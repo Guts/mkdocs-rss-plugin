@@ -1,0 +1,28 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+exclude: "node_modules|migrations|.venv|tests/dev/|tests/fixtures/"
+fail_fast: false
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.1.0
+  hooks:
+  - id: check-added-large-files
+    args: ['--maxkb=500']
+  - id: check-toml
+  - id: check-yaml
+  - id: detect-private-key
+  - id: end-of-file-fixer
+  - id: fix-encoding-pragma
+    args: [--remove]
+  - id: trailing-whitespace
+    args: [--markdown-linebreak-ext=md]
+
+- repo: https://github.com/python/black
+  rev: 19.10b0
+  hooks:
+  - id: black
+    exclude_types: [directory,]
+    language_version: python3
+    log_file: ./dev_precommit_black.log
+    require_serial: true
+    types: [file, python]
