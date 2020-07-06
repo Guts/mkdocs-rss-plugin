@@ -1,0 +1,13 @@
+site_name: Test RSS Plugin
+site_description: Test RSS Plugin
+
+use_directory_urls: true
+
+plugins:
+    - search
+    - mkdocs-rss-plugin
+
+theme:
+    name: mkdocs
+    custom_dir: "docs/theme"
+    static_templates: ["templates/rss.xml"]
