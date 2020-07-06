@@ -26,11 +26,10 @@
     {% for item in feed.entries %}
     <item>
       <title>{{ item.title }}</title>
-      <description>{{ item.description|safe }}</description>
+      <description>{{ item.description|e }}</description>
       <link>{{ item.link }}</link>
       <pubDate>{{ item.pubDate }}</pubDate>
       <guid isPermaLink="false">{{ item.guid }}</guid>
-      <dc:creator><![CDATA[{{ item.author.name }}]]></dc:creator>
     </item>
     {% endfor %}
   </channel>
