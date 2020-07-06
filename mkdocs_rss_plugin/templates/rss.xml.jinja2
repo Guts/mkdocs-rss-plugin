@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0"
+  xmlns:atom="https://www.w3.org/2005/Atom"
+  xmlns:dc="https://purl.org/dc/elements/1.1/">
+  <channel>
+    <!-- Feed global metadata -->
+    <title>{{ feed.title }}</title>
+    <author>{{ feed.author }}</author>
+    <category>{{ feed.category }}</category>
+    <description>{{ feed.description }}</description>
+    <docs>{{ feed.repo_url }}</docs>
+    <generator>{{ feed.generator }}</generator>
+    <language>{{ feed.language }}</language>
+    <link>{{ feed.html_url }}</link>
+    <atom:link href="{{ feed.rss_url }}" rel="self" type="application/rss+xml" />
+    <pubDate>{{ feed.pubDate }}</pubDate>
+
+    <!-- Feed illustration -->
+    <image>
+      <url>{{ feed.logo_url }}</url>
+      <title>{{ feed.title }} - logo</title>
+      <link>{{ feed.html_url }}</link>
+    </image>
+
+
+    {% for item in feed.entries %}
+    <item>
+      <title>{{ item.title }}</title>
+      <description>{{ item.description|safe }}</description>
+      <link>{{ item.link }}</link>
+      <pubDate>{{ item.pubDate }}</pubDate>
+      <guid isPermaLink="false">{{ item.guid }}</guid>
+      <dc:creator><![CDATA[{{ item.author.name }}]]></dc:creator>
+    </item>
+    {% endfor %}
+  </channel>
+</rss>
