@@ -105,3 +105,22 @@ class Util:
             datetime.utcfromtimestamp(dt_created),
             datetime.utcfromtimestamp(dt_updated),
         )
+
+    def get_description_or_abstract(self, in_page: Page, chars_count: int = 150) -> str:
+        """Returns description from page meta. If it doesn't exist, use the \
+        {chars_count} first characters from page content (in markdown).
+
+        :param Page in_page: [description]
+        :param int chars_count: [description]. Defaults to: 150 - optional
+
+        :return: page description to use
+        :rtype: str
+        """
+        if in_page.meta.get("description"):
+            return in_page.meta.get("description")
+        elif in_page.content:
+            return in_page.content[:chars_count]
+        elif in_page.markdown:
+            return in_page.markdown[:chars_count]
+        else:
+            return ""
