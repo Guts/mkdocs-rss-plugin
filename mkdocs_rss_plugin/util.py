@@ -7,9 +7,12 @@
 # standard library
 import logging
 import os
+from datetime import datetime
+from typing import Tuple
 
 # 3rd party
 from git import Git
+from mkdocs.structure.pages import Page
 
 
 # ############################################################################
@@ -82,6 +85,23 @@ class Util:
                        """
                 )
 
-    @staticmethod
-    def determine_site_language():
-        pass
+    def get_file_dates(
+        self, path: str, fallback_to_build_date: bool = False
+    ) -> Tuple[datetime, datetime]:
+        """Extract creation and update dates from git log for given file.
+
+        :param str path: path to a tracked file
+        :param bool fallback_to_build_date: [description]. Defaults to: False - optional
+
+        :return: (creation date, last commit date)
+        :rtype: tuple
+        """
+        dt_created = int(
+            self.repo.log(path, n=1, date="short", format="%at", diff_filter="A")
+        )
+        dt_updated = int(self.repo.log(path, n=1, date="short", format="%at",))
+
+        return (
+            datetime.utcfromtimestamp(dt_created),
+            datetime.utcfromtimestamp(dt_updated),
+        )
