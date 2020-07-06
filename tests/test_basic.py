@@ -23,7 +23,7 @@ from click.testing import CliRunner
 from mkdocs.__main__ import build_command
 
 # package module
-from mkdocs_git_revision_date_localized_plugin.util import Util
+from mkdocs_rss_plugin.util import Util
 
 
 def load_config(mkdocs_path):
