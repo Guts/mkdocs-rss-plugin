@@ -12,7 +12,8 @@ repo_url: 'https://github.com/guts/mkdocs-rss-plugin'
 use_directory_urls: true
 
 plugins:
-    - mkdocs-rss-plugin
+    - mkdocs-rss-plugin:
+        feed_ttl: 90
 
 theme:
     name: readthedocs
