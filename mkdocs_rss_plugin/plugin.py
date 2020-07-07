@@ -5,6 +5,7 @@
 # ##################################
 
 # standard library
+from email.utils import formatdate
 from pathlib import Path
 
 # 3rd party
@@ -13,6 +14,7 @@ from livereload.server import Server
 from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
+from mkdocs.utils import get_build_timestamp
 
 
 # package modules
@@ -36,6 +38,7 @@ class GitRssPlugin(BasePlugin):
         ("abstract_chars_count", config_options.Type(int, default=150)),
         ("category", config_options.Type(str, default=None)),
         ("exclude_files", config_options.Type(list, default=[])),
+        ("feed_ttl", config_options.Type(int, default=1440)),
         ("length", config_options.Type(int, default=20)),
         ("output_feed_filepath", config_options.Type(str, default="feed.xml")),
         ("template", config_options.Type(str, default=str(DEFAULT_TEMPLATE_FILENAME)),),
@@ -67,13 +70,15 @@ class GitRssPlugin(BasePlugin):
 
         # start a feed dictionary using global config vars
         self.feed = {
-            "author": config.get("author", None),
+            "author": config.get("site_author", None),
+            "buildDate": formatdate(get_build_timestamp()),
             "copyright": config.get("copyright", None),
             "description": config.get("site_description", None),
             "generator": "{} - v{}".format(__title__, __version__),
-            "link": config.get("site_url", None),
+            "html_url": config.get("site_url", None),
             "repo_url": config.get("repo_url", config.get("site_url", None)),
             "title": config.get("site_name", None),
+            "ttl": self.config.get("feed_ttl", None),
         }
 
         # final feed url

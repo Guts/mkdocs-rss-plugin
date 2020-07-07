@@ -13,7 +13,11 @@
     <language>{{ feed.language }}</language>
     <link>{{ feed.html_url }}</link>
     <atom:link href="{{ feed.rss_url }}" rel="self" type="application/rss+xml" />
+
+    <!-- Timestamps and frequency -->
     <pubDate>{{ feed.pubDate }}</pubDate>
+    <lastBuildDate>{{ feed.buildDate }}</lastBuildDate>
+    <ttl>{{ feed.ttl }}</ttl>
 
     <!-- Feed illustration -->
     <image>
