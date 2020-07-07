@@ -5,6 +5,7 @@
 # ##################################
 
 # standard library
+import logging
 from email.utils import formatdate
 from pathlib import Path
 
@@ -18,7 +19,7 @@ from mkdocs.utils import get_build_timestamp
 
 
 # package modules
-from .__about__ import __title__, __version__
+from .__about__ import __title__, __uri__, __version__
 from .customtypes import PageInformation
 from .util import Util
 
@@ -28,6 +29,8 @@ from .util import Util
 
 DEFAULT_TEMPLATE_FOLDER = Path(__file__).parent / "templates"
 DEFAULT_TEMPLATE_FILENAME = DEFAULT_TEMPLATE_FOLDER / "rss.xml.jinja2"
+OUTPUT_FEED_CREATED = "feed_rss_created.xml"
+OUTPUT_FEED_UPDATED = "feed_rss_updated.xml"
 
 
 # ############################################################################
@@ -40,13 +43,17 @@ class GitRssPlugin(BasePlugin):
         ("exclude_files", config_options.Type(list, default=[])),
         ("feed_ttl", config_options.Type(int, default=1440)),
         ("length", config_options.Type(int, default=20)),
-        ("output_feed_filepath", config_options.Type(str, default="feed.xml")),
         ("template", config_options.Type(str, default=str(DEFAULT_TEMPLATE_FILENAME)),),
     )
 
     def __init__(self):
-        self.pages_to_filter = []
+        # tooling
         self.util = Util()
+        # pages storage
+        self.pages_to_filter = []
+        # prepare output feeds
+        self.feed_created = dict
+        self.feed_updated = dict
 
     def on_config(self, config: config_options.Config) -> dict:
         """
@@ -69,22 +76,36 @@ class GitRssPlugin(BasePlugin):
         self.tpl_folder = Path(self.config.get("template")).parent
 
         # start a feed dictionary using global config vars
-        self.feed = {
+        base_feed = {
             "author": config.get("site_author", None),
+            "entries": [],
             "buildDate": formatdate(get_build_timestamp()),
             "copyright": config.get("copyright", None),
             "description": config.get("site_description", None),
             "generator": "{} - v{}".format(__title__, __version__),
-            "html_url": config.get("site_url", None),
+            "html_url": config.get("site_url", __uri__),
             "repo_url": config.get("repo_url", config.get("site_url", None)),
             "title": config.get("site_name", None),
             "ttl": self.config.get("feed_ttl", None),
         }
 
+        # create 2 final dicts
+        self.feed_created = base_feed.copy()
+        self.feed_updated = base_feed.copy()
+
         # final feed url
         if config.get("site_url"):
-            self.feed["rss_url"] = "{}/{}".format(
-                config.get("site_url"), self.config.get("output_feed_filepath")
+            self.feed_created["rss_url"] = "{}/{}".format(
+                config.get("site_url"), OUTPUT_FEED_CREATED
+            )
+            self.feed_updated["rss_url"] = "{}/{}".format(
+                config.get("site_url"), OUTPUT_FEED_UPDATED
+            )
+        else:
+            logging.warning(
+                "The variable `site_url` is not set in the MkDocs "
+                "configuration file whereas a URL is mandatory to publish. "
+                "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
             )
 
         # ending event
@@ -140,6 +161,28 @@ class GitRssPlugin(BasePlugin):
         Returns:
             dict: global configuration object
         """
+        # created items
+        for page in sorted(self.pages_to_filter, key=lambda page: page.created):
+            self.feed_created.get("entries").append(
+                {
+                    "description": page.description,
+                    "link": page.url_full,
+                    "pubDate": formatdate(page.created),
+                    "title": page.title,
+                }
+            )
+
+        # updated items
+        for page in sorted(self.pages_to_filter, key=lambda page: page.updated):
+            self.feed_updated.get("entries").append(
+                {
+                    "description": page.description,
+                    "link": page.url_full,
+                    "pubDate": formatdate(page.updated),
+                    "title": page.title,
+                }
+            )
+
         # load Jinja environment
         env = Environment(
             loader=FileSystemLoader(self.tpl_folder),
@@ -148,17 +191,12 @@ class GitRssPlugin(BasePlugin):
 
         template = env.get_template(self.tpl_file.name)
 
-        # items
-        self.feed["entries"] = [
-            {"title": "hahaha", "description": "youplouboum"},
-            {"title": "OIHOHOIHO", "description": "&é('(é'"},
-        ]
+        # write feeds to files
+        with open(OUTPUT_FEED_CREATED, mode="w", encoding="UTF8") as fh:
+            fh.write(template.render(feed=self.feed_created))
 
-        # write feed to file
-        with open(
-            self.config.get("output_feed_filepath"), mode="w", encoding="UTF8"
-        ) as fh:
-            fh.write(template.render(feed=self.feed))
+        with open(OUTPUT_FEED_UPDATED, mode="w", encoding="UTF8") as fh:
+            fh.write(template.render(feed=self.feed_updated))
 
     def on_serve(self, server: Server, config: config_options.Config, builder):
         pass
