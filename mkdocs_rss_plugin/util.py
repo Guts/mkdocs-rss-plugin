@@ -10,10 +10,9 @@ import os
 from typing import Tuple
 
 # 3rd party
-from git import Git
+from git import Git, GitCommandError, GitCommandNotFound
 from mkdocs.structure.pages import Page
-
-# from mkdocs.utils import get_build_timestamp
+from mkdocs.utils import get_build_timestamp
 
 
 # ############################################################################
@@ -94,15 +93,41 @@ class Util:
         :return: (creation date, last commit date)
         :rtype: tuple
         """
-        dt_created = int(
-            self.repo.log(path, n=1, date="short", format="%at", diff_filter="A")
-        )
-        dt_updated = int(self.repo.log(path, n=1, date="short", format="%at",))
+        # empty vars
+        dt_created = dt_updated = None
 
-        return (
-            dt_created,
-            dt_updated,
-        )
+        # explore git log
+        try:
+            dt_created = self.repo.log(
+                path, n=1, date="short", format="%at", diff_filter="AR"
+            )
+            dt_updated = self.repo.log(path, n=1, date="short", format="%at",)
+
+        except GitCommandError as err:
+            logging.warning(
+                "[rss-plugin] Unable to read git logs of '%s'. Is git log readable?"
+                " Falling back to build date. "
+                " Trace: %s" % (path, err)
+            )
+        except GitCommandNotFound as err:
+            logging.error(
+                "[rss-plugin] Unable to perform command 'git log'. Is git installed? "
+                " Falling back to build date. "
+                " Trace: %s" % err
+            )
+
+        # return results
+        if all([dt_created, dt_updated]):
+            return (
+                int(dt_created),
+                int(dt_updated),
+            )
+        else:
+            logging.warning("Dates could not be retrieve for page: %s." % path)
+            return (
+                get_build_timestamp(),
+                get_build_timestamp(),
+            )
 
     def get_description_or_abstract(self, in_page: Page, chars_count: int = 150) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
