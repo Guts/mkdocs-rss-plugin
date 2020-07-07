@@ -80,6 +80,7 @@ class GitRssPlugin(BasePlugin):
             "author": config.get("site_author", None),
             "entries": [],
             "buildDate": formatdate(get_build_timestamp()),
+            "pubDate": formatdate(get_build_timestamp()),
             "copyright": config.get("copyright", None),
             "description": config.get("site_description", None),
             "generator": "{} - v{}".format(__title__, __version__),
