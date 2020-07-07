@@ -43,7 +43,6 @@ class GitRssPlugin(BasePlugin):
         ("exclude_files", config_options.Type(list, default=[])),
         ("feed_ttl", config_options.Type(int, default=1440)),
         ("length", config_options.Type(int, default=20)),
-        ("template", config_options.Type(str, default=str(DEFAULT_TEMPLATE_FILENAME)),),
     )
 
     def __init__(self):
@@ -70,10 +69,10 @@ class GitRssPlugin(BasePlugin):
             dict: global configuration object
         """
         # check template dirs
-        if not Path(self.config.get("template")).is_file():
-            raise FileExistsError(self.config.get("template"))
-        self.tpl_file = Path(self.config.get("template"))
-        self.tpl_folder = Path(self.config.get("template")).parent
+        if not Path(DEFAULT_TEMPLATE_FILENAME).is_file():
+            raise FileExistsError(DEFAULT_TEMPLATE_FILENAME)
+        self.tpl_file = Path(DEFAULT_TEMPLATE_FILENAME)
+        self.tpl_folder = DEFAULT_TEMPLATE_FOLDER
 
         # start a feed dictionary using global config vars
         base_feed = {
