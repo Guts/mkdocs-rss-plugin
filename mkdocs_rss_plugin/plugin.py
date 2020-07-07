@@ -166,7 +166,7 @@ class GitRssPlugin(BasePlugin):
         # created items
         for page in sorted(
             self.pages_to_filter, key=lambda page: page.created, reverse=True
-        ):
+        )[: self.config.get("length", 20)]:
             self.feed_created.get("entries").append(
                 {
                     "description": page.description,
@@ -179,7 +179,7 @@ class GitRssPlugin(BasePlugin):
         # updated items
         for page in sorted(
             self.pages_to_filter, key=lambda page: page.updated, reverse=True
-        ):
+        )[: self.config.get("length", 20)]:
             self.feed_updated["entries"].append(
                 {
                     "description": page.description,

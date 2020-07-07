@@ -15,6 +15,7 @@ plugins:
     - mkdocs-rss-plugin:
         abstract_chars_count: 200
         feed_ttl: 90
+        length: 2
 
 theme:
     name: readthedocs

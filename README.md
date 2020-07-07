@@ -41,6 +41,12 @@ Use [git log](https://git-scm.com/docs/git-log) to generates RSS 2.0 feeds:
 
 > TO DOC
 
+### Feed length
+
+`length`: number of pages to include in feed items (entries).
+
+Default: `20`
+
 ### Item description length
 
 `abstract_chars_count`: number of characters to use as item description.
