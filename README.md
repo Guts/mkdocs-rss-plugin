@@ -41,6 +41,18 @@ Use [git log](https://git-scm.com/docs/git-log) to generates RSS 2.0 feeds:
 
 > TO DOC
 
+### Item description length
+
+`abstract_chars_count`: number of characters to use as item description.
+
+Default: `150`
+
+### Template path
+
+`template`: Jinja2 template file to use.
+
+Default: `mkdocs_rss_plugin/templates/rss.xml.jinja2`
+
 ### Feed TTL
 
 `feed_ttl`: to be inserted as channel `ttl` element. See: [W3C RSS 2.0 documentation](https://validator.w3.org/feed/docs/rss2.html#ltttlgtSubelementOfLtchannelgt).
