@@ -15,6 +15,6 @@ Jinja2>=2,<3
 black==19.10b0
 flake8==3.8.*
 pre-commit>=2.5,<2.7
-mkdocs-awesome-pages-plugin==2.2.*
-mkdocs-material>=5,<6
 pytest-cov==2.10.*
+
+

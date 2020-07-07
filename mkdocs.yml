@@ -1,0 +1,34 @@
+# Project information
+site_name: MkDocs RSS Plugin
+site_description: Documentation about the MkDocs RSS Plugin
+site_author: Julien M. (Guts)
+site_url: https://guts.github.io/mkdocs-rss-plugin
+copyright: 'Guts - In Geo Veritas'
+
+# Repository
+repo_name: 'guts/mkdocs-rss-plugin'
+repo_url: 'https://github.com/guts/mkdocs-rss-plugin'
+
+use_directory_urls: true
+
+
+plugins:
+  - minify:
+      minify_html: true
+  - mkdocs-rss-plugin
+
+theme:
+  name: united
+
+# Extensions to enhance markdown
+markdown_extensions:
+  - codehilite
+  - meta
+  - pymdownx.emoji
+  - toc:
+      permalink: '#'
+
+
+nav:
+- 'index.md'
+- 'configuration.md'
