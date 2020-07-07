@@ -7,7 +7,7 @@
     <title>{{ feed.title }}</title>
     <author>{{ feed.author }}</author>
     <category>{{ feed.category }}</category>
-    <description>{{ feed.description }}</description>
+    <description>{{ feed.description|e }}</description>
     <docs>{{ feed.repo_url }}</docs>
     <generator>{{ feed.generator }}</generator>
     <language>{{ feed.language }}</language>
