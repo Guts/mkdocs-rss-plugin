@@ -77,13 +77,14 @@ class GitRssPlugin(BasePlugin):
         # start a feed dictionary using global config vars
         base_feed = {
             "author": config.get("site_author", None),
-            "entries": [],
             "buildDate": formatdate(get_build_timestamp()),
-            "pubDate": formatdate(get_build_timestamp()),
+            "category": self.config.get("category", None),
             "copyright": config.get("copyright", None),
             "description": config.get("site_description", None),
+            "entries": [],
             "generator": "{} - v{}".format(__title__, __version__),
             "html_url": config.get("site_url", __uri__),
+            "pubDate": formatdate(get_build_timestamp()),
             "repo_url": config.get("repo_url", config.get("site_url", None)),
             "title": config.get("site_name", None),
             "ttl": self.config.get("feed_ttl", None),
