@@ -162,6 +162,10 @@ class GitRssPlugin(BasePlugin):
         Returns:
             dict: global configuration object
         """
+        # output filepaths
+        out_feed_created = Path(config.get("site_dir")) / OUTPUT_FEED_CREATED
+        out_feed_updated = Path(config.get("site_dir")) / OUTPUT_FEED_UPDATED
+
         # created items
         for page in sorted(self.pages_to_filter, key=lambda page: page.created):
             self.feed_created.get("entries").append(
@@ -193,11 +197,11 @@ class GitRssPlugin(BasePlugin):
         template = env.get_template(self.tpl_file.name)
 
         # write feeds to files
-        with open(OUTPUT_FEED_CREATED, mode="w", encoding="UTF8") as fh:
-            fh.write(template.render(feed=self.feed_created))
+        with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
+            fifeed_created.write(template.render(feed=self.feed_created))
 
-        with open(OUTPUT_FEED_UPDATED, mode="w", encoding="UTF8") as fh:
-            fh.write(template.render(feed=self.feed_updated))
+        with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
+            fifeed_updated.write(template.render(feed=self.feed_updated))
 
     def on_serve(self, server: Server, config: config_options.Config, builder):
         pass
