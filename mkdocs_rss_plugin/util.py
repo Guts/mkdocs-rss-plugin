@@ -7,12 +7,13 @@
 # standard library
 import logging
 import os
-from datetime import datetime
 from typing import Tuple
 
 # 3rd party
 from git import Git
 from mkdocs.structure.pages import Page
+
+# from mkdocs.utils import get_build_timestamp
 
 
 # ############################################################################
@@ -87,7 +88,7 @@ class Util:
 
     def get_file_dates(
         self, path: str, fallback_to_build_date: bool = False
-    ) -> Tuple[datetime, datetime]:
+    ) -> Tuple[int, int]:
         """Extract creation and update dates from git log for given file.
 
         :param str path: path to a tracked file
@@ -102,8 +103,8 @@ class Util:
         dt_updated = int(self.repo.log(path, n=1, date="short", format="%at",))
 
         return (
-            datetime.utcfromtimestamp(dt_created),
-            datetime.utcfromtimestamp(dt_updated),
+            dt_created,
+            dt_updated,
         )
 
     def get_description_or_abstract(self, in_page: Page, chars_count: int = 150) -> str:
