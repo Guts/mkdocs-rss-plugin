@@ -12,7 +12,6 @@ from pathlib import Path
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from livereload.server import Server
 from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
@@ -150,7 +149,6 @@ class GitRssPlugin(BasePlugin):
                 url_full=page.canonical_url,
             )
         )
-        # print(self.util.get_description_or_abstract(page))
 
     def on_post_build(self, config: config_options.Config) -> dict:
         """The post_build event does not alter any variables. \
@@ -203,6 +201,3 @@ class GitRssPlugin(BasePlugin):
 
         with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
             fifeed_updated.write(template.render(feed=self.feed_updated))
-
-    def on_serve(self, server: Server, config: config_options.Config, builder):
-        pass
