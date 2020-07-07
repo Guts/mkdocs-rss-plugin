@@ -39,7 +39,15 @@ Use [git log](https://git-scm.com/docs/git-log) to generates RSS 2.0 feeds:
 
 ## Plugin options
 
-> TO DOC
+Sample:
+
+```yml
+plugins:
+  - mkdocs-rss-plugin:
+      abstract_chars_count: 150
+      feed_ttl: 1440
+      length: 20
+```
 
 ### Feed length
 
