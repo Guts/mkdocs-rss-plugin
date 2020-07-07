@@ -86,13 +86,10 @@ class Util:
                        """
                 )
 
-    def get_file_dates(
-        self, path: str, fallback_to_build_date: bool = False
-    ) -> Tuple[int, int]:
+    def get_file_dates(self, path: str) -> Tuple[int, int]:
         """Extract creation and update dates from git log for given file.
 
         :param str path: path to a tracked file
-        :param bool fallback_to_build_date: [description]. Defaults to: False - optional
 
         :return: (creation date, last commit date)
         :rtype: tuple

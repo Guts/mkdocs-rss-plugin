@@ -132,9 +132,7 @@ class GitRssPlugin(BasePlugin):
             str: Markdown source text of page as string
         """
         # retrieve dates from git log
-        page_dates = self.util.get_file_dates(
-            path=page.file.abs_src_path, fallback_to_build_date=1,
-        )
+        page_dates = self.util.get_file_dates(path=page.file.abs_src_path)
 
         # append to list to be filtered later
         self.pages_to_filter.append(
