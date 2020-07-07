@@ -6,6 +6,7 @@
 
 # standard library
 import logging
+from copy import deepcopy
 from email.utils import formatdate
 from pathlib import Path
 
@@ -91,8 +92,8 @@ class GitRssPlugin(BasePlugin):
         }
 
         # create 2 final dicts
-        self.feed_created = base_feed.copy()
-        self.feed_updated = base_feed.copy()
+        self.feed_created = deepcopy(base_feed)
+        self.feed_updated = deepcopy(base_feed)
 
         # final feed url
         if config.get("site_url"):
