@@ -166,7 +166,9 @@ class GitRssPlugin(BasePlugin):
         out_feed_updated = Path(config.get("site_dir")) / OUTPUT_FEED_UPDATED
 
         # created items
-        for page in sorted(self.pages_to_filter, key=lambda page: page.created):
+        for page in sorted(
+            self.pages_to_filter, key=lambda page: page.created, reverse=True
+        ):
             self.feed_created.get("entries").append(
                 {
                     "description": page.description,
@@ -177,8 +179,10 @@ class GitRssPlugin(BasePlugin):
             )
 
         # updated items
-        for page in sorted(self.pages_to_filter, key=lambda page: page.updated):
-            self.feed_updated.get("entries").append(
+        for page in sorted(
+            self.pages_to_filter, key=lambda page: page.updated, reverse=True
+        ):
+            self.feed_updated["entries"].append(
                 {
                     "description": page.description,
                     "link": page.url_full,
