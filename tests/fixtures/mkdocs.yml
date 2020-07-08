@@ -5,9 +5,7 @@ use_directory_urls: true
 
 plugins:
     - search
-    - mkdocs-rss-plugin
+    - rss
 
 theme:
     name: mkdocs
-    custom_dir: "docs/theme"
-    static_templates: ["templates/rss.xml"]

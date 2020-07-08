@@ -1,7 +1,7 @@
-site_name: test gitrevisiondatelocalized_plugin
+site_name: Test RSS Plugin - Bad config
 use_directory_urls: true
 
 plugins:
     - search
-    - mkdocs-rss-plugin:
+    - rss:
         type: somethingwrong

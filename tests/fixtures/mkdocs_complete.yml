@@ -12,13 +12,13 @@ repo_url: 'https://github.com/guts/mkdocs-rss-plugin'
 use_directory_urls: true
 
 plugins:
-    - mkdocs-rss-plugin:
-        abstract_chars_count: 200
-        feed_ttl: 90
-        length: 2
+  - rss:
+    abstract_chars_count: 200
+    feed_ttl: 90
+    length: 2
 
 theme:
-    name: readthedocs
+  name: readthedocs
 
 # Extensions to enhance markdown
 markdown_extensions:

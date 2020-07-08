@@ -44,7 +44,7 @@ setup(
     include_package_data=True,
     # run
     entry_points={
-        "mkdocs.plugins": ["mkdocs-rss-plugin = mkdocs_rss_plugin.plugin:GitRssPlugin"]
+        "mkdocs.plugins": ["rss = mkdocs_rss_plugin.plugin:GitRssPlugin"]
     },
     # dependencies
     python_requires=">=3.6, <4",
