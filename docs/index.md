@@ -22,16 +22,16 @@ Then in your `mkdocs.yml`:
 
 ```yml
 plugins:
-  - mkdocs-rss-plugin
+  - rss
 ```
 
 ## Credits
 
-Plugin logic inspired from [Tim Vink git-based plugins](https://github.com/timvink?tab=repositories&q=mkdocs-git&type=&language=).
+Plugin logic is inspired from [Tim Vink git-based plugins](https://github.com/timvink?tab=repositories&q=mkdocs-git&type=&language=) and main Git stuff is nearly copied/pasted.
 
 Using magic from:
 
 - [GitPython](https://gitpython.readthedocs.io/)
 - [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/)
 
-Documentation theme [United from mkdocs-bootswatch](http://mkdocs.github.io/mkdocs-bootswatch/#united) as a tribute to the RSS historic color scheme: orange and white.
+Documentation theme [United from mkdocs-bootswatch](http://mkdocs.github.io/mkdocs-bootswatch/#united) as a tribute to the classic RSS color scheme: orange and white.

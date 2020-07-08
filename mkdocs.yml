@@ -15,7 +15,8 @@ use_directory_urls: true
 plugins:
   - minify:
       minify_html: true
-  - mkdocs-rss-plugin
+  - rss
+  - search
 
 theme:
   name: united
@@ -30,5 +31,5 @@ markdown_extensions:
 
 
 nav:
-- 'index.md'
+- "Home": 'index.md'
 - 'configuration.md'
