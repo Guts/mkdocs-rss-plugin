@@ -6,50 +6,15 @@
 
 # standard library
 import logging
-import os
 from typing import Tuple
 
 # 3rd party
-from git import Git, GitCommandError, GitCommandNotFound
+from git import GitCommandError, GitCommandNotFound, InvalidGitRepositoryError, Repo
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
-
-# ############################################################################
-# ########## Functions #############
-# ##################################
-def is_shallow_clone(repo: Git) -> bool:
-    """
-    Helper function to determine if repository
-    is a shallow clone.
-
-    References:
-    https://stackoverflow.com/a/37203240/5525118
-
-    Args:
-        repo (git.Repo): Repository
-
-    Returns:
-        bool: If a repo is shallow clone
-    """
-    return os.path.exists(".git/shallow")
-
-
-def commit_count(repo: Git) -> bool:
-    """
-    Helper function to determine the number of commits in a repository
-
-    Args:
-        repo (git.Repo): Repository
-
-    Returns:
-        count (int): Number of commits
-    """
-    refs = repo.for_each_ref().split("\n")
-    refs = [x.split()[0] for x in refs]
-
-    counts = [int(repo.rev_list(x, count=True, first_parent=True)) for x in refs]
-    return max(counts)
+# package
+from mkdocs_rss_plugin.git_manager.ci import CiHandler
 
 
 # ############################################################################
@@ -57,33 +22,25 @@ def commit_count(repo: Git) -> bool:
 # ################################
 class Util:
     def __init__(self, path: str = "."):
-        self.repo = Git(path)
+        """Class hosting the plugin logic.
 
-        # Checks when running builds on CI
-        # See https://github.com/guts/mkdocs-rss-plugin/issues/10
-        if is_shallow_clone(self.repo):
-            n_commits = commit_count(self.repo)
+        :param str path: path tot the git repository to use. Defaults to: "." - optional
+        """
+        try:
+            git_repo = Repo(path, search_parent_directories=True)
+            self.repo = git_repo.git
+            self.git_is_valid = 1
+        except InvalidGitRepositoryError as err:
+            logging.warning(
+                "[rss-plugin] Path is not a valid git directory. " " Trace: %s" % err
+            )
+            self.git_is_valid = 0
+        except Exception as err:
+            logging.warning("[rss-plugin] Git issue: %s" % err)
+            self.git_is_valid = 0
 
-            if os.environ.get("GITLAB_CI") and n_commits < 50:
-                # Default is GIT_DEPTH of 50 for gitlab
-                logging.warning(
-                    """
-                       Running on a gitlab runner might lead to wrong git revision dates
-                       due to a shallow git fetch depth.
-                       Make sure to set GIT_DEPTH to 1000 in your .gitlab-ci.yml file.
-                       (see https://docs.gitlab.com/ee/user/project/pipelines/settings.html#git-shallow-clone).
-                       """
-                )
-            if os.environ.get("GITHUB_ACTIONS") and n_commits == 1:
-                # Default is fetch-depth of 1 for github actions
-                logging.warning(
-                    """
-                       Running on github actions might lead to wrong git revision dates
-                       due to a shallow git fetch depth.
-                       Try setting fetch-depth to 0 in your github action
-                       (see https://github.com/actions/checkout).
-                       """
-                )
+        # Checks if user is running builds on CI and raise appropriate warnings
+        CiHandler(git_repo.git).raise_ci_warnings()
 
     def get_file_dates(self, path: str) -> Tuple[int, int]:
         """Extract creation and update dates from git log for given file.
@@ -91,30 +48,33 @@ class Util:
         :param str path: path to a tracked file
 
         :return: (creation date, last commit date)
-        :rtype: tuple
+        :rtype: tuple of timestamps
         """
         # empty vars
         dt_created = dt_updated = None
 
         # explore git log
-        try:
-            dt_created = self.repo.log(
-                path, n=1, date="short", format="%at", diff_filter="AR"
-            )
-            dt_updated = self.repo.log(path, n=1, date="short", format="%at",)
-
-        except GitCommandError as err:
-            logging.warning(
-                "[rss-plugin] Unable to read git logs of '%s'. Is git log readable?"
-                " Falling back to build date. "
-                " Trace: %s" % (path, err)
-            )
-        except GitCommandNotFound as err:
-            logging.error(
-                "[rss-plugin] Unable to perform command 'git log'. Is git installed? "
-                " Falling back to build date. "
-                " Trace: %s" % err
-            )
+        if self.git_is_valid:
+            try:
+                dt_created = self.repo.log(
+                    path, n=1, date="short", format="%at", diff_filter="AR"
+                )
+                dt_updated = self.repo.log(path, n=1, date="short", format="%at",)
+            except GitCommandError as err:
+                logging.warning(
+                    "[rss-plugin] Unable to read git logs of '%s'. Is git log readable?"
+                    " Falling back to build date. "
+                    " Trace: %s" % (path, err)
+                )
+            except GitCommandNotFound as err:
+                logging.error(
+                    "[rss-plugin] Unable to perform command 'git log'. Is git installed? "
+                    " Falling back to build date. "
+                    " Trace: %s" % err
+                )
+                self.git_is_valid = 0
+        else:
+            pass
 
         # return results
         if all([dt_created, dt_updated]):
