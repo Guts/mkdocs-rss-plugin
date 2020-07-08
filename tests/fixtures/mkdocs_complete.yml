@@ -13,9 +13,9 @@ use_directory_urls: true
 
 plugins:
   - rss:
-    abstract_chars_count: 200
-    feed_ttl: 90
-    length: 2
+      abstract_chars_count: 200
+      feed_ttl: 90
+      length: 3
 
 theme:
   name: readthedocs
