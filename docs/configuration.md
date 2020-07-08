@@ -8,7 +8,7 @@ description: Configuration steps and settings for MkDocs RSS plugin
 To produce a valid RSS feed, the plugin uses:
 
 - some global settings from [MkDocs configuration](#mkdocs-configuration)
-- some [specific settings](##plugin-options) to custom behavior or add some optional elements
+- some [specific settings](#plugin-options) to custom behavior or add some optional elements
 
 ## MkDocs configuration
 
@@ -65,6 +65,3 @@ If the page has no meta, then the plugin retrieves the first number of character
 `abstract_chars_count`: number of characters to use as item description.
 
 Default: `150`
-
-
-----
