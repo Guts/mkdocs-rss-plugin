@@ -1,11 +1,11 @@
 ---
 title: The MkDocs RSS Plugin
-description: "MkDocs RSS plugin: generate RSS feeds for your static website using git logq" 
+description: "MkDocs RSS plugin: generate RSS feeds for your static website using git log."
 ---
 
-# MkDocs RSS Plugin
+--8<-- "README.md"
 
-Plugin for [MkDocs](https://www.mkdocs.org) using [git log](https://git-scm.com/docs/git-log) to generates two [RSS 2.0](https://wikipedia.org/wiki/RSS) feeds:
+Here come the feeds generated for this documentation:
 
 - [feed_rss_created.xml](feed_rss_created.xml) for  latest **created** pages
 - [feed_rss_updated.xml](feed_rss_updated.xml) for latest **updated** pages
@@ -27,7 +27,7 @@ plugins:
 
 ## Credits
 
-Plugin logic is inspired from [Tim Vink git-based plugins](https://github.com/timvink?tab=repositories&q=mkdocs-git&type=&language=) and main Git stuff is nearly copied/pasted.
+Plugin logic is inspired from [Tim Vink git-based plugins](https://github.com/timvink?tab=repositories&q=mkdocs-git&type=&language=) and main parts of Git stuff are nearly copied/pasted.
 
 Using magic from:
 
