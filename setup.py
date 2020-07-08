@@ -25,6 +25,7 @@ README = (HERE / "README.md").read_text()
 # ##############################
 setup(
     name="mkdocs-rss-plugin",
+    version=__about__.__version__,
     author=__about__.__author__,
     author_email=__about__.__email__,
     description=__about__.__summary__,
@@ -32,6 +33,7 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     project_urls={
+        "Docs": "https://guts.github.io/mkdocs-rss-plugin/",
         "Bug Reports": "{}issues/".format(__about__.__uri__),
         "Source": __about__.__uri__,
     },
