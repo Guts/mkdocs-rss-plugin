@@ -96,15 +96,18 @@ class GitRssPlugin(BasePlugin):
 
         # final feed url
         if config.get("site_url"):
-            self.feed_created["rss_url"] = "{}/{}".format(
-                config.get("site_url"), OUTPUT_FEED_CREATED
-            )
-            self.feed_updated["rss_url"] = "{}/{}".format(
-                config.get("site_url"), OUTPUT_FEED_UPDATED
-            )
+            # handle trailing slash
+            if not config.get("site_url").endswith("/"):
+                site_url_base = config.get("site_url") + "/"
+            else:
+                site_url_base = config.get("site_url")
+
+            # concatenate both URLs
+            self.feed_created["rss_url"] = site_url_base + OUTPUT_FEED_CREATED
+            self.feed_updated["rss_url"] = site_url_base + OUTPUT_FEED_UPDATED
         else:
             logging.warning(
-                "The variable `site_url` is not set in the MkDocs "
+                "[rss-plugin] The variable `site_url` is not set in the MkDocs "
                 "configuration file whereas a URL is mandatory to publish. "
                 "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
             )
