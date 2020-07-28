@@ -15,7 +15,8 @@ use_directory_urls: true
 plugins:
   - minify:
       minify_html: true
-  - rss
+  - rss:
+      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
   - search
 
 theme:

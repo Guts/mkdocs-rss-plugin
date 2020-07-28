@@ -40,8 +40,8 @@ class GitRssPlugin(BasePlugin):
     config_scheme = (
         ("abstract_chars_count", config_options.Type(int, default=150)),
         ("category", config_options.Type(str, default=None)),
-        ("exclude_files", config_options.Type(list, default=[])),
         ("feed_ttl", config_options.Type(int, default=1440)),
+        ("image", config_options.Type(str, default=None)),
         ("length", config_options.Type(int, default=20)),
     )
 
@@ -90,6 +90,10 @@ class GitRssPlugin(BasePlugin):
             "ttl": self.config.get("feed_ttl", None),
         }
 
+        # feed image
+        if self.config.get("image"):
+            base_feed["logo_url"] = self.config.get("image")
+
         # create 2 final dicts
         self.feed_created = deepcopy(base_feed)
         self.feed_updated = deepcopy(base_feed)
@@ -111,6 +115,8 @@ class GitRssPlugin(BasePlugin):
                 "configuration file whereas a URL is mandatory to publish. "
                 "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
             )
+
+        
 
         # ending event
         return config

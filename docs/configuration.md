@@ -41,8 +41,16 @@ plugins:
   - rss:
       abstract_chars_count: 150
       feed_ttl: 1440
+      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
       length: 20
 ```
+
+### Channel image
+
+`image`: URL to image to use as feed illustration.
+
+Default: `None`.
+
 
 ### Feed length
 
