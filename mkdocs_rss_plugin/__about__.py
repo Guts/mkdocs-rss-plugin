@@ -32,7 +32,7 @@ __all__ = [
 
 __author__ = "Julien Moura"
 __copyright__ = "2020 - {0}, {1}".format(date.today().year, __author__)
-__email__ = "ingeoveritas@protonmail.com"
+__email__ = "dev@ingeoveritas.com"
 __executable_name__ = "MkDocsRssPlugin.exe"
 __license__ = "GNU General Public License v3.0"
 __summary__ = "Generates a static RSS feed using git log."
