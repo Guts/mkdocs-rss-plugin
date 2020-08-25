@@ -173,31 +173,18 @@ class GitRssPlugin(BasePlugin):
         out_feed_updated = Path(config.get("site_dir")) / OUTPUT_FEED_UPDATED
 
         # created items
-        for page in sorted(
-            self.pages_to_filter, key=lambda page: page.created, reverse=True
-        )[: self.config.get("length", 20)]:
-            self.feed_created.get("entries").append(
-                {
-                    "description": page.description,
-                    "link": page.url_full,
-                    "pubDate": formatdate(page.created),
-                    "title": page.title,
-                }
-            )
+        self.feed_created.get("entries").extend(self.util.filter_pages(
+            pages=self.pages_to_filter,
+            attribute="created",
+            length=self.config.get('length', 20)
+        ))
 
         # updated items
-        for page in sorted(
-            self.pages_to_filter, key=lambda page: page.updated, reverse=True
-        )[: self.config.get("length", 20)]:
-            self.feed_updated["entries"].append(
-                {
-                    "description": page.description,
-                    "link": page.url_full,
-                    "pubDate": formatdate(page.updated),
-                    "title": page.title,
-                }
-            )
-
+        self.feed_created.get("entries").extend(self.util.filter_pages(
+            pages=self.pages_to_filter,
+            attribute="updated",
+            length=self.config.get('length', 20)
+        ))
         # load Jinja environment
         env = Environment(
             loader=FileSystemLoader(self.tpl_folder),

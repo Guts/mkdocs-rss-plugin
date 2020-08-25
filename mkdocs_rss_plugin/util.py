@@ -6,6 +6,7 @@
 
 # standard library
 import logging
+from email.utils import formatdate
 from typing import Tuple
 
 # 3rd party
@@ -107,3 +108,33 @@ class Util:
             return in_page.markdown[:chars_count]
         else:
             return ""
+
+    @staticmethod
+    def filter_pages(pages: dict, attribute: str, length: int) -> list:
+        """Filter and return pages into a friendly RSS structure.
+
+        :param pages: pages to filter
+        :type pages: dict
+        :param attribute: page attribute as filter variable
+        :type attribute: str
+        :param length: max number of pages to return
+        :type length: int
+
+        :return: list of filtered pages
+        :rtype: list
+        """        
+        filtered_pages = []
+        for page in sorted(
+            pages, key=lambda page: getattr(page, attribute), reverse=True
+        )[:length]:
+            filtered_pages.append(
+                {
+                    "category": page.category,
+                    "description": page.description,
+                    "link": page.url_full,
+                    "pubDate": formatdate(page.created),
+                    "title": page.title,
+                }
+            )
+
+        return filtered_pages
