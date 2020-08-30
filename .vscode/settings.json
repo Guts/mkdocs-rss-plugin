@@ -20,6 +20,6 @@
     ],
     "python.linting.pylintEnabled": false,
     // extensions
-    "autoDocstring.customTemplatePath": ".vscode\\docstring-config.mustache",
+    "autoDocstring.customTemplatePath": "",
     "autoDocstring.generateDocstringOnEnter": false,
 }
