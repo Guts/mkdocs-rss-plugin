@@ -6,6 +6,7 @@
 
 # standard library
 import logging
+import re
 from copy import deepcopy
 from email.utils import formatdate
 from pathlib import Path
@@ -14,6 +15,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
+from mkdocs.structure.files import Files
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
@@ -28,7 +30,8 @@ from .util import Util
 # ################################
 
 DEFAULT_TEMPLATE_FOLDER = Path(__file__).parent / "templates"
-DEFAULT_TEMPLATE_FILENAME = DEFAULT_TEMPLATE_FOLDER / "rss.xml.jinja2"
+DEFAULT_TEMPLATE_RSS = DEFAULT_TEMPLATE_FOLDER / "rss.xml.jinja2"
+DEFAULT_TEMPLATE_TAG = DEFAULT_TEMPLATE_FOLDER / "tag_latest_created.html.jinja2"
 OUTPUT_FEED_CREATED = "feed_rss_created.xml"
 OUTPUT_FEED_UPDATED = "feed_rss_updated.xml"
 
@@ -53,6 +56,9 @@ class GitRssPlugin(BasePlugin):
         # prepare output feeds
         self.feed_created = dict
         self.feed_updated = dict
+        # tag dict
+        self.tag_created = list
+        self.tag_updated = list
 
     def on_config(self, config: config_options.Config) -> dict:
         """
@@ -69,9 +75,9 @@ class GitRssPlugin(BasePlugin):
             dict: global configuration object
         """
         # check template dirs
-        if not Path(DEFAULT_TEMPLATE_FILENAME).is_file():
-            raise FileExistsError(DEFAULT_TEMPLATE_FILENAME)
-        self.tpl_file = Path(DEFAULT_TEMPLATE_FILENAME)
+        if not Path(DEFAULT_TEMPLATE_RSS).is_file():
+            raise FileExistsError(DEFAULT_TEMPLATE_RSS)
+        self.tpl_file = Path(DEFAULT_TEMPLATE_RSS)
         self.tpl_folder = DEFAULT_TEMPLATE_FOLDER
 
         # start a feed dictionary using global config vars
@@ -116,17 +122,81 @@ class GitRssPlugin(BasePlugin):
                 "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
             )
 
-        
-
         # ending event
         return config
+
+    def on_page_content(
+        self, html: str, page: Page, config, files: Files, **kwargs
+    ) -> str:
+        """
+        Replace jinja tag {{ git_latest_created }} in HTML.
+
+        The page_content event is called after the Markdown text is
+        rendered to HTML (but before being passed to a template) and
+        can be used to alter the HTML body of the page.
+
+        https://www.mkdocs.org/user-guide/plugins/#on_page_content
+
+        We replace the authors list in this event in order to be able
+        to replace it with arbitrary HTML content (which might otherwise
+        end up in styled HTML in a code block).
+
+        Args:
+            html: the processed HTML of the page
+            page: mkdocs.nav.Page instance
+            config: global configuration object
+            site_navigation: global navigation object
+
+        Returns:
+            str: HTML text of page as string
+        """
+        list_pattern = re.compile(
+            r"\{\{\s*git_latest_created\s*\}\}", flags=re.IGNORECASE
+        )
+        dico_files = {}
+
+        if list_pattern.search(html):
+            for i in files:
+                if i.is_documentation_page():
+                    self.tag_created.append(PageInformation(
+                        abs_path=Path(i.abs_src_path),
+                        category=self.util.get_category(in_page=page),
+                        created=page_dates[0],
+                        updated=page_dates[1],
+                        title=page.title,
+                        description=self.util.get_description_or_abstract(
+                        in_page=page, chars_count=self.config.get("abstract_chars_count")),
+                        url_full=page.canonical_url,
+                    ))
+        
+                    dico_files[i.name] = (i.src_path, i.url, self.util.get_file_dates(i.abs_src_path))
+            print(dir(i), i.src_path)
+            print(dico_files)
+
+            # # created items
+            # self.tag_created = self.util.filter_pages(
+            #     pages=self.pages_to_filter,
+            #     attribute="created",
+            #     length=self.config.get("length", 20),
+            # )
+
+            # jinja2 environment
+            # env = Environment(
+            #     loader=FileSystemLoader(self.tpl_folder),
+            #     autoescape=select_autoescape(["html", "xml"]),
+            # )
+
+            # template = env.get_template(DEFAULT_TEMPLATE_TAG.name)
+            # html = list_pattern.sub(template.render(entries=self.tag_created), html)
+
+            # return html
 
     def on_page_markdown(
         self, markdown: str, page: Page, config: config_options.Config, files
     ) -> str:
         """The page_markdown event is called after the page's markdown is loaded
         from file and can be used to alter the Markdown source text.
-        The meta- data has been stripped off and is available as page.meta
+        The meta-data has been stripped off and is available as page.meta
         at this point.
 
         https://www.mkdocs.org/user-guide/plugins/#on_page_markdown
@@ -147,6 +217,7 @@ class GitRssPlugin(BasePlugin):
         self.pages_to_filter.append(
             PageInformation(
                 abs_path=Path(page.file.abs_src_path),
+                category=self.util.get_category(in_page=page),
                 created=page_dates[0],
                 updated=page_dates[1],
                 title=page.title,
@@ -173,18 +244,22 @@ class GitRssPlugin(BasePlugin):
         out_feed_updated = Path(config.get("site_dir")) / OUTPUT_FEED_UPDATED
 
         # created items
-        self.feed_created.get("entries").extend(self.util.filter_pages(
-            pages=self.pages_to_filter,
-            attribute="created",
-            length=self.config.get('length', 20)
-        ))
+        self.feed_created.get("entries").extend(
+            self.util.filter_pages(
+                pages=self.pages_to_filter,
+                attribute="created",
+                length=self.config.get("length", 20),
+            )
+        )
 
         # updated items
-        self.feed_created.get("entries").extend(self.util.filter_pages(
-            pages=self.pages_to_filter,
-            attribute="updated",
-            length=self.config.get('length', 20)
-        ))
+        self.feed_created.get("entries").extend(
+            self.util.filter_pages(
+                pages=self.pages_to_filter,
+                attribute="updated",
+                length=self.config.get("length", 20),
+            )
+        )
         # load Jinja environment
         env = Environment(
             loader=FileSystemLoader(self.tpl_folder),
