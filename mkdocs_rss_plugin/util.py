@@ -109,6 +109,33 @@ class Util:
         else:
             return ""
 
+    def get_image(self, in_page: Page, base_url: str) -> tuple:
+        """Get image from page meta.
+
+        :param in_page: page to parse
+        :type in_page: Page
+        :param base_url: website URL to resolve absolute URLs for images referenced with local path.
+        :type base_url: str
+
+        :return: (image url, mime type)
+        :rtype: tuple
+        """        
+        if in_page.meta.get("image"):
+            img_url = in_page.meta.get("image")
+        elif in_page.meta.get("illustration"):
+            img_url = in_page.meta.get("illustration")
+        else:
+            return (None, None)
+
+        # guess mimetype
+        mime_type = guess_type(url=img_url, strict=False)[0]
+        # if path, resolve absolute url
+        if not img_url.startswith("http"):
+            img_url = self.build_url(base_url=base_url, path=img_url)
+        print(img_url)
+        # return final tuple
+        return (img_url, mime_type)
+
     @staticmethod
     def filter_pages(pages: dict, attribute: str, length: int) -> list:
         """Filter and return pages into a friendly RSS structure.
