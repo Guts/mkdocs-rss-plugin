@@ -24,6 +24,7 @@ theme:
 
 # Extensions to enhance markdown
 markdown_extensions:
+  - attr_list
   - codehilite
   - meta
   - pymdownx.emoji
