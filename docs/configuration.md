@@ -1,5 +1,6 @@
 ---
 title: Configuration
+categories: ["settings", "configuration"]
 description: Configuration steps and settings for MkDocs RSS plugin
 ---
 

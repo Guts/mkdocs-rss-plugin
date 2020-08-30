@@ -1,5 +1,6 @@
 ---
 title: The MkDocs RSS Plugin
+category: Homepage
 description: "MkDocs RSS plugin: generate RSS feeds for your static website using git log."
 ---
 
