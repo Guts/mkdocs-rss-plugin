@@ -169,7 +169,7 @@ class Util:
         # if path, resolve absolute url
         if not img_url.startswith("http"):
             img_url = self.build_url(base_url=base_url, path=img_url)
-        print(img_url)
+
         # return final tuple
         return (img_url, mime_type)
 
