@@ -6,7 +6,9 @@
 
 # standard library
 import logging
+from urllib.parse import urlencode, urlparse, urlunparse
 from email.utils import formatdate
+from mimetypes import guess_type
 from typing import Tuple
 
 # 3rd party
@@ -42,6 +44,27 @@ class Util:
 
         # Checks if user is running builds on CI and raise appropriate warnings
         CiHandler(git_repo.git).raise_ci_warnings()
+
+    def build_url(self, base_url: str, path: str, args_dict: dict = None) -> str:
+        """Build URL using base URL, cumulating existing and passed path, \
+        then adding URL arguments.
+
+        :param base_url: base URL with existing path to use
+        :type base_url: str
+        :param path: URL path to cumulate with existing
+        :type path: str
+        :param args_dict: URL arguments to add, defaults to None
+        :type args_dict: dict, optional
+
+        :return: complete and valid URL
+        :rtype: str
+        """        
+        # Returns a list in the structure of urlparse.ParseResult
+        url_parts = list(urlparse(base_url))
+        url_parts[2] += path
+        if args_dict:
+            url_parts[4] = urlencode(args_dict)
+        return urlunparse(url_parts)
 
     def get_file_dates(self, path: str) -> Tuple[int, int]:
         """Extract creation and update dates from git log for given file.
