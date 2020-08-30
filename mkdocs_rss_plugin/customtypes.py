@@ -15,6 +15,7 @@ from typing import NamedTuple
 # ##################################
 class PageInformation(NamedTuple):
     abs_path: Path
+    category: str
     created: datetime
     updated: datetime
     title: str

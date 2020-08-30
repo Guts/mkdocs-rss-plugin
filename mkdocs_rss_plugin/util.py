@@ -90,6 +90,20 @@ class Util:
                 get_build_timestamp(),
             )
 
+    def get_category(self, in_page: Page) -> str:
+        """Returns category from page meta.
+
+        :param Page in_page: input page to parse
+
+        :return: page category to use
+        :rtype: str
+        """
+        cat_possible_values = ("category", "Category", "categories", "Categories")
+        if in_page.meta.get("category"):
+            return in_page.meta.get("category")
+        else:
+            return ""
+
     def get_description_or_abstract(self, in_page: Page, chars_count: int = 150) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
         {chars_count} first characters from page content (in markdown).
@@ -137,4 +151,5 @@ class Util:
                 }
             )
 
+        # print(len(filtered_pages))
         return filtered_pages
