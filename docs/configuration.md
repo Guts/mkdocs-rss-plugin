@@ -2,6 +2,7 @@
 title: Configuration
 categories: ["settings", "configuration"]
 description: Configuration steps and settings for MkDocs RSS plugin
+image: "https://svgsilh.com/png-512/97849.png"
 ---
 
 # Configuration

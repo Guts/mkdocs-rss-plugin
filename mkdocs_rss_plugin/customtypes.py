@@ -14,10 +14,11 @@ from typing import NamedTuple
 # ########## Classes ###############
 # ##################################
 class PageInformation(NamedTuple):
-    abs_path: Path
-    category: str
-    created: datetime
-    updated: datetime
-    title: str
-    description: str
-    url_full: str
+    abs_path: Path = None
+    categories: list = None
+    created: datetime = None
+    updated: datetime = None
+    title: str = None
+    description: str = None
+    image: str = None
+    url_full: str = None

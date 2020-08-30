@@ -6,7 +6,9 @@
 
 # standard library
 import logging
+from urllib.parse import urlencode, urlparse, urlunparse
 from email.utils import formatdate
+from mimetypes import guess_type
 from typing import Tuple
 
 # 3rd party
@@ -42,6 +44,27 @@ class Util:
 
         # Checks if user is running builds on CI and raise appropriate warnings
         CiHandler(git_repo.git).raise_ci_warnings()
+
+    def build_url(self, base_url: str, path: str, args_dict: dict = None) -> str:
+        """Build URL using base URL, cumulating existing and passed path, \
+        then adding URL arguments.
+
+        :param base_url: base URL with existing path to use
+        :type base_url: str
+        :param path: URL path to cumulate with existing
+        :type path: str
+        :param args_dict: URL arguments to add, defaults to None
+        :type args_dict: dict, optional
+
+        :return: complete and valid URL
+        :rtype: str
+        """        
+        # Returns a list in the structure of urlparse.ParseResult
+        url_parts = list(urlparse(base_url))
+        url_parts[2] += path
+        if args_dict:
+            url_parts[4] = urlencode(args_dict)
+        return urlunparse(url_parts)
 
     def get_file_dates(self, path: str) -> Tuple[int, int]:
         """Extract creation and update dates from git log for given file.
@@ -123,6 +146,33 @@ class Util:
         else:
             return ""
 
+    def get_image(self, in_page: Page, base_url: str) -> tuple:
+        """Get image from page meta.
+
+        :param in_page: page to parse
+        :type in_page: Page
+        :param base_url: website URL to resolve absolute URLs for images referenced with local path.
+        :type base_url: str
+
+        :return: (image url, mime type)
+        :rtype: tuple
+        """        
+        if in_page.meta.get("image"):
+            img_url = in_page.meta.get("image")
+        elif in_page.meta.get("illustration"):
+            img_url = in_page.meta.get("illustration")
+        else:
+            return (None, None)
+
+        # guess mimetype
+        mime_type = guess_type(url=img_url, strict=False)[0]
+        # if path, resolve absolute url
+        if not img_url.startswith("http"):
+            img_url = self.build_url(base_url=base_url, path=img_url)
+        print(img_url)
+        # return final tuple
+        return (img_url, mime_type)
+
     @staticmethod
     def filter_pages(pages: dict, attribute: str, length: int) -> list:
         """Filter and return pages into a friendly RSS structure.
@@ -143,11 +193,11 @@ class Util:
         )[:length]:
             filtered_pages.append(
                 {
-                    "category": page.category,
                     "description": page.description,
                     "link": page.url_full,
                     "pubDate": formatdate(page.created),
                     "title": page.title,
+                    "image": page.image,
                 }
             )
 
