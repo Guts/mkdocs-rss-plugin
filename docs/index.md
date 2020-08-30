@@ -1,6 +1,7 @@
 ---
 title: The MkDocs RSS Plugin
 description: "MkDocs RSS plugin: generate RSS feeds for your static website using git log."
+image: "rss_icon.svg"
 ---
 
 --8<-- "README.md"
@@ -9,6 +10,10 @@ Here come the feeds generated for this documentation:
 
 - [feed_rss_created.xml](feed_rss_created.xml) for  latest **created** pages
 - [feed_rss_updated.xml](feed_rss_updated.xml) for latest **updated** pages
+
+Or displayed as a Feedly follow button:
+
+[![Feedly button](http://s3.feedly.com/img/follows/feedly-follow-rectangle-flat-big_2x.png "Follow us on Feedly"){: width=130 height= 50 loading=lazy }](https://guts.github.io/mkdocs-rss-plugin/feed_rss_created.xml)
 
 ## Quickstart
 
@@ -35,3 +40,5 @@ Using magic from:
 - [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/)
 
 Documentation theme [United from mkdocs-bootswatch](http://mkdocs.github.io/mkdocs-bootswatch/#united) as a tribute to the classic RSS color scheme: orange and white.
+
+![RSS logo](rss_icon.svg "RSS icon - Wikimedia")
