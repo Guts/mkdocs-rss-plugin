@@ -179,7 +179,6 @@ class Util:
         )[:length]:
             filtered_pages.append(
                 {
-                    "category": page.category,
                     "description": page.description,
                     "link": page.url_full,
                     "pubDate": formatdate(page.created),
