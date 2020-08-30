@@ -3,6 +3,10 @@ title: The MkDocs RSS Plugin
 description: "MkDocs RSS plugin: generate RSS feeds for your static website using git log."
 ---
 
+Newest pages:
+
+{{ git_latest_created }}
+
 --8<-- "README.md"
 
 Here come the feeds generated for this documentation:
