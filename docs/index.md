@@ -13,7 +13,7 @@ Here come the feeds generated for this documentation:
 
 Or displayed as a Feedly follow button:
 
-[![Feedly button](http://s3.feedly.com/img/follows/feedly-follow-rectangle-flat-big_2x.png "Follow us on Feedly"){: width=130 height= 50 loading=lazy }](https://guts.github.io/mkdocs-rss-plugin/feed_rss_created.xml)
+[![Feedly button](http://s3.feedly.com/img/follows/feedly-follow-rectangle-flat-big_2x.png "Follow us on Feedly"){: width=130 height= 50 loading=lazy }](https://feedly.com/i/subscription/feed%2Fhttps%3A%2F%2Fguts.github.io%2Fmkdocs-rss-plugin%2Ffeed_rss_created.xml)
 
 ## Quickstart
 
