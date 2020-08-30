@@ -41,6 +41,7 @@
       <pubDate>{{ item.pubDate }}</pubDate>
       <source url="{{ feed.rss_url }}">{{ feed.title }}</source>
       {% if item_guid is defined %}<guid isPermaLink="false">{{ item.guid }}</guid>{% endif %}
+      {% if item.image is defined %}<enclosure url="{{ item.image[0] }}" type="{{ item.image[1] }}" />{% endif %}
     </item>
     {% endfor %}
   </channel>

@@ -153,6 +153,7 @@ class GitRssPlugin(BasePlugin):
                 description=self.util.get_description_or_abstract(
                     in_page=page, chars_count=self.config.get("abstract_chars_count")
                 ),
+                image=self.util.get_image(in_page=page, base_url=config.get("site_url", __uri__)),
                 url_full=page.canonical_url,
             )
         )

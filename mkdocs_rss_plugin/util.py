@@ -184,6 +184,7 @@ class Util:
                     "link": page.url_full,
                     "pubDate": formatdate(page.created),
                     "title": page.title,
+                    "image": page.image,
                 }
             )
 
