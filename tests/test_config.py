@@ -22,20 +22,21 @@ from pathlib import Path
 from mkdocs.structure.pages import Page
 
 # plugin target
-from mkdocs_rss_plugin.util import Util
+from mkdocs_rss_plugin.plugin import GitRssPlugin
 
 
 # #############################################################################
 # ########## Classes ###############
 # ##################################
-class TestUtil(unittest.TestCase):
-    """Test plugin utils."""
+class TestConfig(unittest.TestCase):
+    """Test plugin configuration."""
 
     # -- Standard methods --------------------------------------------------------
     @classmethod
     def setUpClass(cls):
         """Executed when module is loaded before any test."""
         cls.config_files = sorted(Path("tests/fixtures/").glob("**/*.yml"))
+        cls.feed_image = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png"
 
     def setUp(self):
         """Executed before each test."""
@@ -51,8 +52,42 @@ class TestUtil(unittest.TestCase):
         pass
 
     # -- TESTS ---------------------------------------------------------
-    def test_description(self):
-        print(self.config_files)
+    def test_plugin_config_defaults(self):
+        # default reference
+        expected = {
+            "abstract_chars_count": 150,
+            "category": None,
+            "feed_ttl": 1440,
+            "image": None,
+            "length": 20,
+        }
+
+        # load
+        plugin = GitRssPlugin()
+        errors, warnings = plugin.load_config({})
+        self.assertEqual(plugin.config, expected)
+        self.assertEqual(errors, [])
+        self.assertEqual(warnings, [])
+
+    def test_plugin_config_image(self):
+        # reference
+        expected = {
+            "abstract_chars_count": 150,
+            "category": None,
+            "feed_ttl": 1440,
+            "image": self.feed_image,
+            "length": 20,
+        }
+
+        # custom config
+        custom_cfg = {"image": self.feed_image}
+
+        # load
+        plugin = GitRssPlugin()
+        errors, warnings = plugin.load_config(custom_cfg)
+        self.assertEqual(plugin.config, expected)
+        self.assertEqual(errors, [])
+        self.assertEqual(warnings, [])
 
 
 # ##############################################################################
