@@ -12,13 +12,11 @@ on:
     paths-ignore:
       - "docs/**"
 
-build:
-  runs-on: ubuntu-latest
-  steps:
-    docker-build:
-
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v2
-
 
       - name: Test Docker Build
         run: |
