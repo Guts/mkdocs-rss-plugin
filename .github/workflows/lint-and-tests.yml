@@ -1,5 +1,5 @@
 # This is a basic workflow to help you get started with Actions
-name: Python Linter
+name: Lint and Test
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -59,3 +59,6 @@ jobs:
 
     - name: Run Unit tests
       run: pytest
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
