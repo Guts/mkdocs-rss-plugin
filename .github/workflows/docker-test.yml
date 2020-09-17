@@ -20,4 +20,4 @@ jobs:
 
       - name: Test Docker Build
         run: |
-          docker build -f tests/fixtures/test-build-material.dockerfile -t ${GITHUB_REPOSITORY} .
+          docker build -f tests/fixtures/test-build-material.dockerfile -t mkdocs-plugins/rss .
