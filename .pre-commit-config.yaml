@@ -4,7 +4,7 @@ exclude: "node_modules|migrations|.venv|tests/dev/|tests/fixtures/"
 fail_fast: false
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v3.1.0
+  rev: v3.2.0
   hooks:
   - id: check-added-large-files
     args: ['--maxkb=500']
@@ -18,7 +18,7 @@ repos:
     args: [--markdown-linebreak-ext=md]
 
 - repo: https://github.com/python/black
-  rev: 19.10b0
+  rev: 20.8b1
   hooks:
   - id: black
     exclude_types: [directory,]
