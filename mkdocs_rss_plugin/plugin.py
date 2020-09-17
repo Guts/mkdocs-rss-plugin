@@ -116,8 +116,6 @@ class GitRssPlugin(BasePlugin):
                 "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
             )
 
-        
-
         # ending event
         return config
 
@@ -153,7 +151,9 @@ class GitRssPlugin(BasePlugin):
                 description=self.util.get_description_or_abstract(
                     in_page=page, chars_count=self.config.get("abstract_chars_count")
                 ),
-                image=self.util.get_image(in_page=page, base_url=config.get("site_url", __uri__)),
+                image=self.util.get_image(
+                    in_page=page, base_url=config.get("site_url", __uri__)
+                ),
                 url_full=page.canonical_url,
             )
         )
@@ -174,18 +174,22 @@ class GitRssPlugin(BasePlugin):
         out_feed_updated = Path(config.get("site_dir")) / OUTPUT_FEED_UPDATED
 
         # created items
-        self.feed_created.get("entries").extend(self.util.filter_pages(
-            pages=self.pages_to_filter,
-            attribute="created",
-            length=self.config.get('length', 20)
-        ))
+        self.feed_created.get("entries").extend(
+            self.util.filter_pages(
+                pages=self.pages_to_filter,
+                attribute="created",
+                length=self.config.get("length", 20),
+            )
+        )
 
         # updated items
-        self.feed_created.get("entries").extend(self.util.filter_pages(
-            pages=self.pages_to_filter,
-            attribute="updated",
-            length=self.config.get('length', 20)
-        ))
+        self.feed_created.get("entries").extend(
+            self.util.filter_pages(
+                pages=self.pages_to_filter,
+                attribute="updated",
+                length=self.config.get("length", 20),
+            )
+        )
         # load Jinja environment
         env = Environment(
             loader=FileSystemLoader(self.tpl_folder),

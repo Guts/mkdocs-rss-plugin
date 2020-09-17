@@ -11,7 +11,6 @@ repo_url: 'https://github.com/guts/mkdocs-rss-plugin/'
 
 use_directory_urls: true
 
-
 plugins:
   - minify:
       minify_html: true

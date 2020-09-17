@@ -58,7 +58,7 @@ class Util:
 
         :return: complete and valid URL
         :rtype: str
-        """        
+        """
         # Returns a list in the structure of urlparse.ParseResult
         url_parts = list(urlparse(base_url))
         url_parts[2] += path
@@ -83,7 +83,12 @@ class Util:
                 dt_created = self.repo.log(
                     path, n=1, date="short", format="%at", diff_filter="AR"
                 )
-                dt_updated = self.repo.log(path, n=1, date="short", format="%at",)
+                dt_updated = self.repo.log(
+                    path,
+                    n=1,
+                    date="short",
+                    format="%at",
+                )
             except GitCommandError as err:
                 logging.warning(
                     "[rss-plugin] Unable to read git logs of '%s'. Is git log readable?"
@@ -142,7 +147,7 @@ class Util:
 
         :return: (image url, mime type)
         :rtype: tuple
-        """        
+        """
         if in_page.meta.get("image"):
             img_url = in_page.meta.get("image")
         elif in_page.meta.get("illustration"):
@@ -172,7 +177,7 @@ class Util:
 
         :return: list of filtered pages
         :rtype: list
-        """        
+        """
         filtered_pages = []
         for page in sorted(
             pages, key=lambda page: getattr(page, attribute), reverse=True
