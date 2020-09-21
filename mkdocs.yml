@@ -20,6 +20,7 @@ plugins:
 
 theme:
   name: united
+  language: en
 
 # Extensions to enhance markdown
 markdown_extensions:
