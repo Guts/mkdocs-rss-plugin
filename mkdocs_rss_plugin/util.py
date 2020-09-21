@@ -6,13 +6,14 @@
 
 # standard library
 import logging
-from urllib.parse import urlencode, urlparse, urlunparse
 from email.utils import formatdate
 from mimetypes import guess_type
 from typing import Tuple
+from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
 from git import GitCommandError, GitCommandNotFound, InvalidGitRepositoryError, Repo
+from mkdocs.config.config_options import Config
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
@@ -163,6 +164,29 @@ class Util:
 
         # return final tuple
         return (img_url, mime_type)
+
+    @staticmethod
+    def guess_locale(config: Config) -> str or None:
+        """Extract language code from MkDocs or Theme configuration.
+
+        :param config: configuration object
+        :type config: Config
+
+        :return: language code
+        :rtype: str or None
+        """
+        # MkDocs locale settings - might be added in future mkdocs versions
+        # see: https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/24
+        if config.get("locale"):
+            return config.get("locale")
+
+        # Some themes implement a locale or a language setting
+        if "theme" in config and "locale" in config.get("theme"):
+            return config.get("theme")._vars.get("locale")
+        elif "theme" in config and "language" in config.get("theme"):
+            return config.get("theme")._vars.get("language")
+        else:
+            return None
 
     @staticmethod
     def filter_pages(pages: dict, attribute: str, length: int) -> list:

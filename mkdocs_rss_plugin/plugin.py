@@ -84,6 +84,7 @@ class GitRssPlugin(BasePlugin):
             "entries": [],
             "generator": "{} - v{}".format(__title__, __version__),
             "html_url": config.get("site_url", __uri__),
+            "language": self.util.guess_locale(config),
             "pubDate": formatdate(get_build_timestamp()),
             "repo_url": config.get("repo_url", config.get("site_url", None)),
             "title": config.get("site_name", None),
