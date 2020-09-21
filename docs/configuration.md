@@ -23,6 +23,7 @@ To produce a valid RSS feed, the plugin uses:
 | [`site_author`](https://www.mkdocs.org/user-guide/configuration/#site_author) | **recomended** | optional channel element [`managingEditor`](https://www.w3schools.com/xml/rss_tag_managingeditor.asp) |
 | ---- | ---- | ---- |
 | [`copyright`](https://www.mkdocs.org/user-guide/configuration/#copyright) | *optional* | optional channel element [`copyright`](https://www.w3schools.com/xml/rss_tag_copyright.asp) |
+| [`locale` or `theme/locale` or `theme/language`](https://github.com/squidfunk/mkdocs-material/issues/1350#issuecomment-559095892) | *optional* | optional channel element [`language`](https://www.w3schools.com/xml/rss_tag_language.asp) |
 
 ### Automatic elements
 
@@ -42,7 +43,7 @@ plugins:
   - rss:
       abstract_chars_count: 150
       feed_ttl: 1440
-      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png'
       length: 20
 ```
 
@@ -52,6 +53,17 @@ plugins:
 
 Default: `None`.
 
+Output:
+
+```xml
+<image>
+  <url>
+    https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+  </url>
+  <title>MkDocs RSS Plugin - Illustration</title>
+  <link>https://guts.github.io/mkdocs-rss-plugin/</link>
+</image>
+```
 
 ### Feed length
 
@@ -64,6 +76,12 @@ Default: `20`
 `feed_ttl`: number of minutes to be cached. Inserted as channel `ttl` element. See: [W3C RSS 2.0 documentation](https://www.w3schools.com/xml/rss_tag_ttl.asp).
 
 Default: `1440` (= 1 day)
+
+Output:
+
+```xml
+<ttl>1440</ttl>
+```
 
 ### Item description length
 
