@@ -40,6 +40,7 @@ class GitRssPlugin(BasePlugin):
     config_scheme = (
         ("abstract_chars_count", config_options.Type(int, default=150)),
         ("category", config_options.Type(str, default=None)),
+        ("date_from_meta", config_options.Type(dict, default=None)),
         ("feed_ttl", config_options.Type(int, default=1440)),
         ("image", config_options.Type(str, default=None)),
         ("length", config_options.Type(int, default=20)),
