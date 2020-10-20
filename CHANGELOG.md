@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
+## 0.7.1
+
+### Fixed
+
+- feed for updated content is broken - #15
+
+----
+
 ## 0.7.0
 
 ### Added
