@@ -184,7 +184,7 @@ class GitRssPlugin(BasePlugin):
         )
 
         # updated items
-        self.feed_created.get("entries").extend(
+        self.feed_updated.get("entries").extend(
             self.util.filter_pages(
                 pages=self.pages_to_filter,
                 attribute="updated",
