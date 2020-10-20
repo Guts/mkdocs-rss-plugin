@@ -41,6 +41,4 @@ Using magic from:
 - [GitPython](https://gitpython.readthedocs.io/)
 - [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/)
 
-
 Documentation theme [United from mkdocs-bootswatch](https://mkdocs.github.io/mkdocs-bootswatch/#united) as a tribute to the classic RSS color scheme: orange and white.
-
