@@ -210,7 +210,7 @@ class Util:
                 {
                     "description": page.description,
                     "link": page.url_full,
-                    "pubDate": formatdate(page.created),
+                    "pubDate": formatdate(getattr(page, attribute)),
                     "title": page.title,
                     "image": page.image,
                 }
