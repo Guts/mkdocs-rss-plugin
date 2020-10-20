@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
+## 0.7.2
+
+### Fixed
+
+- wrong items order in updated feed
+
+----
+
 ## 0.7.1
 
 ### Fixed
