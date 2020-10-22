@@ -46,6 +46,20 @@ class Util:
         # Checks if user is running builds on CI and raise appropriate warnings
         CiHandler(git_repo.git).raise_ci_warnings()
 
+    def build_local_path(self, page_path: str, path_to_append: str) -> str:
+        """Build URL using base URL, cumulating existing and passed path, \
+        then adding URL arguments.
+
+        :param page_path: base URL with existing path to use
+        :type base_url: str
+        :param path: URL path to cumulate with existing
+        :type path: str
+
+        :return: complete and valid path
+        :rtype: str
+        """
+        return str(Path(page_path).parent / Path(path_to_append))
+
     def build_url(self, base_url: str, path: str, args_dict: dict = None) -> str:
         """Build URL using base URL, cumulating existing and passed path, \
         then adding URL arguments.
