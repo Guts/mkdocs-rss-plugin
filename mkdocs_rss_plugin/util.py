@@ -6,9 +6,13 @@
 
 # standard library
 import logging
+import ssl
 from email.utils import formatdate
 from mimetypes import guess_type
+from pathlib import Path
 from typing import Tuple
+from urllib import request
+from urllib.error import HTTPError
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
@@ -18,12 +22,24 @@ from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
 # package
+from mkdocs_rss_plugin import __about__
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
+
+# ############################################################################
+# ########## Globals #############
+# ################################
+
+REMOTE_REQUEST_HEADERS = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "User-Agent": "{}/{}".format(__about__.__title__, __about__.__version__),
+}
 
 
 # ############################################################################
 # ########## Classes #############
 # ################################
+
+
 class Util:
     def __init__(self, path: str = "."):
         """Class hosting the plugin logic.
@@ -153,14 +169,14 @@ class Util:
             return ""
 
     def get_image(self, in_page: Page, base_url: str) -> tuple:
-        """Get image from page meta.
+        """Get image from page meta and returns properties.
 
         :param in_page: page to parse
         :type in_page: Page
         :param base_url: website URL to resolve absolute URLs for images referenced with local path.
         :type base_url: str
 
-        :return: (image url, mime type)
+        :return: (image url, mime type, image length)
         :rtype: tuple
         """
         if in_page.meta.get("image"):
@@ -168,16 +184,23 @@ class Util:
         elif in_page.meta.get("illustration"):
             img_url = in_page.meta.get("illustration")
         else:
-            return (None, None)
+            return None
 
         # guess mimetype
         mime_type = guess_type(url=img_url, strict=False)[0]
+
         # if path, resolve absolute url
         if not img_url.startswith("http"):
+            img_local_path = self.build_local_path(
+                page_path=in_page.file.abs_src_path, path_to_append=img_url
+            )
+            img_length = Path(img_local_path).stat().st_size
             img_url = self.build_url(base_url=base_url, path=img_url)
+        else:
+            img_length = self.get_remote_image_length(image_url=img_url)
 
         # return final tuple
-        return (img_url, mime_type)
+        return (img_url, mime_type, img_length)
 
     def get_remote_image_length(
         self,
