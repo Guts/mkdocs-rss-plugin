@@ -92,3 +92,21 @@ If the page has no meta, then the plugin retrieves the first number of character
 `abstract_chars_count`: number of characters to use as item description.
 
 Default: `150`
+
+----
+
+## Integration
+
+### Reference RSS feeds in HTML meta-tags
+
+To facilitate the discovery of RSS feeds, it's recomended to add relevant meta-tags into the pages `<head>`, through template customization in `main.html` :
+
+```html
+{% extends "base.html" %}
+
+{% block extrahead %}
+  <!-- RSS Feed -->
+  <link rel="alternate" type="application/rss+xml" title="RSS feed of created content" href="feed_rss_created.xml">
+  <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="feed_rss_updated.xml">
+{% endblock %}
+```
