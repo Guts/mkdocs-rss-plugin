@@ -9,7 +9,7 @@
     // Formatter
     "python.formatting.provider": "black",
     "python.formatting.blackArgs": [
-        "--target-version=py37"
+        "--target-version=py38"
     ],
     // Linter
     "python.linting.enabled": true,
