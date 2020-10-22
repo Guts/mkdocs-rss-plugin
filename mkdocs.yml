@@ -40,4 +40,4 @@ nav:
 - "Home": 'index.md'
 - "Settings": 'configuration.md'
 - "Changelog": 'changelog.md'
-- "API Reference": 'changelog.md'
+- "API Reference": 'https://mkdocs-rss-plugin.readthedocs.io/'
