@@ -62,20 +62,6 @@ class Util:
         # Checks if user is running builds on CI and raise appropriate warnings
         CiHandler(git_repo.git).raise_ci_warnings()
 
-    def build_local_path(self, page_path: str, path_to_append: str) -> str:
-        """Build URL using base URL, cumulating existing and passed path, \
-        then adding URL arguments.
-
-        :param page_path: base URL with existing path to use
-        :type base_url: str
-        :param path: URL path to cumulate with existing
-        :type path: str
-
-        :return: complete and valid path
-        :rtype: str
-        """
-        return str(Path(page_path).parent / Path(path_to_append))
-
     def build_url(self, base_url: str, path: str, args_dict: dict = None) -> str:
         """Build URL using base URL, cumulating existing and passed path, \
         then adding URL arguments.
@@ -191,16 +177,33 @@ class Util:
 
         # if path, resolve absolute url
         if not img_url.startswith("http"):
-            img_local_path = self.build_local_path(
+            img_length = self.get_local_image_length(
                 page_path=in_page.file.abs_src_path, path_to_append=img_url
             )
-            img_length = Path(img_local_path).stat().st_size
             img_url = self.build_url(base_url=base_url, path=img_url)
         else:
             img_length = self.get_remote_image_length(image_url=img_url)
 
         # return final tuple
         return (img_url, mime_type, img_length)
+
+    def get_local_image_length(self, page_path: str, path_to_append: str) -> str:
+        """Build URL using base URL, cumulating existing and passed path, \
+        then adding URL arguments.
+
+        :param page_path: base URL with existing path to use
+        :type base_url: str
+        :param path: URL path to cumulate with existing
+        :type path: str
+
+        :return: complete and valid path
+        :rtype: str
+        """
+        image_path = Path(page_path).parent / Path(path_to_append)
+        if not image_path.is_file():
+            return None
+
+        return image_path.stat().st_size
 
     def get_remote_image_length(
         self,
