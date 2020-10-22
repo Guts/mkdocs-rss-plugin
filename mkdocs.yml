@@ -38,5 +38,6 @@ markdown_extensions:
 
 nav:
 - "Home": 'index.md'
-- 'configuration.md'
+- "Settings": 'configuration.md'
 - "Changelog": 'changelog.md'
+- "API Reference": 'changelog.md'
