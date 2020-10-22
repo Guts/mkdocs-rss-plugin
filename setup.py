@@ -43,9 +43,7 @@ setup(
     ),
     include_package_data=True,
     # run
-    entry_points={
-        "mkdocs.plugins": ["rss = mkdocs_rss_plugin.plugin:GitRssPlugin"]
-    },
+    entry_points={"mkdocs.plugins": ["rss = mkdocs_rss_plugin.plugin:GitRssPlugin"]},
     # dependencies
     python_requires=">=3.6, <4",
     extras_require={
@@ -55,7 +53,7 @@ setup(
     install_requires=[
         "GitPython==3.1.*",
         "Jinja2>=2,<3",
-        "mkdocs>=1,<2",
+        "mkdocs>=1.1,<1.2",
     ],
     # metadata
     keywords="mkdocs rss git plugin",

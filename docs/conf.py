@@ -44,6 +44,7 @@ extensions = [
     # Sphinx included
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.viewcode",
     # 3rd party
     "sphinx_autodoc_typehints",
     "sphinx_copybutton",
