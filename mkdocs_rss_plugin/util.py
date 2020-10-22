@@ -179,6 +179,67 @@ class Util:
         # return final tuple
         return (img_url, mime_type)
 
+    def get_remote_image_length(
+        self,
+        image_url: str,
+        http_method: str = "HEAD",
+        attempt: int = 0,
+        ssl_context: ssl.SSLContext = None,
+    ) -> int:
+        """Retrieve length for remote images (starting with 'http' \
+            in meta.image or meta.illustration). \
+            It tries to perform a HEAD request and get the length from the headers. \
+            If it fails, it tries again with a GET and disabling SSL verification.
+
+        :param image_url: remote image URL
+        :type image_url: str
+        :param http_method: HTTP method used to perform request, defaults to "HEAD"
+        :type http_method: str, optional
+        :param attempt: request tries counter, defaults to 0
+        :type attempt: int, optional
+        :param ssl_context: SSL context, defaults to None
+        :type ssl_context: ssl.SSLContext, optional
+
+        :return: image length
+        :rtype: int
+        """
+        # prepare request
+        req = request.Request(
+            image_url,
+            method=http_method,
+            headers=REMOTE_REQUEST_HEADERS,
+        )
+        # first, try HEAD request to avoid downloading the image
+        try:
+            attempt += 1
+            remote_img = request.urlopen(url=req, context=ssl_context)
+            img_length = remote_img.getheader("content-length")
+        except HTTPError as err:
+            logging.warning(
+                "[rss-plugin] Remote image could not been reached: {}. "
+                "Trying again with GET and disabling SSL verification. Attempt: {}. "
+                "Trace: {}".format(image_url, attempt, err)
+            )
+            if attempt < 2:
+                return self.get_remote_image_length(
+                    image_url,
+                    http_method="GET",
+                    attempt=attempt,
+                    ssl_context=ssl._create_unverified_context(),
+                )
+            else:
+                logging.error(
+                    "[rss-plugin] Remote image is not reachable: {} after {} attempts. "
+                    " Trace: {}".format(
+                        image_url,
+                        attempt,
+                        err,
+                    )
+                )
+                img_length = None
+
+        return img_length
+
     @staticmethod
     def guess_locale(config: Config) -> str or None:
         """Extract language code from MkDocs or Theme configuration.
