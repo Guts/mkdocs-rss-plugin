@@ -4,8 +4,8 @@
   xmlns:dc="https://purl.org/dc/elements/1.1/">
   <channel>
     <!-- Mandatory elements -->
-    <title>{{ feed.title }}</title>
     <description>{{ feed.description|e }}</description>
+    <title>{{ feed.title|e }}</title>
     <link>{{ feed.html_url }}</link>
     <atom:link href="{{ feed.rss_url }}" rel="self" type="application/rss+xml" />
 
@@ -35,7 +35,7 @@
     <!-- Entries -->
     {% for item in feed.entries %}
     <item>
-      <title>{{ item.title }}</title>
+      <title>{{ item.title|e }}</title>
       <description>{{ item.description|e }}</description>
       <link>{{ item.link }}</link>
       <pubDate>{{ item.pubDate }}</pubDate>
