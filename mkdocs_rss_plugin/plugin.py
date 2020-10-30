@@ -83,7 +83,7 @@ class GitRssPlugin(BasePlugin):
             "description": config.get("site_description", None),
             "entries": [],
             "generator": "{} - v{}".format(__title__, __version__),
-            "html_url": config.get("site_url", __uri__),
+            "html_url": self.util.get_site_url(config),
             "language": self.util.guess_locale(config),
             "pubDate": formatdate(get_build_timestamp()),
             "repo_url": config.get("repo_url", config.get("site_url", None)),
@@ -100,22 +100,21 @@ class GitRssPlugin(BasePlugin):
         self.feed_updated = deepcopy(base_feed)
 
         # final feed url
-        if config.get("site_url"):
-            # handle trailing slash
-            if not config.get("site_url").endswith("/"):
-                site_url_base = config.get("site_url") + "/"
-            else:
-                site_url_base = config.get("site_url")
-
+        if base_feed.get("html_url"):
             # concatenate both URLs
-            self.feed_created["rss_url"] = site_url_base + OUTPUT_FEED_CREATED
-            self.feed_updated["rss_url"] = site_url_base + OUTPUT_FEED_UPDATED
+            self.feed_created["rss_url"] = (
+                base_feed.get("html_url") + OUTPUT_FEED_CREATED
+            )
+            self.feed_updated["rss_url"] = (
+                base_feed.get("html_url") + OUTPUT_FEED_UPDATED
+            )
         else:
             logging.warning(
                 "[rss-plugin] The variable `site_url` is not set in the MkDocs "
                 "configuration file whereas a URL is mandatory to publish. "
                 "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
             )
+            self.feed_created["rss_url"] = self.feed_updated["rss_url"] = None
 
         # ending event
         return config
