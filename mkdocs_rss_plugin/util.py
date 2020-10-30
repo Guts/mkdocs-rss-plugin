@@ -267,25 +267,52 @@ class Util:
         return img_length
 
     @staticmethod
-    def guess_locale(config: Config) -> str or None:
+    def get_site_url(mkdocs_config: Config) -> str or None:
+        """Extract site URL from MkDocs configuration and enforce the behavior to ensure \
+        returning a str with length > 0 or None. If exists, it adds an ending slash.
+
+        :param mkdocs_config: configuration object
+        :type mkdocs_config: Config
+
+        :return: site url
+        :rtype: str or None
+        """
+        # this method exists because the following line returns an empty string instead of \
+        # None (because the key alwayus exists)
+        defined_site_url = mkdocs_config.get("site_url", None)
+
+        # cases
+        if defined_site_url is None or not len(defined_site_url):
+            # in cas of mkdocs's behavior change
+            site_url = None
+        else:
+            site_url = defined_site_url
+            # handle trailing slash
+            if not site_url.endswith("/"):
+                site_url = site_url + "/"
+
+        return site_url
+
+    @staticmethod
+    def guess_locale(mkdocs_config: Config) -> str or None:
         """Extract language code from MkDocs or Theme configuration.
 
-        :param config: configuration object
-        :type config: Config
+        :param mkdocs_config: configuration object
+        :type mkdocs_config: Config
 
         :return: language code
         :rtype: str or None
         """
         # MkDocs locale settings - might be added in future mkdocs versions
         # see: https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/24
-        if config.get("locale"):
-            return config.get("locale")
+        if mkdocs_config.get("locale"):
+            return mkdocs_config.get("locale")
 
         # Some themes implement a locale or a language setting
-        if "theme" in config and "locale" in config.get("theme"):
-            return config.get("theme")._vars.get("locale")
-        elif "theme" in config and "language" in config.get("theme"):
-            return config.get("theme")._vars.get("language")
+        if "theme" in mkdocs_config and "locale" in mkdocs_config.get("theme"):
+            return mkdocs_config.get("theme")._vars.get("locale")
+        elif "theme" in mkdocs_config and "language" in mkdocs_config.get("theme"):
+            return mkdocs_config.get("theme")._vars.get("language")
         else:
             return None
 
