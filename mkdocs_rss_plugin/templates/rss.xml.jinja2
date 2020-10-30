@@ -4,16 +4,16 @@
   xmlns:dc="https://purl.org/dc/elements/1.1/">
   <channel>
     <!-- Mandatory elements -->
-    <description>{{ feed.description|e }}</description>
-    <title>{{ feed.title|e }}</title>
-    <link>{{ feed.html_url }}</link>
-    <atom:link href="{{ feed.rss_url }}" rel="self" type="application/rss+xml" />
+    {% if feed.title is not none %}<title>{{ feed.title|e }}</title>{% endif %}
+    {% if feed.description is not none %}<description>{{ feed.description|e }}</description>{% endif %}
+    {% if feed.html_url is not none %}<link>{{ feed.html_url }}</link>{% endif %}
+    {% if feed.rss_url is not none %}<atom:link href="{{ feed.rss_url }}" rel="self" type="application/rss+xml" />{% endif %}
 
     <!-- Optional elements -->
-    {% if feed.author is defined %}<managingEditor>{{ feed.author }}</managingEditor>{% endif %}
-    {% if feed.category is defined %}<category>{{ feed.category }}</category>{% endif %}
-    {% if feed.repo_url is defined %}<docs>{{ feed.repo_url }}</docs>{% endif %}
-    {% if feed.language is defined %}<language>{{ feed.language }}</language>{% endif %}
+    {% if feed.author is not none %}<managingEditor>{{ feed.author }}</managingEditor>{% endif %}
+    {% if feed.category is not none %}<category>{{ feed.category }}</category>{% endif %}
+    {% if feed.repo_url is not none %}<docs>{{ feed.repo_url }}</docs>{% endif %}
+    {% if feed.language is not none %}<language>{{ feed.language }}</language>{% endif %}
 
     <!-- Timestamps and frequency -->
     <pubDate>{{ feed.pubDate }}</pubDate>
@@ -28,7 +28,7 @@
     <image>
       <url>{{ feed.logo_url }}</url>
       <title>{{ feed.title }} - Illustration</title>
-      <link>{{ feed.html_url }}</link>
+      {% if feed.html_url is not none %}<link>{{ feed.html_url }}</link>{% endif %}
     </image>
     {% endif %}
 
@@ -37,10 +37,10 @@
     <item>
       <title>{{ item.title|e }}</title>
       <description>{{ item.description|e }}</description>
-      <link>{{ item.link }}</link>
+      {% if item.link is not none %}<link>{{ item.link }}</link>{% endif %}
       <pubDate>{{ item.pubDate }}</pubDate>
-      <source url="{{ feed.rss_url }}">{{ feed.title }}</source>
-      <guid isPermaLink="true">{{ item.link }}</guid>
+      {% if item.link is not none %}<source url="{{ feed.rss_url }}">{{ feed.title }}</source>{% endif %}
+      {% if item.link is not none %}<guid isPermaLink="true">{{ item.link }}</guid>{% endif %}
       {% if item.image is not none %}
       <enclosure url="{{ item.image[0] }}" type="{{ item.image[1] }}" length="{{ item.image[2] }}" />
       {% endif %}
