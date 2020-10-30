@@ -17,6 +17,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
+## 0.9.0
+
+### Improved
+
+- enable auto-escape on feed and item titles, using the Jinja e filter - see #19
+- improve consistency for missing attributes in mkdocs.yml, returning almost always a None value
+
+----
+
 ## 0.8.0
 
 ### Added
