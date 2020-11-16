@@ -12,4 +12,13 @@ updates:
     time: "04:00"
     timezone: Europe/Paris
   labels:
-  - dependencies
+    - dependencies
+
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "monthly"
+  reviewers:
+    - Guts
+  labels:
+    - ci-cd
