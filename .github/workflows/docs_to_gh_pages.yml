@@ -30,7 +30,7 @@ jobs:
         python-version: 3.8
 
     - name: Cache project dependencies (pip)
-      uses: actions/cache@v1
+      uses: actions/cache@v2.1.3
       with:
         path: ~/.cache/pip          # This path is specific to Ubuntu
         # Look to see if there is a cache hit for the corresponding requirements file
