@@ -129,7 +129,7 @@ class Util:
                 int(dt_updated),
             )
         else:
-            logging.warning("Dates could not be retrieved for page: %s." % path)
+            logging.warning("[rss-plugin] Dates could not be retrieved for page: %s." % path)
             return (
                 get_build_timestamp(),
                 get_build_timestamp(),
