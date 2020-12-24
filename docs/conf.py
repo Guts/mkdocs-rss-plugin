@@ -77,6 +77,21 @@ exclude_patterns = ["_build", ".venv", "Thumbs.db", ".DS_Store", "_output"]
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+html_theme_options = {
+    # "canonical_url": __about__.__uri_homepage__,
+    "display_version": True,
+    "logo_only": False,
+    "prev_next_buttons_location": "both",
+    "style_external_links": True,
+    "style_nav_header_background": "SteelBlue",
+    # Toc options
+    "collapse_navigation": False,
+    "includehidden": False,
+    "navigation_depth": 4,
+    "sticky_navigation": False,
+    "titles_only": False,
+}
+
 html_sidebars = {
     "**": ["globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html"]
 }
@@ -84,7 +99,7 @@ html_sidebars = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+# html_static_path = ["_static"]
 
 # Configuration for intersphinx (refer to others docs).
 intersphinx_mapping = {
