@@ -5,7 +5,7 @@
     ],
     "editor.wordWrapColumn": 88,
     // Python environment
-    "python.pythonPath": ".venv\\Scripts\\python.exe",
+    "python.pythonPath": ".venv/bin/python",
     // Formatter
     "python.formatting.provider": "black",
     "python.formatting.blackArgs": [
@@ -20,6 +20,6 @@
     ],
     "python.linting.pylintEnabled": false,
     // extensions
-    "autoDocstring.customTemplatePath": "",
+    "autoDocstring.docstringFormat": "sphinx",
     "autoDocstring.generateDocstringOnEnter": false,
 }

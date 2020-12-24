@@ -17,6 +17,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
+## 0.10.0
+
+### Added
+
+- option to use dates from page metadata (YAML front-matter) instead of git log. See #14 and [related documentation section](https://guts.github.io/mkdocs-rss-plugin/configuration/#dates-overriding)
+
+### Changed
+
+- the default length for description has been changed from 150 to 160 to fit maximum recommendation
+
+----
+
 ## 0.9.0
 
 ### Improved
