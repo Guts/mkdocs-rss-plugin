@@ -154,7 +154,7 @@ class Util:
                 int(dt_updated),
             )
         else:
-            logging.warning("Dates could not be retrieved for page: %s." % path)
+            logging.warning("Dates could not be retrieved for page: %s." % in_page.file.abs_src_path)
             return (
                 get_build_timestamp(),
                 get_build_timestamp(),
