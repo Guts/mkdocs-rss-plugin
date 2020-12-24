@@ -12,6 +12,21 @@ A plugin for [MkDocs](https://www.mkdocs.org), the static site generator, which 
 
 ## Usage
 
+Typical `mkdocs.yml`:
+
+```yaml
+plugins:
+  - rss:
+      abstract_chars_count: 160
+      feed_ttl: 1440
+      length: 20
+      date_from_meta:
+        as_creation: "date"
+        as_update: false
+        datetime_format: "%Y-%m-%d %H:%M"
+      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+```
+
 For further information, [see the user documentation](https://guts.github.io/mkdocs-rss-plugin/).
 
 ## Development
