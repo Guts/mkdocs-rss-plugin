@@ -6,6 +6,7 @@
 
 # standard library
 import logging
+from datetime import datetime
 from email.utils import formatdate
 from mimetypes import guess_type
 from typing import Tuple
@@ -19,6 +20,13 @@ from mkdocs.utils import get_build_timestamp
 
 # package
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
+
+
+# ############################################################################
+# ########## Globals ###############
+# ##################################
+
+logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 
 
 # ############################################################################
@@ -67,10 +75,16 @@ class Util:
             url_parts[4] = urlencode(args_dict)
         return urlunparse(url_parts)
 
-    def get_file_dates(self, path: str) -> Tuple[int, int]:
+    def get_file_dates(
+        self,
+        in_page: Page,
+        source_date_creation: str = "git",
+        source_date_update: str = "git",
+        meta_datetime_format: str = "%Y-%m-%d %H:%M"
+    ) -> Tuple[int, int]:
         """Extract creation and update dates from git log for given file.
 
-        :param str path: path to a tracked file
+        :param Page in_page: input page to work with
 
         :return: (creation date, last commit date)
         :rtype: tuple of timestamps
@@ -78,14 +92,25 @@ class Util:
         # empty vars
         dt_created = dt_updated = None
 
+        if source_date_creation != "git" and in_page.meta.get(source_date_creation):
+            dt_created = in_page.meta.get(source_date_creation)
+            try:
+                dt_created = datetime.strptime(dt_created, meta_datetime_format)
+            except ValueError as err:
+                logger.error("Date in. Trace: {}".format(err))
+
         # explore git log
         if self.git_is_valid:
             try:
                 dt_created = self.repo.log(
-                    path, n=1, date="short", format="%at", diff_filter="AR"
+                    in_page.file.abs_src_path,
+                    n=1,
+                    date="short",
+                    format="%at",
+                    diff_filter="AR",
                 )
                 dt_updated = self.repo.log(
-                    path,
+                    in_page.file.abs_src_path,
                     n=1,
                     date="short",
                     format="%at",
@@ -94,7 +119,7 @@ class Util:
                 logging.warning(
                     "[rss-plugin] Unable to read git logs of '%s'. Is git log readable?"
                     " Falling back to build date. "
-                    " Trace: %s" % (path, err)
+                    " Trace: %s" % (in_page.file.abs_src_path, err)
                 )
             except GitCommandNotFound as err:
                 logging.error(
