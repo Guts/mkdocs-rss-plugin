@@ -17,6 +17,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
+## 0.9.0
+
+### Improved
+
+- enable auto-escape on feed and item titles, using the Jinja e filter - see #19
+- improve consistency for missing attributes in mkdocs.yml, returning almost always a None value
+
+----
+
+## 0.8.0
+
+### Added
+
+- RSS compliance: image length is now present into enclosure tags - See #9
+- User documentation:
+  - clarify how item elements are computed
+  - add how to edit HTML templates meta-tags to reference feeds
+- API reference documentation generated from source code and published through Read The Docs
+
+----
+
+## 0.7.2
+
+### Fixed
+
+- wrong items order in updated feed
+
+----
+
+## 0.7.1
+
+### Fixed
+
+- feed for updated content is broken - #15
+
+----
+
 ## 0.7.0
 
 ### Added

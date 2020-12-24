@@ -7,9 +7,13 @@
 # standard library
 import logging
 from datetime import datetime
+import ssl
 from email.utils import formatdate
 from mimetypes import guess_type
+from pathlib import Path
 from typing import Tuple
+from urllib import request
+from urllib.error import HTTPError
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
@@ -19,7 +23,17 @@ from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
 # package
+from mkdocs_rss_plugin import __about__
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
+
+# ############################################################################
+# ########## Globals #############
+# ################################
+
+REMOTE_REQUEST_HEADERS = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "User-Agent": "{}/{}".format(__about__.__title__, __about__.__version__),
+}
 
 
 # ############################################################################
@@ -32,6 +46,8 @@ logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 # ############################################################################
 # ########## Classes #############
 # ################################
+
+
 class Util:
     def __init__(self, path: str = "."):
         """Class hosting the plugin logic.
@@ -164,14 +180,14 @@ class Util:
             return ""
 
     def get_image(self, in_page: Page, base_url: str) -> tuple:
-        """Get image from page meta.
+        """Get image from page meta and returns properties.
 
         :param in_page: page to parse
         :type in_page: Page
         :param base_url: website URL to resolve absolute URLs for images referenced with local path.
         :type base_url: str
 
-        :return: (image url, mime type)
+        :return: (image url, mime type, image length)
         :rtype: tuple
         """
         if in_page.meta.get("image"):
@@ -179,37 +195,149 @@ class Util:
         elif in_page.meta.get("illustration"):
             img_url = in_page.meta.get("illustration")
         else:
-            return (None, None)
+            return None
 
         # guess mimetype
         mime_type = guess_type(url=img_url, strict=False)[0]
+
         # if path, resolve absolute url
         if not img_url.startswith("http"):
+            img_length = self.get_local_image_length(
+                page_path=in_page.file.abs_src_path, path_to_append=img_url
+            )
             img_url = self.build_url(base_url=base_url, path=img_url)
+        else:
+            img_length = self.get_remote_image_length(image_url=img_url)
 
         # return final tuple
-        return (img_url, mime_type)
+        return (img_url, mime_type, img_length)
+
+    def get_local_image_length(self, page_path: str, path_to_append: str) -> str:
+        """Build URL using base URL, cumulating existing and passed path, \
+        then adding URL arguments.
+
+        :param page_path: base URL with existing path to use
+        :type base_url: str
+        :param path: URL path to cumulate with existing
+        :type path: str
+
+        :return: complete and valid path
+        :rtype: str
+        """
+        image_path = Path(page_path).parent / Path(path_to_append)
+        if not image_path.is_file():
+            return None
+
+        return image_path.stat().st_size
+
+    def get_remote_image_length(
+        self,
+        image_url: str,
+        http_method: str = "HEAD",
+        attempt: int = 0,
+        ssl_context: ssl.SSLContext = None,
+    ) -> int:
+        """Retrieve length for remote images (starting with 'http' \
+            in meta.image or meta.illustration). \
+            It tries to perform a HEAD request and get the length from the headers. \
+            If it fails, it tries again with a GET and disabling SSL verification.
+
+        :param image_url: remote image URL
+        :type image_url: str
+        :param http_method: HTTP method used to perform request, defaults to "HEAD"
+        :type http_method: str, optional
+        :param attempt: request tries counter, defaults to 0
+        :type attempt: int, optional
+        :param ssl_context: SSL context, defaults to None
+        :type ssl_context: ssl.SSLContext, optional
+
+        :return: image length
+        :rtype: int
+        """
+        # prepare request
+        req = request.Request(
+            image_url,
+            method=http_method,
+            headers=REMOTE_REQUEST_HEADERS,
+        )
+        # first, try HEAD request to avoid downloading the image
+        try:
+            attempt += 1
+            remote_img = request.urlopen(url=req, context=ssl_context)
+            img_length = remote_img.getheader("content-length")
+        except HTTPError as err:
+            logging.warning(
+                "[rss-plugin] Remote image could not been reached: {}. "
+                "Trying again with GET and disabling SSL verification. Attempt: {}. "
+                "Trace: {}".format(image_url, attempt, err)
+            )
+            if attempt < 2:
+                return self.get_remote_image_length(
+                    image_url,
+                    http_method="GET",
+                    attempt=attempt,
+                    ssl_context=ssl._create_unverified_context(),
+                )
+            else:
+                logging.error(
+                    "[rss-plugin] Remote image is not reachable: {} after {} attempts. "
+                    " Trace: {}".format(
+                        image_url,
+                        attempt,
+                        err,
+                    )
+                )
+                img_length = None
+
+        return img_length
 
     @staticmethod
-    def guess_locale(config: Config) -> str or None:
+    def get_site_url(mkdocs_config: Config) -> str or None:
+        """Extract site URL from MkDocs configuration and enforce the behavior to ensure \
+        returning a str with length > 0 or None. If exists, it adds an ending slash.
+
+        :param mkdocs_config: configuration object
+        :type mkdocs_config: Config
+
+        :return: site url
+        :rtype: str or None
+        """
+        # this method exists because the following line returns an empty string instead of \
+        # None (because the key alwayus exists)
+        defined_site_url = mkdocs_config.get("site_url", None)
+
+        # cases
+        if defined_site_url is None or not len(defined_site_url):
+            # in cas of mkdocs's behavior change
+            site_url = None
+        else:
+            site_url = defined_site_url
+            # handle trailing slash
+            if not site_url.endswith("/"):
+                site_url = site_url + "/"
+
+        return site_url
+
+    @staticmethod
+    def guess_locale(mkdocs_config: Config) -> str or None:
         """Extract language code from MkDocs or Theme configuration.
 
-        :param config: configuration object
-        :type config: Config
+        :param mkdocs_config: configuration object
+        :type mkdocs_config: Config
 
         :return: language code
         :rtype: str or None
         """
         # MkDocs locale settings - might be added in future mkdocs versions
         # see: https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/24
-        if config.get("locale"):
-            return config.get("locale")
+        if mkdocs_config.get("locale"):
+            return mkdocs_config.get("locale")
 
         # Some themes implement a locale or a language setting
-        if "theme" in config and "locale" in config.get("theme"):
-            return config.get("theme")._vars.get("locale")
-        elif "theme" in config and "language" in config.get("theme"):
-            return config.get("theme")._vars.get("language")
+        if "theme" in mkdocs_config and "locale" in mkdocs_config.get("theme"):
+            return mkdocs_config.get("theme")._vars.get("locale")
+        elif "theme" in mkdocs_config and "language" in mkdocs_config.get("theme"):
+            return mkdocs_config.get("theme")._vars.get("language")
         else:
             return None
 
@@ -235,7 +363,7 @@ class Util:
                 {
                     "description": page.description,
                     "link": page.url_full,
-                    "pubDate": formatdate(page.created),
+                    "pubDate": formatdate(getattr(page, attribute)),
                     "title": page.title,
                     "image": page.image,
                 }

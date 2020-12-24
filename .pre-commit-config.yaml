@@ -4,7 +4,7 @@ exclude: "node_modules|migrations|.venv|tests/dev/|tests/fixtures/"
 fail_fast: false
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v3.2.0
+  rev: v3.3.0
   hooks:
   - id: check-added-large-files
     args: ['--maxkb=500']
