@@ -98,7 +98,8 @@ class Util:
         source_date_update: str = "git",
         meta_datetime_format: str = "%Y-%m-%d %H:%M",
     ) -> Tuple[int, int]:
-        """Extract creation and update dates from git log for given file.
+        """Extract creation and update dates from page metadata (yaml frontmatter) or \
+            git log for given file.
 
         :param in_page: input page to work with
         :type in_page: Page
