@@ -111,23 +111,28 @@ Default: `150`
 
 ### Dates overriding
 
-Basically, the plugin aims to retrieve creation and update dates from git log. But sometimes, it does not match the content workflow as described in the following use cases.
+Basically, the plugin aims to retrieve creation and update dates from git log. But sometimes, it does not match the content workflow: markdown generated from sources, .
 
 So, it's possible to use the dates manually specified into the [page metadata] through the [YAML frontmatter](https://www.mkdocs.org/user-guide/writing-your-docs/#meta-data).
 
-For example, in your pages, you can write the front-matter like this:
+- `as_creation`: meta tag name to use as creation date. Default to False.
+- `as_update`: meta tag name to use as update date. Default to False.
+- `datetime_format`: datetime format. Default to "%Y-%m-%d %H:%M".
+
+#### Example
+
+For example, in your `best_article.md` created in 2019, you can write the front-matter like this:
 
 ```markdown
 ---
 title: "This page title is a perfect clickbait!"
 authors: ["Julien M."]
-date: "2020-12-28 10:20"
+date: "2020-10-22 17:18"
 ---
 
 # This plugin will change your MkDocs life
 
-Lorem ipsum
-
+Lorem ipsum [...]
 ```
 
 So in your `mkdocs.yml` you will have:
@@ -138,28 +143,20 @@ plugins:
       date_from_meta:
         as_creation: "date"
         as_update: false
+        datetime_format: "%Y-%m-%d %H:%M"
 ```
 
-#### Options
+At the end, into the RSS you will get:
 
-`as_creation`: meta tag name to use as creation date. Default to False.
-`as_update`: meta tag name to use as update date. Default to False.
-`date_format`: datetime format. Default to "%Y-%m-%d %H:%M".
+```xml
+<item>
+  <title>This page title is a perfect clickbait!</title>
+  <link>https://website.com/articles/best_article/</link>
+  <pubDate>Thu, 22 Oct 2020 17:18:00 -0000</pubDate>
+  [...]
 
-If False, it will use th git log.
-
-#### Use cases
-
-##### Contribution and publication workflow
-
-- a writer create the article
-- multiple authors will contribute to the article content
-- after a few weeks, the article is published. But in the meantime, others articles have been published and trusting the git log it
-
-##### Generated pages from sources
-
-> TO DOC
-
+</item>
+```
 
 ----
 
