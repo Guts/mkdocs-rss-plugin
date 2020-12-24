@@ -42,7 +42,7 @@ logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 
 class GitRssPlugin(BasePlugin):
     config_scheme = (
-        ("abstract_chars_count", config_options.Type(int, default=150)),
+        ("abstract_chars_count", config_options.Type(int, default=160)),
         ("category", config_options.Type(str, default=None)),
         ("date_from_meta", config_options.Type(dict, default=None)),
         ("feed_ttl", config_options.Type(int, default=1440)),
@@ -169,7 +169,7 @@ class GitRssPlugin(BasePlugin):
             in_page=page,
             source_date_creation=self.src_date_created,
             source_date_update=self.src_date_updated,
-            meta_datetime_format=self.meta_datetime_format
+            meta_datetime_format=self.meta_datetime_format,
         )
 
         # append to list to be filtered later
