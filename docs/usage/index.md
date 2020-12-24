@@ -1,5 +1,6 @@
 ---
 title: The MkDocs RSS Plugin
+date: 2020-07-06
 description: "MkDocs RSS plugin: generate RSS feeds for your static website using git log."
 image: "rss_icon.svg"
 ---

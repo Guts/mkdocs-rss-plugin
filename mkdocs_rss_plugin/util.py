@@ -6,8 +6,8 @@
 
 # standard library
 import logging
-from datetime import datetime
 import ssl
+from datetime import date, datetime
 from email.utils import formatdate
 from mimetypes import guess_type
 from pathlib import Path
@@ -121,23 +121,60 @@ class Util:
         # if enabled, try to retrieve dates from page metadata
         if source_date_creation != "git" and in_page.meta.get(source_date_creation):
             try:
-                dt_created = datetime.strptime(
-                    in_page.meta.get(source_date_creation), meta_datetime_format
-                ).timestamp()
+                if isinstance(in_page.meta.get(source_date_creation), str):
+                    dt_created = datetime.strptime(
+                        in_page.meta.get(source_date_creation), meta_datetime_format
+                    ).timestamp()
+                elif isinstance(
+                    in_page.meta.get(source_date_creation), (date, datetime)
+                ):
+                    dt_created = datetime.combine(
+                        in_page.meta.get(source_date_creation), datetime.min.time()
+                    ).timestamp()
+                else:
+                    raise TypeError(
+                        "[rss-plugin] Incompatible date type in meta of page: {}.".format(
+                            in_page.file.abs_src_path
+                        )
+                    )
             except ValueError as err:
                 logger.error(
                     "[rss-plugin] Incompatible date found in meta of page: {}. Trace: {}".format(
                         in_page.file.abs_src_path, err
                     )
                 )
+            except Exception as err:
+                logger.error(
+                    "[rss-plugin] Unable to retrieve creation date for: {}. Trace: {}".format(
+                        in_page.file.abs_src_path, err
+                    )
+                )
+
         if source_date_update != "git" and in_page.meta.get(source_date_update):
             try:
-                dt_updated = datetime.strptime(
-                    in_page.meta.get(source_date_update), meta_datetime_format
-                ).timestamp()
+                if isinstance(in_page.meta.get(source_date_update), str):
+                    dt_updated = datetime.strptime(
+                        in_page.meta.get(source_date_update), meta_datetime_format
+                    ).timestamp()
+                elif isinstance(in_page.meta.get(source_date_update), (date, datetime)):
+                    dt_updated = datetime.combine(
+                        in_page.meta.get(source_date_update), datetime.min.time()
+                    ).timestamp()
+                else:
+                    raise TypeError(
+                        "[rss-plugin] Incompatible date type in meta of page: {}.".format(
+                            in_page.file.abs_src_path
+                        )
+                    )
             except ValueError as err:
                 logger.error(
                     "[rss-plugin] Incompatible date found in meta of page: {}. Trace: {}".format(
+                        in_page.file.abs_src_path, err
+                    )
+                )
+            except Exception as err:
+                logger.error(
+                    "[rss-plugin] Unable to retrieve update date for: {}. Trace: {}".format(
                         in_page.file.abs_src_path, err
                     )
                 )
