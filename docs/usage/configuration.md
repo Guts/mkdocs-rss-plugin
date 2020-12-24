@@ -176,5 +176,5 @@ To facilitate the discovery of RSS feeds, it's recomended to add relevant meta-t
 {% endblock %}
 ```
 
-<!-- Hyperinks references -->
+<!-- Hyperlinks references -->
 [page metadata]: https://python-markdown.github.io/extensions/meta_data/
