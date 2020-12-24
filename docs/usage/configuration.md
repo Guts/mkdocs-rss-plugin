@@ -76,7 +76,7 @@ Output:
   <url>
     https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
   </url>
-  <title>MkDocs RSS Plugin - Illustration</title>
+  <title>MkDocs RSS Plugin</title>
   <link>https://guts.github.io/mkdocs-rss-plugin/</link>
 </image>
 ```
