@@ -57,6 +57,7 @@ class TestConfig(unittest.TestCase):
         expected = {
             "abstract_chars_count": 150,
             "category": None,
+            "date_from_meta": None,
             "feed_ttl": 1440,
             "image": None,
             "length": 20,
@@ -74,6 +75,7 @@ class TestConfig(unittest.TestCase):
         expected = {
             "abstract_chars_count": 150,
             "category": None,
+            "date_from_meta": None,
             "feed_ttl": 1440,
             "image": self.feed_image,
             "length": 20,
