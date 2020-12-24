@@ -21,7 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- option to use dates from page metadata (YAML front-matter) instead of git log. See #14 and [related documentation section](https://guts.github.io/mkdocs-rss-plugin/configuration/#dates-overriding)
+- option to use dates from page metadata (YAML front-matter) instead of git log. See [#14](https://github.com/Guts/mkdocs-rss-plugin/pull/14) and [related documentation section](https://guts.github.io/mkdocs-rss-plugin/configuration/#dates-overriding)
+- Python 3.9 is enabled in CI and referenced in PyPi tags
 
 ### Changed
 
