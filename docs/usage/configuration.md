@@ -1,5 +1,6 @@
 ---
 title: Configuration
+date: 2020-12-31 14:20
 description: Configuration steps and settings for MkDocs RSS plugin
 image: "https://svgsilh.com/png-512/97849.png"
 ---
@@ -100,13 +101,62 @@ Output:
 
 ### Item description length
 
-To fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp), the plugin first tries to retrieve the value of the keyword `description` from the [page metadata](https://python-markdown.github.io/extensions/meta_data/).
+To fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp), the plugin first tries to retrieve the value of the keyword `description` from the [page metadata].
 
 If the page has no meta, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is raw markdown.
 
 `abstract_chars_count`: number of characters to use as item description.
 
 Default: `150`
+
+### Dates overriding
+
+Basically, the plugin aims to retrieve creation and update dates from git log. But sometimes, it does not match the content workflow: markdown generated from sources, .
+
+So, it's possible to use the dates manually specified into the [page metadata] through the [YAML frontmatter](https://www.mkdocs.org/user-guide/writing-your-docs/#meta-data).
+
+- `as_creation`: meta tag name to use as creation date. Default to False.
+- `as_update`: meta tag name to use as update date. Default to False.
+- `datetime_format`: datetime format. Default to "%Y-%m-%d %H:%M".
+
+#### Example
+
+For example, in your `best_article.md` created in 2019, you can write the front-matter like this:
+
+```markdown
+---
+title: "This page title is a perfect clickbait!"
+authors: ["Julien M."]
+date: "2020-10-22 17:18"
+---
+
+# This plugin will change your MkDocs life
+
+Lorem ipsum [...]
+```
+
+So in your `mkdocs.yml` you will have:
+
+```yaml
+plugins:
+  - rss:
+      date_from_meta:
+        as_creation: "date"
+        as_update: false
+        datetime_format: "%Y-%m-%d %H:%M"
+```
+
+At the end, into the RSS you will get:
+
+```xml
+<item>
+  <title>This page title is a perfect clickbait!</title>
+  <link>https://website.com/articles/best_article/</link>
+  <pubDate>Thu, 22 Oct 2020 17:18:00 -0000</pubDate>
+  [...]
+
+</item>
+```
 
 ----
 
@@ -125,3 +175,6 @@ To facilitate the discovery of RSS feeds, it's recomended to add relevant meta-t
   <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="/feed_rss_updated.xml">
 {% endblock %}
 ```
+
+<!-- Hyperinks references -->
+[page metadata]: https://python-markdown.github.io/extensions/meta_data/

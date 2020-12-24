@@ -32,14 +32,19 @@ DEFAULT_TEMPLATE_FILENAME = DEFAULT_TEMPLATE_FOLDER / "rss.xml.jinja2"
 OUTPUT_FEED_CREATED = "feed_rss_created.xml"
 OUTPUT_FEED_UPDATED = "feed_rss_updated.xml"
 
+logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
+
 
 # ############################################################################
 # ########## Classes ###############
 # ##################################
+
+
 class GitRssPlugin(BasePlugin):
     config_scheme = (
-        ("abstract_chars_count", config_options.Type(int, default=150)),
+        ("abstract_chars_count", config_options.Type(int, default=160)),
         ("category", config_options.Type(str, default=None)),
+        ("date_from_meta", config_options.Type(dict, default=None)),
         ("feed_ttl", config_options.Type(int, default=1440)),
         ("image", config_options.Type(str, default=None)),
         ("length", config_options.Type(int, default=20)),
@@ -48,6 +53,9 @@ class GitRssPlugin(BasePlugin):
     def __init__(self):
         # tooling
         self.util = Util()
+        # dates source
+        self.src_date_created = self.src_date_updated = "git"
+        self.meta_datetime_format = None
         # pages storage
         self.pages_to_filter = []
         # prepare output feeds
@@ -95,6 +103,24 @@ class GitRssPlugin(BasePlugin):
         if self.config.get("image"):
             base_feed["logo_url"] = self.config.get("image")
 
+        # date handling
+        if self.config.get("date_from_meta") is not None:
+            self.src_date_created = self.config.get("date_from_meta").get(
+                "as_creation", False
+            )
+            self.src_date_updated = self.config.get("date_from_meta").get(
+                "as_update", False
+            )
+            self.meta_datetime_format = self.config.get("date_from_meta").get(
+                "datetime_format", "%Y-%m-%d %H:%M"
+            )
+            logger.debug(
+                "[rss-plugin] Dates will be retrieved from page meta (yaml "
+                "frontmatter). The git log will be used as fallback."
+            )
+        else:
+            logger.debug("[rss-plugin] Dates will be retrieved from git log.")
+
         # create 2 final dicts
         self.feed_created = deepcopy(base_feed)
         self.feed_updated = deepcopy(base_feed)
@@ -139,7 +165,12 @@ class GitRssPlugin(BasePlugin):
             str: Markdown source text of page as string
         """
         # retrieve dates from git log
-        page_dates = self.util.get_file_dates(path=page.file.abs_src_path)
+        page_dates = self.util.get_file_dates(
+            in_page=page,
+            source_date_creation=self.src_date_created,
+            source_date_update=self.src_date_updated,
+            meta_datetime_format=self.meta_datetime_format,
+        )
 
         # append to list to be filtered later
         self.pages_to_filter.append(

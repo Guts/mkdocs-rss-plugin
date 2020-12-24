@@ -14,7 +14,6 @@
 # ##################################
 
 # Standard library
-import logging
 import unittest
 from pathlib import Path
 
@@ -55,8 +54,9 @@ class TestConfig(unittest.TestCase):
     def test_plugin_config_defaults(self):
         # default reference
         expected = {
-            "abstract_chars_count": 150,
+            "abstract_chars_count": 160,
             "category": None,
+            "date_from_meta": None,
             "feed_ttl": 1440,
             "image": None,
             "length": 20,
@@ -72,8 +72,9 @@ class TestConfig(unittest.TestCase):
     def test_plugin_config_image(self):
         # reference
         expected = {
-            "abstract_chars_count": 150,
+            "abstract_chars_count": 160,
             "category": None,
+            "date_from_meta": None,
             "feed_ttl": 1440,
             "image": self.feed_image,
             "length": 20,

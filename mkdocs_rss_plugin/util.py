@@ -6,6 +6,7 @@
 
 # standard library
 import logging
+from datetime import datetime
 import ssl
 from email.utils import formatdate
 from mimetypes import guess_type
@@ -33,6 +34,13 @@ REMOTE_REQUEST_HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     "User-Agent": "{}/{}".format(__about__.__title__, __about__.__version__),
 }
+
+
+# ############################################################################
+# ########## Globals ###############
+# ##################################
+
+logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 
 
 # ############################################################################
@@ -83,34 +91,80 @@ class Util:
             url_parts[4] = urlencode(args_dict)
         return urlunparse(url_parts)
 
-    def get_file_dates(self, path: str) -> Tuple[int, int]:
+    def get_file_dates(
+        self,
+        in_page: Page,
+        source_date_creation: str = "git",
+        source_date_update: str = "git",
+        meta_datetime_format: str = "%Y-%m-%d %H:%M",
+    ) -> Tuple[int, int]:
         """Extract creation and update dates from git log for given file.
 
-        :param str path: path to a tracked file
+        :param in_page: input page to work with
+        :type in_page: Page
+        :param source_date_creation: which source to use (git or meta tag) for creation \
+            date, defaults to "git"
+        :type source_date_creation: str, optional
+        :param source_date_update: which source to use (git or meta tag) for update \
+            date, defaults to "git"
+        :type source_date_update: str, optional
+        :param meta_datetime_format: datetime string format, defaults to "%Y-%m-%d %H:%M"
+        :type meta_datetime_format: str, optional
 
-        :return: (creation date, last commit date)
-        :rtype: tuple of timestamps
+        :return: tuple of timestamps (creation date, last commit date)
+        :rtype: Tuple[int, int]
         """
         # empty vars
         dt_created = dt_updated = None
 
+        # if enabled, try to retrieve dates from page metadata
+        if source_date_creation != "git" and in_page.meta.get(source_date_creation):
+            try:
+                dt_created = datetime.strptime(
+                    in_page.meta.get(source_date_creation), meta_datetime_format
+                ).timestamp()
+            except ValueError as err:
+                logger.error(
+                    "[rss-plugin] Incompatible date found in meta of page: {}. Trace: {}".format(
+                        in_page.file.abs_src_path, err
+                    )
+                )
+        if source_date_update != "git" and in_page.meta.get(source_date_update):
+            try:
+                dt_updated = datetime.strptime(
+                    in_page.meta.get(source_date_update), meta_datetime_format
+                ).timestamp()
+            except ValueError as err:
+                logger.error(
+                    "[rss-plugin] Incompatible date found in meta of page: {}. Trace: {}".format(
+                        in_page.file.abs_src_path, err
+                    )
+                )
+
         # explore git log
         if self.git_is_valid:
             try:
-                dt_created = self.repo.log(
-                    path, n=1, date="short", format="%at", diff_filter="AR"
-                )
-                dt_updated = self.repo.log(
-                    path,
-                    n=1,
-                    date="short",
-                    format="%at",
-                )
+                # only if dates have not been retrieved from page meta
+                if not dt_created:
+                    dt_created = self.repo.log(
+                        in_page.file.abs_src_path,
+                        n=1,
+                        date="short",
+                        format="%at",
+                        diff_filter="AR",
+                    )
+                if not dt_updated:
+                    dt_updated = self.repo.log(
+                        in_page.file.abs_src_path,
+                        n=1,
+                        date="short",
+                        format="%at",
+                    )
             except GitCommandError as err:
                 logging.warning(
                     "[rss-plugin] Unable to read git logs of '%s'. Is git log readable?"
                     " Falling back to build date. "
-                    " Trace: %s" % (path, err)
+                    " Trace: %s" % (in_page.file.abs_src_path, err)
                 )
             except GitCommandNotFound as err:
                 logging.error(
@@ -129,7 +183,10 @@ class Util:
                 int(dt_updated),
             )
         else:
-            logging.warning("Dates could not be retrieved for page: %s." % path)
+            logging.warning(
+                "[rss-plugin] Dates could not be retrieved for page: %s."
+                % in_page.file.abs_src_path
+            )
             return (
                 get_build_timestamp(),
                 get_build_timestamp(),
