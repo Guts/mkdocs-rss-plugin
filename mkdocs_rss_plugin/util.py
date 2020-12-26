@@ -120,64 +120,22 @@ class Util:
 
         # if enabled, try to retrieve dates from page metadata
         if source_date_creation != "git" and in_page.meta.get(source_date_creation):
-            try:
-                if isinstance(in_page.meta.get(source_date_creation), str):
-                    dt_created = datetime.strptime(
-                        in_page.meta.get(source_date_creation), meta_datetime_format
-                    ).timestamp()
-                elif isinstance(
-                    in_page.meta.get(source_date_creation), (date, datetime)
-                ):
-                    dt_created = datetime.combine(
-                        in_page.meta.get(source_date_creation), datetime.min.time()
-                    ).timestamp()
-                else:
-                    raise TypeError(
-                        "[rss-plugin] Incompatible date type in meta of page: {}.".format(
-                            in_page.file.abs_src_path
-                        )
-                    )
-            except ValueError as err:
-                logger.error(
-                    "[rss-plugin] Incompatible date found in meta of page: {}. Trace: {}".format(
-                        in_page.file.abs_src_path, err
-                    )
-                )
-            except Exception as err:
-                logger.error(
-                    "[rss-plugin] Unable to retrieve creation date for: {}. Trace: {}".format(
-                        in_page.file.abs_src_path, err
-                    )
-                )
+            dt_created = self.get_date_from_meta(
+                date_metatag_value=in_page.meta.get(source_date_creation),
+                meta_datetime_format=meta_datetime_format,
+            )
+            if isinstance(dt_created, str):
+                logger.error(dt_created)
+                dt_created = None
 
         if source_date_update != "git" and in_page.meta.get(source_date_update):
-            try:
-                if isinstance(in_page.meta.get(source_date_update), str):
-                    dt_updated = datetime.strptime(
-                        in_page.meta.get(source_date_update), meta_datetime_format
-                    ).timestamp()
-                elif isinstance(in_page.meta.get(source_date_update), (date, datetime)):
-                    dt_updated = datetime.combine(
-                        in_page.meta.get(source_date_update), datetime.min.time()
-                    ).timestamp()
-                else:
-                    raise TypeError(
-                        "[rss-plugin] Incompatible date type in meta of page: {}.".format(
-                            in_page.file.abs_src_path
-                        )
-                    )
-            except ValueError as err:
-                logger.error(
-                    "[rss-plugin] Incompatible date found in meta of page: {}. Trace: {}".format(
-                        in_page.file.abs_src_path, err
-                    )
-                )
-            except Exception as err:
-                logger.error(
-                    "[rss-plugin] Unable to retrieve update date for: {}. Trace: {}".format(
-                        in_page.file.abs_src_path, err
-                    )
-                )
+            dt_updated = self.get_date_from_meta(
+                date_metatag_value=in_page.meta.get(source_date_creation),
+                meta_datetime_format=meta_datetime_format,
+            )
+            if isinstance(dt_updated, str):
+                logger.error(dt_updated)
+                dt_updated = None
 
         # explore git log
         if self.git_is_valid:
@@ -229,6 +187,37 @@ class Util:
                 get_build_timestamp(),
                 get_build_timestamp(),
             )
+
+    def get_date_from_meta(
+        self, date_metatag_value: str, meta_datetime_format: str
+    ) -> float:
+        """Get date from page.meta handling str with associated datetime format and \
+            date already transformed by MkDocs.
+
+        :param date_metatag_value: value of page.meta.{tag_for_date}
+        :type date_metatag_value: str
+        :param meta_datetime_format: expected format of datetime
+        :type meta_datetime_format: str
+
+        :return: datetime as timestamp
+        :rtype: float
+        """
+        out_date = None
+        try:
+            if isinstance(date_metatag_value, str):
+                out_date = datetime.strptime(date_metatag_value, meta_datetime_format)
+            elif isinstance(date_metatag_value, (date, datetime)):
+                out_date = datetime.combine(date_metatag_value, datetime.min.time())
+            else:
+                return "[rss-plugin] Incompatible date type."
+        except ValueError as err:
+            return "[rss-plugin] Incompatible date found. Trace: {}".format(err)
+        except Exception as err:
+            return "[rss-plugin] Unable to retrieve creation date. Trace: {}".format(
+                err
+            )
+
+        return out_date.timestamp()
 
     def get_description_or_abstract(self, in_page: Page, chars_count: int = 150) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
