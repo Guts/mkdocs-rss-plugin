@@ -7,15 +7,6 @@ image: "rss_icon.svg"
 
 --8<-- "README.md"
 
-Here come the feeds generated for this documentation:
-
-- [feed_rss_created.xml](feed_rss_created.xml) for  latest **created** pages: [W3C validator](https://validator.w3.org/feed/check.cgi?url=https%3A//guts.github.io/mkdocs-rss-plugin/feed_rss_created.xml)
-- [feed_rss_updated.xml](feed_rss_updated.xml) for latest **updated** pages: [W3C validator](https://validator.w3.org/feed/check.cgi?url=https%3A//guts.github.io/mkdocs-rss-plugin/feed_rss_updated.xml)
-
-Or it could be displayed as a Feedly follow button:
-
-[![Feedly button](https://s3.feedly.com/img/follows/feedly-follow-rectangle-flat-big_2x.png "Follow us on Feedly"){: width=130 height= 50 loading=lazy }](https://feedly.com/i/subscription/feed%2Fhttps%3A%2F%2Fguts.github.io%2Fmkdocs-rss-plugin%2Ffeed_rss_created.xml)
-
 ## Quickstart
 
 Installation:
@@ -30,6 +21,17 @@ Then in your `mkdocs.yml`:
 plugins:
   - rss
 ```
+
+## Example
+
+As examples, here come the feeds generated for this documentation:
+
+- [feed_rss_created.xml](feed_rss_created.xml) for  latest **created** pages: [W3C validator](https://validator.w3.org/feed/check.cgi?url=https%3A//guts.github.io/mkdocs-rss-plugin/feed_rss_created.xml)
+- [feed_rss_updated.xml](feed_rss_updated.xml) for latest **updated** pages: [W3C validator](https://validator.w3.org/feed/check.cgi?url=https%3A//guts.github.io/mkdocs-rss-plugin/feed_rss_updated.xml)
+
+Or it could be displayed as a Feedly follow button:
+
+[![Feedly button](https://s3.feedly.com/img/follows/feedly-follow-rectangle-flat-big_2x.png "Follow us on Feedly"){: width=130 height= 50 loading=lazy }](https://feedly.com/i/subscription/feed%2Fhttps%3A%2F%2Fguts.github.io%2Fmkdocs-rss-plugin%2Ffeed_rss_created.xml)
 
 ## Credits
 
