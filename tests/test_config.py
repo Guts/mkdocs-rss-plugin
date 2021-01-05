@@ -60,6 +60,7 @@ class TestConfig(unittest.TestCase):
             "feed_ttl": 1440,
             "image": None,
             "length": 20,
+            "pretty_print": False,
         }
 
         # load
@@ -78,6 +79,7 @@ class TestConfig(unittest.TestCase):
             "feed_ttl": 1440,
             "image": self.feed_image,
             "length": 20,
+            "pretty_print": False,
         }
 
         # custom config

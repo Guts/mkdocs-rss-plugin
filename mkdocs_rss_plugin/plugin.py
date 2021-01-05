@@ -48,6 +48,7 @@ class GitRssPlugin(BasePlugin):
         ("feed_ttl", config_options.Type(int, default=1440)),
         ("image", config_options.Type(str, default=None)),
         ("length", config_options.Type(int, default=20)),
+        ("pretty_print", config_options.Type(bool, default=False)),
     )
 
     def __init__(self):
@@ -200,6 +201,9 @@ class GitRssPlugin(BasePlugin):
         Returns:
             dict: global configuration object
         """
+        # pretty print or not
+        pretty_print = self.config.get("pretty_print", False)
+
         # output filepaths
         out_feed_created = Path(config.get("site_dir")) / OUTPUT_FEED_CREATED
         out_feed_updated = Path(config.get("site_dir")) / OUTPUT_FEED_UPDATED
@@ -221,35 +225,53 @@ class GitRssPlugin(BasePlugin):
                 length=self.config.get("length", 20),
             )
         )
-        # load Jinja environment
-        env = Environment(
-            autoescape=select_autoescape(["html", "xml"]),
-            loader=FileSystemLoader(self.tpl_folder),
-            lstrip_blocks=True,
-            trim_blocks=True,
-        )
 
-        template = env.get_template(self.tpl_file.name)
+        # write feeds according to the pretty print option
+        if pretty_print:
+            # load Jinja environment and template
+            env = Environment(
+                autoescape=select_autoescape(["html", "xml"]),
+                loader=FileSystemLoader(self.tpl_folder),
+            )
 
-        # write feeds to files
-        with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
-            prev_char = ""
-            for char in template.render(feed=self.feed_created):
-                if char == "\n":
-                    continue
-                if char == " " and prev_char == " ":
-                    prev_char = char
-                    continue
-                prev_char = char
-                fifeed_created.write(char)
+            template = env.get_template(self.tpl_file.name)
 
-        with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
-            for char in template.render(feed=self.feed_updated):
-                if char == "\n":
+            # write feeds to files
+            with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
+                fifeed_created.write(template.render(feed=self.feed_created))
+
+            with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
+                fifeed_updated.write(template.render(feed=self.feed_updated))
+
+        else:
+            # load Jinja environment and template
+            env = Environment(
+                autoescape=select_autoescape(["html", "xml"]),
+                loader=FileSystemLoader(self.tpl_folder),
+                lstrip_blocks=True,
+                trim_blocks=True,
+            )
+            template = env.get_template(self.tpl_file.name)
+
+            # write feeds to files stripping out spaces and new lines
+            with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
+                prev_char = ""
+                for char in template.render(feed=self.feed_created):
+                    if char == "\n":
+                        continue
+                    if char == " " and prev_char == " ":
+                        prev_char = char
+                        continue
                     prev_char = char
-                    continue
-                if char == " " and prev_char == " ":
+                    fifeed_created.write(char)
+
+            with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
+                for char in template.render(feed=self.feed_updated):
+                    if char == "\n":
+                        prev_char = char
+                        continue
+                    if char == " " and prev_char == " ":
+                        prev_char = char
+                        continue
                     prev_char = char
-                    continue
-                prev_char = char
-                fifeed_updated.write(char)
+                    fifeed_updated.write(char)
