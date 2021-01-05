@@ -1,32 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0"
-  xmlns:atom="https://www.w3.org/2005/Atom"
-  xmlns:dc="https://purl.org/dc/elements/1.1/"
-  xmlns:webfeeds="http://webfeeds.org/rss/1.0"
-  >
-
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <!-- Mandatory elements -->
+    {# Mandatory elements #}
     {% if feed.title is not none %}<title>{{ feed.title|e }}</title>{% endif %}
     {% if feed.description is not none %}<description>{{ feed.description|e }}</description>{% endif %}
     {% if feed.html_url is not none %}<link>{{ feed.html_url }}</link>{% endif %}
     {% if feed.rss_url is not none %}<atom:link href="{{ feed.rss_url }}" rel="self" type="application/rss+xml" />{% endif %}
 
-    <!-- Optional elements -->
+    {# Optional elements #}
     {% if feed.author is not none %}<managingEditor>{{ feed.author }}</managingEditor>{% endif %}
     {% if feed.category is not none %}<category>{{ feed.category }}</category>{% endif %}
     {% if feed.repo_url is not none %}<docs>{{ feed.repo_url }}</docs>{% endif %}
     {% if feed.language is not none %}<language>{{ feed.language }}</language>{% endif %}
 
-    <!-- Timestamps and frequency -->
+    {# Timestamps and frequency #}
     <pubDate>{{ feed.pubDate }}</pubDate>
     <lastBuildDate>{{ feed.buildDate }}</lastBuildDate>
     <ttl>{{ feed.ttl }}</ttl>
 
-    <!-- Credits -->
+    {# Credits #}
     <generator>{{ feed.generator }}</generator>
 
-    <!-- Feed illustration -->
+    {# Feed illustration #}
     {% if feed.logo_url is defined %}
     <image>
       <url>{{ feed.logo_url }}</url>
@@ -35,7 +30,7 @@
     </image>
     {% endif %}
 
-    <!-- Entries -->
+    {# Entries #}
     {% for item in feed.entries %}
     <item>
       <title>{{ item.title|e }}</title>

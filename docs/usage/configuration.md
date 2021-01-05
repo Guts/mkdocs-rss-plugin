@@ -52,16 +52,7 @@ Basically, each page is an item element in the RSS feed.
 
 ## Plugin options
 
-Sample:
-
-```yaml
-plugins:
-  - rss:
-      abstract_chars_count: 150
-      feed_ttl: 1440
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png'
-      length: 20
-```
+For a sample see [homepage](/#usage).
 
 ### Channel image
 
@@ -157,6 +148,18 @@ At the end, into the RSS you will get:
 
 </item>
 ```
+
+### Prettified output
+
+By default, the output file is minified, using Jinja2 strip options and manual work. It's possible to disable it and prettify the output using `pretty_print: true`.
+
+```yaml
+plugins:
+  - rss:
+      pretty_print: true
+```
+
+Default: `False`.
 
 ----
 
