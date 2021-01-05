@@ -233,7 +233,23 @@ class GitRssPlugin(BasePlugin):
 
         # write feeds to files
         with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
-            fifeed_created.write(template.render(feed=self.feed_created))
+            prev_char = ""
+            for char in template.render(feed=self.feed_created):
+                if char == "\n":
+                    continue
+                if char == " " and prev_char == " ":
+                    prev_char = char
+                    continue
+                prev_char = char
+                fifeed_created.write(char)
 
         with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
-            fifeed_updated.write(template.render(feed=self.feed_updated))
+            for char in template.render(feed=self.feed_updated):
+                if char == "\n":
+                    prev_char = char
+                    continue
+                if char == " " and prev_char == " ":
+                    prev_char = char
+                    continue
+                prev_char = char
+                fifeed_updated.write(char)
