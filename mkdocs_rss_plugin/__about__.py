@@ -38,7 +38,7 @@ __title__ = "MkDocs RSS plugin"
 __title_clean__ = "".join(e for e in __title__ if e.isalnum())
 __uri__ = "https://github.com/Guts/mkdocs-rss-plugin/"
 
-__version__ = "0.10.0"
+__version__ = "0.11.0"
 __version_info__ = tuple(
     [
         int(num) if num.isdigit() else num
