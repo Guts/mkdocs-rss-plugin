@@ -223,8 +223,10 @@ class GitRssPlugin(BasePlugin):
         )
         # load Jinja environment
         env = Environment(
-            loader=FileSystemLoader(self.tpl_folder),
             autoescape=select_autoescape(["html", "xml"]),
+            loader=FileSystemLoader(self.tpl_folder),
+            lstrip_blocks=True,
+            trim_blocks=True,
         )
 
         template = env.get_template(self.tpl_file.name)
