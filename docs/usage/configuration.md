@@ -174,8 +174,8 @@ To facilitate the discovery of RSS feeds, it's recomended to add relevant meta-t
 
 {% block extrahead %}
   <!-- RSS Feed -->
-  <link rel="alternate" type="application/rss+xml" title="RSS feed of created content" href="/feed_rss_created.xml">
-  <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="/feed_rss_updated.xml">
+  <link rel="alternate" type="application/rss+xml" title="RSS feed of created content" href="{{ config.site_url }}feed_rss_created.xml">
+  <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="{{ config.site_url }}feed_rss_updated.xml">
 {% endblock %}
 ```
 
