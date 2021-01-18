@@ -15,6 +15,7 @@ from typing import NamedTuple
 # ##################################
 class PageInformation(NamedTuple):
     abs_path: Path = None
+    authors: tuple = None
     created: datetime = None
     updated: datetime = None
     title: str = None
