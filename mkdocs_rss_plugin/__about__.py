@@ -33,12 +33,14 @@ __author__ = "Julien Moura"
 __copyright__ = "2020 - {0}, {1}".format(date.today().year, __author__)
 __email__ = "dev@ingeoveritas.com"
 __license__ = "GNU General Public License v3.0"
-__summary__ = "MkDocs plugin which generates a static RSS feed using git log."
+__summary__ = (
+    "MkDocs plugin which generates a static RSS feed using git log and page.meta."
+)
 __title__ = "MkDocs RSS plugin"
 __title_clean__ = "".join(e for e in __title__ if e.isalnum())
 __uri__ = "https://github.com/Guts/mkdocs-rss-plugin/"
 
-__version__ = "0.11.0"
+__version__ = "0.12.0"
 __version_info__ = tuple(
     [
         int(num) if num.isdigit() else num
