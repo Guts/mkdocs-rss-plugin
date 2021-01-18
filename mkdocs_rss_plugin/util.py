@@ -188,6 +188,44 @@ class Util:
                 get_build_timestamp(),
             )
 
+    def get_authors_from_meta(self, in_page: Page) -> Tuple[str] or None:
+        """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
+        str and iterable as values types.
+
+        Args:
+            in_page (Page): page to look at
+
+        Returns:
+            Tuple[str]: tuple of authors names
+        """
+        # identify the key
+        if "author" in in_page.meta:
+            if isinstance(in_page.meta.get("author"), str):
+                return (in_page.meta.get("author"),)
+            elif isinstance(in_page.meta.get("author"), (list, tuple)):
+                return tuple(in_page.meta.get("author"))
+            else:
+                logging.warning(
+                    "[rss-plugin] Type of author value in page.meta (%s) is not valid. "
+                    "It should be str, list or tuple, not: %s."
+                    % in_page.file.abs_src_path,
+                    type(in_page.meta.get("author")),
+                )
+                return None
+        elif "authors" in in_page.meta:
+            if isinstance(in_page.meta.get("authors"), str):
+                return (in_page.meta.get("authors"),)
+            elif isinstance(in_page.meta.get("authors"), (list, tuple)):
+                return tuple(in_page.meta.get("authors"))
+            else:
+                logging.warning(
+                    "[rss-plugin] Type of authors value in page.meta (%s) is not valid. "
+                    "It should be str, list or tuple, not: %s."
+                    % in_page.file.abs_src_path,
+                    type(in_page.meta.get("authors")),
+                )
+                return None
+
     def get_date_from_meta(
         self, date_metatag_value: str, meta_datetime_format: str
     ) -> float:
@@ -420,6 +458,7 @@ class Util:
         )[:length]:
             filtered_pages.append(
                 {
+                    "authors": page.authors,
                     "description": page.description,
                     "link": page.url_full,
                     "pubDate": formatdate(getattr(page, attribute)),

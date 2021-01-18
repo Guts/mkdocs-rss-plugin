@@ -177,6 +177,7 @@ class GitRssPlugin(BasePlugin):
         self.pages_to_filter.append(
             PageInformation(
                 abs_path=Path(page.file.abs_src_path),
+                authors=self.util.get_authors_from_meta(in_page=page),
                 created=page_dates[0],
                 updated=page_dates[1],
                 title=page.title,

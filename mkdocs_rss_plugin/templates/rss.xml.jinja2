@@ -34,6 +34,12 @@
     {% for item in feed.entries %}
     <item>
       <title>{{ item.title|e }}</title>
+      {# Authors loop #}
+      {% if item.authors is not none %}
+        {% for author in item.authors %}
+      <author>{{ author }}</author>
+        {% endfor %}
+      {% endif %}
       <description>{{ item.description|e }}</description>
       {% if item.link is not none %}<link>{{ item.link }}</link>{% endif %}
       <pubDate>{{ item.pubDate }}</pubDate>
