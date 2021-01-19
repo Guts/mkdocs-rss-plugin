@@ -17,6 +17,7 @@ from urllib.error import HTTPError
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
+import markdown
 from git import GitCommandError, GitCommandNotFound, InvalidGitRepositoryError, Repo
 from mkdocs.config.config_options import Config
 from mkdocs.structure.pages import Page
@@ -261,8 +262,9 @@ class Util:
         """Returns description from page meta. If it doesn't exist, use the \
         {chars_count} first characters from page content (in markdown).
 
-        :param Page in_page: [description]
-        :param int chars_count: [description]. Defaults to: 150 - optional
+        :param Page in_page: page to look at
+        :param int chars_count: if page.meta.description is not set, number of chars \
+        of the content to use. Defaults to: 150 - optional
 
         :return: page description to use
         :rtype: str
@@ -270,9 +272,25 @@ class Util:
         if in_page.meta.get("description"):
             return in_page.meta.get("description")
         elif in_page.content:
-            return in_page.content[:chars_count]
+            if len(in_page.content) < chars_count:
+                return markdown.markdown(
+                    in_page.content[:chars_count], output_format="html5"
+                )
+            else:
+                return markdown.markdown(
+                    "{}...".format(in_page.content[: chars_count - 3]),
+                    output_format="html5",
+                )
         elif in_page.markdown:
-            return in_page.markdown[:chars_count]
+            if len(in_page.markdown) < chars_count:
+                return markdown.markdown(
+                    in_page.markdown[:chars_count], output_format="html5"
+                )
+            else:
+                return markdown.markdown(
+                    "{}...".format(in_page.markdown[: chars_count - 3]),
+                    output_format="html5",
+                )
         else:
             return ""
 
