@@ -4,5 +4,5 @@
 # -----------------------
 black==20.8b1
 flake8==3.8.*
-pre-commit>=2.5,<2.10
+pre-commit>=2.5,<2.11
 pytest-cov==2.11.*
