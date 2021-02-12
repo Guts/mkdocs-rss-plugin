@@ -49,6 +49,7 @@ class GitRssPlugin(BasePlugin):
         ("image", config_options.Type(str, default=None)),
         ("length", config_options.Type(int, default=20)),
         ("pretty_print", config_options.Type(bool, default=False)),
+        ("match_path", config_options.Type(str, default=None)),
     )
 
     def __init__(self):
@@ -188,6 +189,7 @@ class GitRssPlugin(BasePlugin):
                     in_page=page, base_url=config.get("site_url", __uri__)
                 ),
                 url_full=page.canonical_url,
+                src_path=page.file.src_path,
             )
         )
 
@@ -215,6 +217,7 @@ class GitRssPlugin(BasePlugin):
                 pages=self.pages_to_filter,
                 attribute="created",
                 length=self.config.get("length", 20),
+                match_path=self.config.get("match_path"),
             )
         )
 
@@ -224,6 +227,7 @@ class GitRssPlugin(BasePlugin):
                 pages=self.pages_to_filter,
                 attribute="updated",
                 length=self.config.get("length", 20),
+                match_path=self.config.get("match_path"),
             )
         )
 
