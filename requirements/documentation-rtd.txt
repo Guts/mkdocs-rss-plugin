@@ -3,7 +3,7 @@
 
 # Documentation (for devs)
 # -----------------------
-sphinx>=3.2,<3.5
+sphinx>=3.2,<3.6
 sphinx-autodoc-typehints>=1.10,<1.12
 sphinx-copybutton>=0.3,<0.4
 sphinx-markdown-tables>=0.0.15,<0.0.16
