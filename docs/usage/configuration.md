@@ -96,7 +96,7 @@ Output:
 
 To fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp), the plugin first tries to retrieve the value of the keyword `description` from the [page metadata].
 
-If the page has no meta, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is raw markdown.
+If the page has no meta, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted rougthly into HTML.
 
 `abstract_chars_count`: number of characters to use as item description.
 

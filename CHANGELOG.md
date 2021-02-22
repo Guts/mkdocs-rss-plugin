@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- if `page.meta.description` is not set, the `abstract_chars_count` first characters from markdown content are now converted into HTML.
 - add `match_path` option which should be a regex pattern matching the path to your files within the docs_dir. See [issue #34](https://github.com/Guts/mkdocs-rss-plugin/issues/34) and the related [PR #43](https://github.com/Guts/mkdocs-rss-plugin/pull/43). Contributed by [Ryan Morshead](https://github.com/rmorshea/).
 
 ----
