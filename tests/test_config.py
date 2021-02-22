@@ -17,9 +17,6 @@
 import unittest
 from pathlib import Path
 
-# mkdocs
-from mkdocs.structure.pages import Page
-
 # plugin target
 from mkdocs_rss_plugin.plugin import GitRssPlugin
 
@@ -61,6 +58,7 @@ class TestConfig(unittest.TestCase):
             "image": None,
             "length": 20,
             "pretty_print": False,
+            "match_path": None,
         }
 
         # load
@@ -80,6 +78,7 @@ class TestConfig(unittest.TestCase):
             "image": self.feed_image,
             "length": 20,
             "pretty_print": False,
+            "match_path": None,
         }
 
         # custom config

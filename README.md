@@ -26,6 +26,7 @@ plugins:
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
       length: 20
       pretty_print: false
+      match_path: ".*"
 ```
 
 For further information, [see the user documentation](https://guts.github.io/mkdocs-rss-plugin/).

@@ -163,6 +163,18 @@ plugins:
 
 Default: `False`.
 
+### Filter pages
+
+This adds a `match_path` option which should be a regex pattern matching the path to your files within the `docs_dir`. For example if you had a blog under `docs/blog` where `docs_dir` is `docs` you might use:
+
+```yaml
+plugins:
+  - rss:
+      match_path: "blog/.*"
+```
+
+Default: `None`.
+
 ----
 
 ## Integration
