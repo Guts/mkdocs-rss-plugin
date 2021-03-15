@@ -3,6 +3,6 @@
 # Development
 # -----------------------
 black==20.8b1
-flake8==3.8.*
+flake8==3.9.*
 pre-commit>=2.5,<2.11
 pytest-cov==2.11.*
