@@ -6,7 +6,6 @@
 
 # standard library
 import logging
-import re
 import ssl
 from datetime import date, datetime
 from email.utils import formatdate
@@ -458,7 +457,7 @@ class Util:
             return None
 
     @staticmethod
-    def filter_pages(pages: list, attribute: str, length: int, match_path: str) -> list:
+    def filter_pages(pages: list, attribute: str, length: int) -> list:
         """Filter and return pages into a friendly RSS structure.
 
         :param pages: pages to filter
@@ -472,12 +471,9 @@ class Util:
         :rtype: list
         """
         filtered_pages = []
-        path_pattern = re.compile(match_path) if match_path else None
         for page in sorted(
             pages, key=lambda page: getattr(page, attribute), reverse=True
         )[:length]:
-            if path_pattern and not path_pattern.match(page.src_path):
-                continue
             filtered_pages.append(
                 {
                     "authors": page.authors,

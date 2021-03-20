@@ -9,6 +9,7 @@ import logging
 from copy import deepcopy
 from email.utils import formatdate
 from pathlib import Path
+from re import compile
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -49,7 +50,7 @@ class GitRssPlugin(BasePlugin):
         ("image", config_options.Type(str, default=None)),
         ("length", config_options.Type(int, default=20)),
         ("pretty_print", config_options.Type(bool, default=False)),
-        ("match_path", config_options.Type(str, default=None)),
+        ("match_path", config_options.Type(str, default=".*")),
     )
 
     def __init__(self):
@@ -104,6 +105,9 @@ class GitRssPlugin(BasePlugin):
         # feed image
         if self.config.get("image"):
             base_feed["logo_url"] = self.config.get("image")
+
+        # pattern to match pages included in output
+        self.match_path_pattern = compile(self.config.get("match_path"))
 
         # date handling
         if self.config.get("date_from_meta") is not None:
@@ -166,6 +170,10 @@ class GitRssPlugin(BasePlugin):
         Returns:
             str: Markdown source text of page as string
         """
+        # skip pages that don't match the config var match_path
+        if not self.match_path_pattern.match(page.file.src_path):
+            return
+
         # retrieve dates from git log
         page_dates = self.util.get_file_dates(
             in_page=page,
@@ -189,7 +197,6 @@ class GitRssPlugin(BasePlugin):
                     in_page=page, base_url=config.get("site_url", __uri__)
                 ),
                 url_full=page.canonical_url,
-                src_path=page.file.src_path,
             )
         )
 
@@ -217,7 +224,6 @@ class GitRssPlugin(BasePlugin):
                 pages=self.pages_to_filter,
                 attribute="created",
                 length=self.config.get("length", 20),
-                match_path=self.config.get("match_path"),
             )
         )
 
@@ -227,7 +233,6 @@ class GitRssPlugin(BasePlugin):
                 pages=self.pages_to_filter,
                 attribute="updated",
                 length=self.config.get("length", 20),
-                match_path=self.config.get("match_path"),
             )
         )
 
