@@ -173,7 +173,7 @@ plugins:
       match_path: "blog/.*"
 ```
 
-Default: `None`.
+Default: `.*`.
 
 ----
 
