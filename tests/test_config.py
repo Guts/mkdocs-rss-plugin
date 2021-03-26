@@ -58,7 +58,7 @@ class TestConfig(unittest.TestCase):
             "image": None,
             "length": 20,
             "pretty_print": False,
-            "match_path": None,
+            "match_path": ".*",
         }
 
         # load
@@ -78,7 +78,7 @@ class TestConfig(unittest.TestCase):
             "image": self.feed_image,
             "length": 20,
             "pretty_print": False,
-            "match_path": None,
+            "match_path": ".*",
         }
 
         # custom config

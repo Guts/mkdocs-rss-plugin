@@ -22,4 +22,3 @@ class PageInformation(NamedTuple):
     description: str = None
     image: str = None
     url_full: str = None
-    src_path: str = None
