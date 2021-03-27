@@ -173,6 +173,13 @@ plugins:
       match_path: "blog/.*"
 ```
 
+Since `match_path` gives you all the power of regular expressions you can have more complex patterns to include multiple directories. For example, to include all pages under both `release-notes` and `articles`:
+
+```yaml
+    - rss:
+          match_path: "(release-notes|articles)/.*"
+```
+
 Default: `.*`.
 
 ----
