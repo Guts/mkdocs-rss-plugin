@@ -8,6 +8,7 @@ copyright: 'Guts - In Geo Veritas'
 # Repository
 repo_name: 'guts/mkdocs-rss-plugin'
 repo_url: 'https://github.com/guts/mkdocs-rss-plugin/'
+edit_uri: 'blob/master/docs/usage/'
 
 docs_dir: 'docs/usage'
 use_directory_urls: true
