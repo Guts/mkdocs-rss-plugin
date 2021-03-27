@@ -5,8 +5,8 @@
 # ##################################
 
 # standard library
-from os import environ, path
 import logging
+from os import environ, path
 
 # 3rd party
 from git import Git

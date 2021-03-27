@@ -18,7 +18,6 @@ from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
-
 # package modules
 from .__about__ import __title__, __uri__, __version__
 from .customtypes import PageInformation
