@@ -44,7 +44,7 @@
       {% if item.link is not none %}<link>{{ item.link }}</link>{% endif %}
       <pubDate>{{ item.pubDate }}</pubDate>
       {% if item.link is not none %}<source url="{{ feed.rss_url }}">{{ feed.title }}</source>{% endif %}
-      {% if item.link is not none %}<guid isPermaLink="true">{{ item.link }}</guid>{% endif %}
+      {% if item.guid is not none %}<guid isPermaLink="true">{{ item.guid }}</guid>{% endif %}
       {% if item.image is not none %}
       <enclosure url="{{ item.image[0] }}" type="{{ item.image[1] }}" length="{{ item.image[2] }}" />
       {% endif %}

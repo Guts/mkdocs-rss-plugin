@@ -17,8 +17,9 @@ class PageInformation(NamedTuple):
     abs_path: Path = None
     authors: tuple = None
     created: datetime = None
-    updated: datetime = None
-    title: str = None
     description: str = None
+    guid: str = None
     image: str = None
+    title: str = None
+    updated: datetime = None
     url_full: str = None
