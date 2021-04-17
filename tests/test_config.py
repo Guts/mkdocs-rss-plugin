@@ -59,6 +59,7 @@ class TestConfig(unittest.TestCase):
             "length": 20,
             "pretty_print": False,
             "match_path": ".*",
+            "url_parameters": None,
         }
 
         # load
@@ -79,6 +80,7 @@ class TestConfig(unittest.TestCase):
             "length": 20,
             "pretty_print": False,
             "match_path": ".*",
+            "url_parameters": None,
         }
 
         # custom config
