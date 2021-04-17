@@ -183,6 +183,38 @@ plugins:
 
 Default: `.*`.
 
+### URL parameters
+
+This option allows you to add parameters to the URLs of the RSS feed items. It works as a dictionary of keys/values that is passed to [Python *urllib.parse.urlencode*](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlencode).  
+One possible use case is the addition of [Urchin Tracking Module (UTM) parameters](https://en.wikipedia.org/wiki/UTM_parameters):
+
+```yaml
+plugins:
+  - rss:
+      url_parameters:
+        utm_source: "documentation"
+        utm_medium: "RSS"
+        utm_campaign: "feed-syndication"
+```
+
+Will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss>
+    [...]
+    <item>
+      [...]
+      <link>https://guts.github.io/mkdocs-rss-plugin/?utm_source=documentation&amp;utm_medium=RSS&amp;utm_campaign=feed-syndication</link>
+      [...]
+    </item>
+    [...]
+  </channel>
+</rss>
+```
+
+Default: `None`.
+
 ----
 
 ## Integration
