@@ -23,7 +23,7 @@ plugins:
         datetime_format: "%Y-%m-%d %H:%M"
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
       match_path: ".*"
-      pretty_print: true
+      pretty_print: false
       url_parameters:
         utm_source: "documentation"
         utm_medium: "RSS"
