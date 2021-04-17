@@ -18,7 +18,7 @@ Minimal [`mkdocs.yml` configuration](https://www.mkdocs.org/user-guide/configura
 
 ```yaml
 site_description: required. Used as feed mandatory channel description.
-site_name:	required. Used as feed mandatory channel title and items source URL label.
+site_name: required. Used as feed mandatory channel title and items source URL label.
 site_url: required. Used to build feed items URLs.
 ```
 
