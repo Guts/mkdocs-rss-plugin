@@ -478,6 +478,7 @@ class Util:
                 {
                     "authors": page.authors,
                     "description": page.description,
+                    "guid": page.guid,
                     "link": page.url_full,
                     "pubDate": formatdate(getattr(page, attribute)),
                     "title": page.title,

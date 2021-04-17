@@ -50,6 +50,7 @@ class GitRssPlugin(BasePlugin):
         ("length", config_options.Type(int, default=20)),
         ("pretty_print", config_options.Type(bool, default=False)),
         ("match_path", config_options.Type(str, default=".*")),
+        ("url_parameters", config_options.Type(dict, default=None)),
     )
 
     def __init__(self):
@@ -181,6 +182,16 @@ class GitRssPlugin(BasePlugin):
             meta_datetime_format=self.meta_datetime_format,
         )
 
+        # handle custom URL parameters
+        if self.config.get("url_parameters"):
+            page_url_full = self.util.build_url(
+                base_url=page.canonical_url,
+                path="",
+                args_dict=self.config.get("url_parameters"),
+            )
+        else:
+            page_url_full = page.canonical_url
+
         # append to list to be filtered later
         self.pages_to_filter.append(
             PageInformation(
@@ -192,10 +203,11 @@ class GitRssPlugin(BasePlugin):
                 description=self.util.get_description_or_abstract(
                     in_page=page, chars_count=self.config.get("abstract_chars_count")
                 ),
+                guid=page.canonical_url,
                 image=self.util.get_image(
                     in_page=page, base_url=config.get("site_url", __uri__)
                 ),
-                url_full=page.canonical_url,
+                url_full=page_url_full,
             )
         )
 
