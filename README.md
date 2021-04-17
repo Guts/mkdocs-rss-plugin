@@ -14,7 +14,22 @@ A plugin for [MkDocs](https://www.mkdocs.org), the static site generator, which 
 
 ## Usage
 
-Typical `mkdocs.yml`:
+Minimal [`mkdocs.yml` configuration](https://www.mkdocs.org/user-guide/configuration/#project-information):
+
+```yaml
+site_description: required. Used as feed mandatory channel description.
+site_name:	required. Used as feed mandatory channel title and items source URL label.
+site_url: required. Used to build feed items URLs.
+```
+
+Minimal plugin option:
+
+```yaml
+plugins:
+  - rss
+```
+
+Full options:
 
 ```yaml
 plugins:
@@ -29,6 +44,10 @@ plugins:
       length: 20
       pretty_print: false
       match_path: ".*"
+      url_parameters:
+        utm_source: "documentation"
+        utm_medium: "RSS"
+        utm_campaign: "feed-syndication"
 ```
 
 For further information, [see the user documentation](https://guts.github.io/mkdocs-rss-plugin/).
