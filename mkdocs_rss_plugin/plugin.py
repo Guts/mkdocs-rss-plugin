@@ -192,8 +192,6 @@ class GitRssPlugin(BasePlugin):
         else:
             page_url_full = page.canonical_url
 
-        print(page_url_full)
-
         # append to list to be filtered later
         self.pages_to_filter.append(
             PageInformation(
