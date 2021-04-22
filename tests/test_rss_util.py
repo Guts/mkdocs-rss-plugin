@@ -54,9 +54,19 @@ class TestRssUtil(unittest.TestCase):
     # -- TESTS ---------------------------------------------------------
     def test_build_url(self):
         """Test URL builder."""
+        # without URL parameters
         item_url = self.plg_utils.build_url(
             base_url="https://guts.github.io/mkdocs-rss-plugin/", path="changelog"
         )
+        self.assertTrue(checkers.is_url(item_url))
+
+        # with URL parameters
+        item_url = self.plg_utils.build_url(
+            base_url="https://guts.github.io/mkdocs-rss-plugin/",
+            path="changelog",
+            args_dict={"utm_source": "test_rss"},
+        )
+        print(item_url)
         self.assertTrue(checkers.is_url(item_url))
 
     def test_local_image_ok(self):
