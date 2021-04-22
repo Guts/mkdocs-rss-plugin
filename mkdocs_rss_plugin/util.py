@@ -327,7 +327,7 @@ class Util:
         # return final tuple
         return (img_url, mime_type, img_length)
 
-    def get_local_image_length(self, page_path: str, path_to_append: str) -> str:
+    def get_local_image_length(self, page_path: str, path_to_append: str) -> int:
         """Build URL using base URL, cumulating existing and passed path, \
         then adding URL arguments.
 
@@ -337,7 +337,7 @@ class Util:
         :type path: str
 
         :return: complete and valid path
-        :rtype: str
+        :rtype: int
         """
         image_path = Path(page_path).parent / Path(path_to_append)
         if not image_path.is_file():
@@ -366,7 +366,7 @@ class Util:
         :param ssl_context: SSL context, defaults to None
         :type ssl_context: ssl.SSLContext, optional
 
-        :return: image length
+        :return: image length as str or None
         :rtype: int
         """
         # prepare request
@@ -402,9 +402,9 @@ class Util:
                         err,
                     )
                 )
-                img_length = None
+                return None
 
-        return img_length
+        return int(img_length)
 
     @staticmethod
     def get_site_url(mkdocs_config: Config) -> str or None:
