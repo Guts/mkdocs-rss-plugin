@@ -423,7 +423,7 @@ class Util:
 
         # cases
         if defined_site_url is None or not len(defined_site_url):
-            # in cas of mkdocs's behavior change
+            # in case of mkdocs's behavior change
             site_url = None
         else:
             site_url = defined_site_url
