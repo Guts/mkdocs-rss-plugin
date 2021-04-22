@@ -2,8 +2,8 @@ ci-cd:
   - .github/**/*
 
 dependencies:
-  - ./requirements.txt
-  - ./requirements/*.txt
+  - requirements.txt
+  - requirements/**/*.txt
 
 documentation:
   - docs/**/*
