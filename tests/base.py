@@ -12,6 +12,9 @@ import shutil
 import unittest
 from pathlib import Path
 
+# 3rd party
+from click.testing import CliRunner
+
 # MkDocs
 from mkdocs.__main__ import build_command
 from mkdocs.config import load_config
@@ -32,15 +35,17 @@ class BaseTest(unittest.TestCase):
             mkdocs_path (str): path to MkDocs configuration file
 
         Returns:
-            dict: plugin configuration loaded by MkDocs. Empty if specified plugin is not enabled into the mkdocs.yml.
+            dict: plugin configuration loaded by MkDocs. Empty if specified plugin is \
+            not enabled into the mkdocs.yml.
         """
         # instanciate plugin
         cfg_mkdocs = load_config(mkdocs_path)
 
         plugins = cfg_mkdocs.get("plugins")
-        if not "rss" in plugins:
+        if "rss" not in plugins:
             logging.warning(
-                f"Plugin {plugin_name} is not part of enabled plugin in the MkDocs configuration file: {mkdocs_path}"
+                f"Plugin {plugin_name} is not part of enabled plugin in the MkDocs "
+                "configuration file: {mkdocs_path}"
             )
             return {}
         plugin_loaded = plugins.get("rss")
@@ -64,7 +69,8 @@ class BaseTest(unittest.TestCase):
             runner = CliRunner()
             run = runner.invoke(build_command, ["--clean", "--config-file"])
             return run
-        except:
+        except Exception as err:
+            logging.critical(err)
             raise
 
     def setup_clean_mkdocs_folder(
