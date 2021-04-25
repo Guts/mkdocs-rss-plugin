@@ -17,14 +17,19 @@
 import unittest
 from pathlib import Path
 
+from mkdocs.config.base import Config
+
 # plugin target
 from mkdocs_rss_plugin.plugin import GitRssPlugin
+
+# test suite
+from tests.base import BaseTest
 
 
 # #############################################################################
 # ########## Classes ###############
 # ##################################
-class TestConfig(unittest.TestCase):
+class TestConfig(BaseTest):
     """Test plugin configuration."""
 
     # -- Standard methods --------------------------------------------------------
@@ -92,6 +97,10 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(plugin.config, expected)
         self.assertEqual(errors, [])
         self.assertEqual(warnings, [])
+
+    def test_plugin_config_through_mkdocs(self):
+        plg_cfg = self.get_plugin_config_from_mkdocs(Path("mkdocs.yml"), "rss")
+        self.assertIsInstance(plg_cfg, Config)
 
 
 # ##############################################################################
