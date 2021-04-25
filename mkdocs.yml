@@ -1,26 +1,38 @@
 # Project information
 site_name: MkDocs RSS Plugin
 site_description: Documentation about the MkDocs RSS Plugin
-site_author: Julien M. (Guts)
+site_author: dev@ingeoveritas.com (Julien M.)
 site_url: https://guts.github.io/mkdocs-rss-plugin/
 copyright: 'Guts - In Geo Veritas'
 
 # Repository
 repo_name: 'guts/mkdocs-rss-plugin'
 repo_url: 'https://github.com/guts/mkdocs-rss-plugin/'
+edit_uri: 'blob/master/docs/usage/'
 
+docs_dir: 'docs/usage'
 use_directory_urls: true
-
 
 plugins:
   - minify:
       minify_html: true
   - rss:
+      date_from_meta:
+        as_creation: "date"
+        as_update: false
+        datetime_format: "%Y-%m-%d %H:%M"
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+      match_path: ".*"
+      pretty_print: false
+      url_parameters:
+        utm_source: "documentation"
+        utm_medium: "RSS"
+        utm_campaign: "feed-syndication"
   - search
 
 theme:
   name: united
+  language: en
 
 # Extensions to enhance markdown
 markdown_extensions:
@@ -37,4 +49,6 @@ markdown_extensions:
 
 nav:
 - "Home": 'index.md'
-- 'configuration.md'
+- "Settings": 'configuration.md'
+- "Changelog": 'changelog.md'
+- "API Reference": 'https://mkdocs-rss-plugin.readthedocs.io/'

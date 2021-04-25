@@ -1,47 +1,53 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0"
-  xmlns:atom="https://www.w3.org/2005/Atom"
-  xmlns:dc="https://purl.org/dc/elements/1.1/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <!-- Mandatory elements -->
-    <title>{{ feed.title }}</title>
-    <description>{{ feed.description|e }}</description>
-    <link>{{ feed.html_url }}</link>
-    <atom:link href="{{ feed.rss_url }}" rel="self" type="application/rss+xml" />
+    {# Mandatory elements #}
+    {% if feed.title is not none %}<title>{{ feed.title|e }}</title>{% endif %}
+    {% if feed.description is not none %}<description>{{ feed.description|e }}</description>{% endif %}
+    {% if feed.html_url is not none %}<link>{{ feed.html_url }}</link>{% endif %}
+    {% if feed.rss_url is not none %}<atom:link href="{{ feed.rss_url }}" rel="self" type="application/rss+xml" />{% endif %}
 
-    <!-- Optional elements -->
-    {% if feed.author is defined %}<managingEditor>{{ feed.author }}</managingEditor>{% endif %}
-    {% if feed.category is defined %}<category>{{ feed.category }}</category>{% endif %}
-    {% if feed.repo_url is defined %}<docs>{{ feed.repo_url }}</docs>{% endif %}
-    {% if feed.language is defined %}<language>{{ feed.language }}</language>{% endif %}
+    {# Optional elements #}
+    {% if feed.author is not none %}<managingEditor>{{ feed.author }}</managingEditor>{% endif %}
+    {% if feed.category is not none %}<category>{{ feed.category }}</category>{% endif %}
+    {% if feed.repo_url is not none %}<docs>{{ feed.repo_url }}</docs>{% endif %}
+    {% if feed.language is not none %}<language>{{ feed.language }}</language>{% endif %}
 
-    <!-- Timestamps and frequency -->
+    {# Timestamps and frequency #}
     <pubDate>{{ feed.pubDate }}</pubDate>
     <lastBuildDate>{{ feed.buildDate }}</lastBuildDate>
     <ttl>{{ feed.ttl }}</ttl>
 
-    <!-- Credits -->
+    {# Credits #}
     <generator>{{ feed.generator }}</generator>
 
-    <!-- Feed illustration -->
+    {# Feed illustration #}
     {% if feed.logo_url is defined %}
     <image>
       <url>{{ feed.logo_url }}</url>
-      <title>{{ feed.title }} - Illustration</title>
-      <link>{{ feed.html_url }}</link>
+      <title>{{ feed.title }}</title>
+      {% if feed.html_url is not none %}<link>{{ feed.html_url }}</link>{% endif %}
     </image>
     {% endif %}
 
-    <!-- Entries -->
+    {# Entries #}
     {% for item in feed.entries %}
     <item>
-      <title>{{ item.title }}</title>
+      <title>{{ item.title|e }}</title>
+      {# Authors loop #}
+      {% if item.authors is not none %}
+        {% for author in item.authors %}
+      <author>{{ author }}</author>
+        {% endfor %}
+      {% endif %}
       <description>{{ item.description|e }}</description>
-      <link>{{ item.link }}</link>
+      {% if item.link is not none %}<link>{{ item.link|e }}</link>{% endif %}
       <pubDate>{{ item.pubDate }}</pubDate>
-      <source url="{{ feed.rss_url }}">{{ feed.title }}</source>
-      {% if item_guid is defined %}<guid isPermaLink="false">{{ item.guid }}</guid>{% endif %}
-      {% if item.image is defined %}<enclosure url="{{ item.image[0] }}" type="{{ item.image[1] }}" />{% endif %}
+      {% if item.link is not none %}<source url="{{ feed.rss_url }}">{{ feed.title }}</source>{% endif %}
+      {% if item.guid is not none %}<guid isPermaLink="true">{{ item.guid }}</guid>{% endif %}
+      {% if item.image is not none %}
+      <enclosure url="{{ item.image[0] }}" type="{{ item.image[1] }}" length="{{ item.image[2] }}" />
+      {% endif %}
     </item>
     {% endfor %}
   </channel>

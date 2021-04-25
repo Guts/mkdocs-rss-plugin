@@ -5,8 +5,8 @@
 # ##################################
 
 # standard library
-from os import environ, path
 import logging
+from os import environ, path
 
 # 3rd party
 from git import Git
@@ -80,8 +80,8 @@ class CiHandler:
     def commit_count(self) -> bool:
         """Helper function to determine the number of commits in a repository.
 
-        Returns:
-            count (int): Number of commits
+        :return: Number of commits
+        :rtype: bool
         """
         refs = self.repo.for_each_ref().split("\n")
         refs = [x.split()[0] for x in refs]
@@ -92,13 +92,12 @@ class CiHandler:
         return max(counts)
 
     def is_shallow_clone(self) -> bool:
-        """Helper function to determine if repository is a shallow clone.
-
+        """Helper function to determine if repository is a shallow clone. \
         References & Context:
-        https://github.com/timvink/mkdocs-rss-plugin/issues/10
-        https://stackoverflow.com/a/37203240/5525118
+        - https://github.com/timvink/mkdocs-rss-plugin/issues/10
+        - https://stackoverflow.com/a/37203240/5525118
 
-        Returns:
-            bool: If a repo is shallow clone
+        :return: True if a repo is shallow clone
+        :rtype: bool
         """
         return path.exists(".git/shallow")

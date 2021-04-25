@@ -1,0 +1,23 @@
+name: Docker Builder
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - "docs/**"
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - "docs/**"
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Test Docker Build
+        run: |
+          docker build -f tests/fixtures/test-build-material.dockerfile -t mkdocs-plugins/rss .
