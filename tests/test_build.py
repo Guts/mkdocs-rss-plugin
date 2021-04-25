@@ -78,6 +78,9 @@ class TestBuildRss(BaseTest):
             feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
             self.assertEqual(feed_parsed.bozo, 0)
 
+            # some feed characteristics
+            self.assertEqual(feed_parsed.version, "rss20")
+
 
 # ##############################################################################
 # ##### Stand alone program ########
