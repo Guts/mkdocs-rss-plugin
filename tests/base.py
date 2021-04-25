@@ -127,28 +127,28 @@ class BaseTest(unittest.TestCase):
 
         return testproject_path
 
-    def validate_mkdocs_file(self, temp_path: Path, mkdocs_yml_filepath: str):
-        """
-        Creates a clean mkdocs project
-        for a mkdocs YML file, builds and validates it.
+    # def validate_mkdocs_file(self, temp_path: Path, mkdocs_yml_filepath: str):
+    #     """
+    #     Creates a clean mkdocs project
+    #     for a mkdocs YML file, builds and validates it.
 
-        Args:
-            temp_path (PosixPath): Path to temporary folder
-            mkdocs_yml_filepath (PosixPath): Path to mkdocs.yml file
-        """
-        testproject_path = self.setup_clean_mkdocs_folder(
-            mkdocs_yml_filepath=mkdocs_yml_filepath, output_path=temp_path
-        )
-        # setup_commit_history(testproject_path)
-        # result = build_docs_setup(testproject_path)
-        # assert result.exit_code == 0, "'mkdocs build' command failed"
+    #     Args:
+    #         temp_path (PosixPath): Path to temporary folder
+    #         mkdocs_yml_filepath (PosixPath): Path to mkdocs.yml file
+    #     """
+    #     testproject_path = self.setup_clean_mkdocs_folder(
+    #         mkdocs_yml_filepath=mkdocs_yml_filepath, output_path=temp_path
+    #     )
+    #     # setup_commit_history(testproject_path)
+    #     # result = build_docs_setup(testproject_path)
+    #     # assert result.exit_code == 0, "'mkdocs build' command failed"
 
-        # # validate build with locale retrieved from mkdocs config file
-        # validate_build(
-        #     testproject_path, plugin_config=get_plugin_config_from_mkdocs(mkdocs_yml_filepath)
-        # )
+    #     # # validate build with locale retrieved from mkdocs config file
+    #     # validate_build(
+    #     #     testproject_path, plugin_config=get_plugin_config_from_mkdocs(mkdocs_yml_filepath)
+    #     # )
 
-        return testproject_path
+    #     return testproject_path
 
 
 # ##############################################################################
@@ -172,4 +172,4 @@ if __name__ == "__main__":
     )
     print(type(run_result), run_result.exit_code)
     d = feedparser.parse("zoubi/feed_rss_created.xml")
-    print(d)
+    print(d.version)
