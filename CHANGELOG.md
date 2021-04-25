@@ -15,6 +15,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed -->
 
+## 0.15.0
+
+### Added
+
+- ability to define URL parameters on items URLs (see [documentation](https://guts.github.io/mkdocs-rss-plugin/configuration/#url-parameters))
+- complete unit tests and display code coverage badge (using codecov.io)
+
+### Changed
+
+- homogenization of docstrings on the sphinx format (as stipulated in the contribution guidelines)
+
+----
+
 ## 0.14.0
 
 ### Fixed
