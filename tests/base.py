@@ -18,6 +18,7 @@ from click.testing import CliRunner
 # MkDocs
 from mkdocs.__main__ import build_command
 from mkdocs.config import load_config
+from mkdocs.config.base import Config
 
 # #############################################################################
 # ########## Classes ###############
@@ -29,7 +30,7 @@ class BaseTest(unittest.TestCase):
 
     def get_plugin_config_from_mkdocs(
         self, mkdocs_yml_filepath: Path, plugin_name: str
-    ) -> dict:
+    ) -> Config:
         """Load a mkdocs.yml and returns the configuration for the specified plugin.
 
         :param mkdocs_yml_filepath: path to MkDocs configuration file
@@ -39,7 +40,7 @@ class BaseTest(unittest.TestCase):
 
         :return: plugin configuration loaded by MkDocs. Empty if specified plugin is \
         not enabled into the mkdocs.yml.
-        :rtype: dict
+        :rtype: Config
         """
         # instanciate plugin
         cfg_mkdocs = load_config(str(mkdocs_yml_filepath.resolve()))
@@ -156,7 +157,7 @@ class BaseTest(unittest.TestCase):
 if __name__ == "__main__":
     base = BaseTest()
     plg_cfg = base.get_plugin_config_from_mkdocs(Path("mkdocs.yml"), "rss")
-    print(plg_cfg)
+    print(type(plg_cfg))
     # truc = base.setup_clean_mkdocs_folder(
     #     mkdocs_yml_filepath=Path("mkdocs.yml"), output_path=Path("tests/fixtures/")
     # )
