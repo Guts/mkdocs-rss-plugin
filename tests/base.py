@@ -155,6 +155,9 @@ class BaseTest(unittest.TestCase):
 # ##### Stand alone program ########
 # ##################################
 if __name__ == "__main__":
+    """Quick and dirty tests"""
+    import feedparser
+
     base = BaseTest()
     plg_cfg = base.get_plugin_config_from_mkdocs(Path("mkdocs.yml"), "rss")
     print(type(plg_cfg))
@@ -162,9 +165,11 @@ if __name__ == "__main__":
     #     mkdocs_yml_filepath=Path("mkdocs.yml"), output_path=Path("tests/fixtures/")
     # )
     # print(truc)
-    # run_result = base.build_docs_setup(
-    #     testproject_path="docs",
-    #     mkdocs_yml_filepath=Path("mkdocs.yml"),
-    #     output_path=Path("zoubi"),
-    # )
-    # print(type(run_result), run_result.exit_code)
+    run_result = base.build_docs_setup(
+        testproject_path="docs",
+        mkdocs_yml_filepath=Path("mkdocs.yml"),
+        output_path=Path("zoubi"),
+    )
+    print(type(run_result), run_result.exit_code)
+    d = feedparser.parse("zoubi/feed_rss_created.xml")
+    print(d)
