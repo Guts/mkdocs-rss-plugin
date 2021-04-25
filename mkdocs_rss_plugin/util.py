@@ -193,11 +193,11 @@ class Util:
         """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
         str and iterable as values types.
 
-        Args:
-            in_page (Page): page to look at
+        :param in_page: page to look into
+        :type in_page: Page
 
-        Returns:
-            Tuple[str]: tuple of authors names
+        :return: tuple of authors names
+        :rtype: Tuple[str] or None
         """
         # identify the key
         if "author" in in_page.meta:

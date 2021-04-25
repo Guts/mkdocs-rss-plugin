@@ -14,6 +14,8 @@ from typing import NamedTuple
 # ########## Classes ###############
 # ##################################
 class PageInformation(NamedTuple):
+    """Data type to set and get page information in order to produce the RSS feed."""
+
     abs_path: Path = None
     authors: tuple = None
     created: datetime = None

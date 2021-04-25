@@ -41,6 +41,8 @@ logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 
 
 class GitRssPlugin(BasePlugin):
+    """Main class for MkDocs plugin."""
+
     config_scheme = (
         ("abstract_chars_count", config_options.Type(int, default=160)),
         ("category", config_options.Type(str, default=None)),
@@ -54,6 +56,7 @@ class GitRssPlugin(BasePlugin):
     )
 
     def __init__(self):
+        """Instanciation."""
         # tooling
         self.util = Util()
         # dates source
@@ -66,18 +69,18 @@ class GitRssPlugin(BasePlugin):
         self.feed_updated = dict
 
     def on_config(self, config: config_options.Config) -> dict:
-        """
-
-        The config event is the first event called on build and
+        """The config event is the first event called on build and
         is run immediately after the user configuration is loaded and validated.
         Any alterations to the config should be made here.
         https://www.mkdocs.org/user-guide/plugins/#on_config
 
-        Args:
-            config (dict): global configuration object
+        :param config: global configuration object
+        :type config: config_options.Config
 
-        Returns:
-            dict: global configuration object
+        :raises FileExistsError: if the template for the RSS feed is not found
+
+        :return: plugin configuration object
+        :rtype: dict
         """
         # check template dirs
         if not Path(DEFAULT_TEMPLATE_FILENAME).is_file():
@@ -161,14 +164,17 @@ class GitRssPlugin(BasePlugin):
 
         https://www.mkdocs.org/user-guide/plugins/#on_page_markdown
 
-        Args:
-            markdown (str): Markdown source text of page as string
-            page: mkdocs.nav.Page instance
-            config: global configuration object
-            site_navigation: global navigation object
+        :param markdown: Markdown source text of page as strin
+        :type markdown: str
+        :param page: mkdocs.nav.Page instance
+        :type page: Page
+        :param config: global configuration object
+        :type config: config_options.Config
+        :param files: global navigation object
+        :type files: [type]
 
-        Returns:
-            str: Markdown source text of page as string
+        :return: Markdown source text of page as strin
+        :rtype: str
         """
         # skip pages that don't match the config var match_path
         if not self.match_path_pattern.match(page.file.src_path):
@@ -216,11 +222,10 @@ class GitRssPlugin(BasePlugin):
         Use this event to call post-build scripts. \
         See: <https://www.mkdocs.org/user-guide/plugins/#on_post_build>
 
-        Args:
-            config (dict): global configuration object
-
-        Returns:
-            dict: global configuration object
+        :param config: global configuration object
+        :type config: config_options.Config
+        :return: global configuration object
+        :rtype: dict
         """
         # pretty print or not
         pretty_print = self.config.get("pretty_print", False)
