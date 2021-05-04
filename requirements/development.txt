@@ -2,7 +2,7 @@
 
 # Development
 # -----------------------
-black==21.4b0
+black==21.4b2
 feedparser>=6.0,<6.1
 flake8>=3.8,<3.10
 pre-commit>=2.10,<2.13
