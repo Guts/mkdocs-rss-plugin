@@ -26,12 +26,12 @@ jobs:
         fetch-depth: 0
 
     - name: Set up Python
-      uses: actions/setup-python@v2.2.1
+      uses: actions/setup-python@v2.2.2
       with:
         python-version: 3.8
 
     - name: Cache project dependencies (pip)
-      uses: actions/cache@v2.1.4
+      uses: actions/cache@v2.1.5
       with:
         path: ~/.cache/pip          # This path is specific to Ubuntu
         # Look to see if there is a cache hit for the corresponding requirements file

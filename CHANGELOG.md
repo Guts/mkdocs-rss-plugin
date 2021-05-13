@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed -->
 
+## 0.16.0
+
+### Added
+
+- add option to handle the [RSS item comments element](https://www.w3schools.com/XML/rss_tag_comments.asp) through item URL path (see [documentation](https://guts.github.io/mkdocs-rss-plugin/configuration/#item-comments-path))
+
+### Changed
+
+- ignore `urllib.error.URLError` exception to avoid build crashes typically when network is offline
+
+----
+
 ## 0.15.0
 
 ### Added
