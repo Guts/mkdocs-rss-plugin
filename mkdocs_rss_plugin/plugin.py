@@ -46,12 +46,13 @@ class GitRssPlugin(BasePlugin):
     config_scheme = (
         ("abstract_chars_count", config_options.Type(int, default=160)),
         ("category", config_options.Type(str, default=None)),
+        ("comments_path", config_options.Type(str, default=None)),
         ("date_from_meta", config_options.Type(dict, default=None)),
         ("feed_ttl", config_options.Type(int, default=1440)),
         ("image", config_options.Type(str, default=None)),
         ("length", config_options.Type(int, default=20)),
-        ("pretty_print", config_options.Type(bool, default=False)),
         ("match_path", config_options.Type(str, default=".*")),
+        ("pretty_print", config_options.Type(bool, default=False)),
         ("url_parameters", config_options.Type(dict, default=None)),
     )
 
@@ -198,14 +199,22 @@ class GitRssPlugin(BasePlugin):
         else:
             page_url_full = page.canonical_url
 
+        # handle URL comment path
+        if self.config.get("comments_path"):
+            print("YIPIYO", self.config.get("comments_path"))
+            page_url_comments = self.util.build_url(
+                base_url=page.canonical_url,
+                path=self.config.get("comments_path"),
+            )
+        else:
+            page_url_comments = None
+
         # append to list to be filtered later
         self.pages_to_filter.append(
             PageInformation(
                 abs_path=Path(page.file.abs_src_path),
                 authors=self.util.get_authors_from_meta(in_page=page),
                 created=page_dates[0],
-                updated=page_dates[1],
-                title=page.title,
                 description=self.util.get_description_or_abstract(
                     in_page=page, chars_count=self.config.get("abstract_chars_count")
                 ),
@@ -213,6 +222,9 @@ class GitRssPlugin(BasePlugin):
                 image=self.util.get_image(
                     in_page=page, base_url=config.get("site_url", __uri__)
                 ),
+                title=page.title,
+                updated=page_dates[1],
+                url_comments=page_url_comments,
                 url_full=page_url_full,
             )
         )
