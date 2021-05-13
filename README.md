@@ -36,6 +36,7 @@ Full options:
 plugins:
   - rss:
       abstract_chars_count: 160
+      comments_path: "#__comments"
       date_from_meta:
         as_creation: "date"
         as_update: false
