@@ -201,7 +201,6 @@ class GitRssPlugin(BasePlugin):
 
         # handle URL comment path
         if self.config.get("comments_path"):
-            print("YIPIYO", self.config.get("comments_path"))
             page_url_comments = self.util.build_url(
                 base_url=page.canonical_url,
                 path=self.config.get("comments_path"),
