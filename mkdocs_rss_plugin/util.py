@@ -477,6 +477,7 @@ class Util:
             filtered_pages.append(
                 {
                     "authors": page.authors,
+                    "comments_url": page.url_comments,
                     "description": page.description,
                     "guid": page.guid,
                     "image": page.image,

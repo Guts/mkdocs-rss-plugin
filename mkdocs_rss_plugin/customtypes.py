@@ -24,4 +24,5 @@ class PageInformation(NamedTuple):
     image: str = None
     title: str = None
     updated: datetime = None
+    url_comments: str = None
     url_full: str = None

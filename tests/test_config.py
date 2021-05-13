@@ -58,6 +58,7 @@ class TestConfig(BaseTest):
         expected = {
             "abstract_chars_count": 160,
             "category": None,
+            "comments_path": None,
             "date_from_meta": None,
             "feed_ttl": 1440,
             "image": None,
@@ -79,6 +80,7 @@ class TestConfig(BaseTest):
         expected = {
             "abstract_chars_count": 160,
             "category": None,
+            "comments_path": None,
             "date_from_meta": None,
             "feed_ttl": 1440,
             "image": self.feed_image,
