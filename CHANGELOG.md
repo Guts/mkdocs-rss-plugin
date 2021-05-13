@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed -->
 
+## 0.16.1
+
+### Fixed
+
+- remove a print statement
+
+----
+
 ## 0.16.0
 
 ### Added
