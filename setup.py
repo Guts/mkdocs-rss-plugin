@@ -53,7 +53,7 @@ setup(
     install_requires=[
         "GitPython==3.1.*",
         "Jinja2>=2,<3",
-        "mkdocs>=1.1,<1.2",
+        "mkdocs>=1.1,<1.3",
     ],
     # metadata
     keywords="mkdocs rss git plugin",
