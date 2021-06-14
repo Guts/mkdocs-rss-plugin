@@ -6,6 +6,7 @@
 **/.github
 **/.gitignore
 **/.project
+**/.pytest_cache
 **/.settings
 **/.toolstarget
 **/.venv
@@ -17,11 +18,14 @@
 **/azds.yaml
 **/bin
 **/charts
+**/htmlcov
 **/docker-compose*
 **/Dockerfile*
+**/junit
 **/node_modules
 **/npm-debug.log
 **/obj
 **/secrets.dev.yaml
+**/site
+# **/tests
 **/values.dev.yaml
-README.md

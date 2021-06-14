@@ -13,7 +13,7 @@ from mimetypes import guess_type
 from pathlib import Path
 from typing import Tuple
 from urllib import request
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
@@ -380,7 +380,7 @@ class Util:
             attempt += 1
             remote_img = request.urlopen(url=req, context=ssl_context)
             img_length = remote_img.getheader("content-length")
-        except HTTPError as err:
+        except (HTTPError, URLError) as err:
             logging.warning(
                 "[rss-plugin] Remote image could not been reached: {}. "
                 "Trying again with GET and disabling SSL verification. Attempt: {}. "
@@ -477,6 +477,7 @@ class Util:
             filtered_pages.append(
                 {
                     "authors": page.authors,
+                    "comments_url": page.url_comments,
                     "description": page.description,
                     "guid": page.guid,
                     "image": page.image,

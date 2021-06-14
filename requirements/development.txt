@@ -2,9 +2,9 @@
 
 # Development
 # -----------------------
-black==21.4b2
+black==21.6b0
 feedparser>=6.0,<6.1
 flake8>=3.8,<3.10
-pre-commit>=2.10,<2.13
-pytest-cov==2.11.*
+pre-commit>=2.10,<2.14
+pytest-cov==2.12.*
 validator-collection>=1.5,<1.6

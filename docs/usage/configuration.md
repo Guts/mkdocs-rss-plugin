@@ -74,6 +74,24 @@ Output:
 </image>
 ```
 
+### Item comments path
+
+`comments_path`: path to add to each item URL pointing.
+
+Default: `None`.
+
+For example, if you're using Material for Mkdocs with comment integration (Disqus or Isso), the comment block is under the div id `__comments`, so you can set: `comments_path: "#__comments"` and the output will be:
+
+```xml
+<item>
+  <title>This page title is a perfect clickbait!</title>
+  <link>https://website.com/articles/best_article/</link>
+  <comments>https://website.com/articles/best_article/#__comments</comments>
+  [...]
+
+</item>
+```
+
 ### Feed length
 
 `length`: number of pages to include as feed items (entries).

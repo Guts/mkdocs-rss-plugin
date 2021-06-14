@@ -1,11 +1,11 @@
 # This is a basic workflow to help you get started with Actions
-name: Deploy to Github Pages
+name: "📚 Documentation"
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - "docs/**"
       - "*.md"
@@ -31,7 +31,7 @@ jobs:
         python-version: 3.8
 
     - name: Cache project dependencies (pip)
-      uses: actions/cache@v2.1.5
+      uses: actions/cache@v2.1.6
       with:
         path: ~/.cache/pip          # This path is specific to Ubuntu
         # Look to see if there is a cache hit for the corresponding requirements file

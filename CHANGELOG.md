@@ -15,6 +15,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed -->
 
+## 0.17.0 - - 2021-06-14
+
+### Changed
+
+- bump MkDocs maximal version
+
+### Fixed
+
+- improve DockerFile used to test, fixing it after Material removed some dependencies
+
+----
+
+## 0.16.1
+
+### Fixed
+
+- remove a print statement
+
+----
+
+## 0.16.0
+
+### Added
+
+- add option to handle the [RSS item comments element](https://www.w3schools.com/XML/rss_tag_comments.asp) through item URL path (see [documentation](https://guts.github.io/mkdocs-rss-plugin/configuration/#item-comments-path))
+
+### Changed
+
+- ignore `urllib.error.URLError` exception to avoid build crashes typically when network is offline
+
+----
+
 ## 0.15.0
 
 ### Added
