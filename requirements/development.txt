@@ -5,6 +5,6 @@
 black==21.7b0
 feedparser>=6.0,<6.1
 flake8>=3.8,<3.10
-pre-commit>=2.10,<2.14
+pre-commit>=2.10,<2.15
 pytest-cov==2.12.*
 validator-collection>=1.5,<1.6
