@@ -276,7 +276,7 @@ class Util:
         if description and chars_count != None:
             return description
         elif in_page.content:
-            if len(in_page.content) < chars_count or chars_count == None:
+            if chars_count == None or len(in_page.content) < chars_count:
                 return markdown.markdown(
                     in_page.content[:chars_count], output_format="html5"
                 )
@@ -286,7 +286,7 @@ class Util:
                     output_format="html5",
                 )
         elif in_page.markdown:
-            if len(in_page.markdown) < chars_count or chars_count == None:
+            if chars_count == None or len(in_page.markdown) < chars_count:
                 return markdown.markdown(
                     in_page.markdown[:chars_count], output_format="html5"
                 )
