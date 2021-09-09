@@ -155,18 +155,17 @@ class GitRssPlugin(BasePlugin):
         # ending event
         return config
 
-    def on_page_markdown(
-        self, markdown: str, page: Page, config: config_options.Config, files
+    def on_page_content(
+        self, html: str, page: Page, config: config_options.Config, files
     ) -> str:
-        """The page_markdown event is called after the page's markdown is loaded
-        from file and can be used to alter the Markdown source text.
-        The meta- data has been stripped off and is available as page.meta
-        at this point.
+        """The page_content event is called after the Markdown text is rendered
+        to HTML (but before being passed to a template) and can be used to alter
+        the HTML body of the page.
 
-        https://www.mkdocs.org/user-guide/plugins/#on_page_markdown
+        https://www.mkdocs.org/user-guide/plugins/#on_page_content
 
-        :param markdown: Markdown source text of page as strin
-        :type markdown: str
+        :param html: HTML rendered from Markdown source as string
+        :type html: str
         :param page: mkdocs.nav.Page instance
         :type page: Page
         :param config: global configuration object
@@ -174,7 +173,7 @@ class GitRssPlugin(BasePlugin):
         :param files: global navigation object
         :type files: [type]
 
-        :return: Markdown source text of page as strin
+        :return: HTML rendered from Markdown source as string
         :rtype: str
         """
         # skip pages that don't match the config var match_path

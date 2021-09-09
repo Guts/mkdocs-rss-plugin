@@ -277,16 +277,11 @@ class Util:
         # return the description.
         if description and chars_count != None:
             return description
-        elif in_page.content:
+        # If chars count is unlimited, use the html content
+        elif in_page.content and chars_count == None:
             if chars_count == None or len(in_page.content) < chars_count:
-                return markdown.markdown(
-                    in_page.content[:chars_count], output_format="html5"
-                )
-            else:
-                return markdown.markdown(
-                    "{}...".format(in_page.content[: chars_count - 3]),
-                    output_format="html5",
-                )
+                return in_page.content[:chars_count]
+        # Use markdown
         elif in_page.markdown:
             if chars_count == None or len(in_page.markdown) < chars_count:
                 return markdown.markdown(
