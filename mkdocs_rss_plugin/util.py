@@ -269,10 +269,14 @@ class Util:
         :return: page description to use
         :rtype: str
         """
-        if in_page.meta.get("description") and chars_count:
-            return in_page.meta.get("description")
+        description = in_page.meta.get("description")
+
+        # If the abstract chars is not unlimited and the description exists, 
+        # return the description.
+        if description and chars_count != None:
+            return description
         elif in_page.content:
-            if len(in_page.content) < chars_count or not chars_count:
+            if len(in_page.content) < chars_count or chars_count == None:
                 return markdown.markdown(
                     in_page.content[:chars_count], output_format="html5"
                 )
@@ -282,7 +286,7 @@ class Util:
                     output_format="html5",
                 )
         elif in_page.markdown:
-            if len(in_page.markdown) < chars_count or not chars_count:
+            if len(in_page.markdown) < chars_count or chars_count == None:
                 return markdown.markdown(
                     in_page.markdown[:chars_count], output_format="html5"
                 )
@@ -291,8 +295,9 @@ class Util:
                     "{}...".format(in_page.markdown[: chars_count - 3]),
                     output_format="html5",
                 )
+        # Unlimited chars_count but no content is found, then return the description.
         else:
-            return ""
+            return description if description else ""
 
     def get_image(self, in_page: Page, base_url: str) -> tuple:
         """Get image from page meta and returns properties.
