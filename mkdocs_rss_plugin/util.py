@@ -258,21 +258,21 @@ class Util:
 
         return out_date.timestamp()
 
-    def get_description_or_abstract(self, in_page: Page, chars_count: int = 150) -> str:
+    def get_description_or_abstract(self, in_page: Page, chars_count: int = None) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
         {chars_count} first characters from page content (in markdown).
 
         :param Page in_page: page to look at
         :param int chars_count: if page.meta.description is not set, number of chars \
-        of the content to use. Defaults to: 150 - optional
+        of the content to use. Defaults to: None (unlimited) - optional
 
         :return: page description to use
         :rtype: str
         """
-        if in_page.meta.get("description"):
+        if in_page.meta.get("description") and chars_count:
             return in_page.meta.get("description")
         elif in_page.content:
-            if len(in_page.content) < chars_count:
+            if len(in_page.content) < chars_count or not chars_count:
                 return markdown.markdown(
                     in_page.content[:chars_count], output_format="html5"
                 )
@@ -282,7 +282,7 @@ class Util:
                     output_format="html5",
                 )
         elif in_page.markdown:
-            if len(in_page.markdown) < chars_count:
+            if len(in_page.markdown) < chars_count or not chars_count:
                 return markdown.markdown(
                     in_page.markdown[:chars_count], output_format="html5"
                 )
