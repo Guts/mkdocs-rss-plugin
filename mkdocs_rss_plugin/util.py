@@ -258,9 +258,7 @@ class Util:
 
         return out_date.timestamp()
 
-    def get_description_or_abstract(
-        self, in_page: Page, chars_count: int = 160
-    ) -> str:
+    def get_description_or_abstract(self, in_page: Page, chars_count: int = 160) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
         {chars_count} first characters from page content (in markdown).
 
