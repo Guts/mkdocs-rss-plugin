@@ -45,6 +45,10 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -U -r requirements.txt
           python -m pip install -U -r requirements/documentation.txt
+          python -m pip install --upgrade ghp-import
+
+      - name: Build static website
+        run: mkdocs build --verbose
 
       - name: Deploy to Github Pages
-        run: mkdocs gh-deploy --clean --force --verbose
+        run: ghp-import --force --no-jekyll --no-history --push site
