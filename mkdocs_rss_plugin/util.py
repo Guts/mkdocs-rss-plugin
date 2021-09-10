@@ -259,7 +259,7 @@ class Util:
         return out_date.timestamp()
 
     def get_description_or_abstract(
-        self, in_page: Page, chars_count: int = None
+        self, in_page: Page, chars_count: int = 160
     ) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
         {chars_count} first characters from page content (in markdown).
@@ -272,6 +272,10 @@ class Util:
         :rtype: str
         """
         description = in_page.meta.get("description")
+
+        # Set chars_count to None if it is set to be unlimited, for slicing.
+        if chars_count < 0:
+            chars_count = None
 
         # If the abstract chars is not unlimited and the description exists,
         # return the description.

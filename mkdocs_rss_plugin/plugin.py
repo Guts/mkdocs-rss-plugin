@@ -44,7 +44,7 @@ class GitRssPlugin(BasePlugin):
     """Main class for MkDocs plugin."""
 
     config_scheme = (
-        ("abstract_chars_count", config_options.Type(int, default=None)),
+        ("abstract_chars_count", config_options.Type(int, default=160)),
         ("category", config_options.Type(str, default=None)),
         ("comments_path", config_options.Type(str, default=None)),
         ("date_from_meta", config_options.Type(dict, default=None)),
