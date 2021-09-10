@@ -51,4 +51,7 @@ jobs:
         run: mkdocs build --verbose
 
       - name: Deploy to Github Pages
-        run: ghp-import --force --no-jekyll --no-history --push site
+        run: |
+          git config --global user.name "Guts"
+          git config --global user.email "1596222+Guts@users.noreply.github.com"
+          ghp-import --force --no-jekyll --no-history --push site
