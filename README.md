@@ -35,7 +35,7 @@ Full options:
 ```yaml
 plugins:
   - rss:
-      abstract_chars_count: 160
+      abstract_chars_count: 160  # -1 for full content
       comments_path: "#__comments"
       date_from_meta:
         as_creation: "date"
