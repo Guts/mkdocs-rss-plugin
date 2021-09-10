@@ -3,32 +3,41 @@
 exclude: "node_modules|migrations|.venv|tests/dev/|tests/fixtures/"
 fail_fast: false
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.0.1
-  hooks:
-  - id: check-added-large-files
-    args: ['--maxkb=500']
-  - id: check-toml
-  - id: check-yaml
-  - id: detect-private-key
-  - id: end-of-file-fixer
-  - id: fix-encoding-pragma
-    args: [--remove]
-  - id: trailing-whitespace
-    args: [--markdown-linebreak-ext=md]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+      - id: check-toml
+      - id: check-yaml
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: fix-encoding-pragma
+        args: [--remove]
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
 
-- repo: https://github.com/pycqa/isort
-  rev: 5.9.3
-  hooks:
-    - id: isort
-      args: ["--profile", "black", "--filter-files"]
+  - repo: https://github.com/pycqa/isort
+    rev: 5.9.3
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--filter-files"]
 
-- repo: https://github.com/psf/black
-  rev: 21.7b0
-  hooks:
-  - id: black
-    exclude_types: [directory,]
-    language_version: python3
-    log_file: ./dev_precommit_black.log
-    require_serial: true
-    types: [file, python]
+  - repo: https://github.com/psf/black
+    rev: 21.8b0
+    hooks:
+      - id: black
+        exclude_types: [directory]
+        language_version: python3
+        log_file: ./dev_precommit_black.log
+        require_serial: true
+        types: [file, python]
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
+      - id: flake8
+        language: python
+        files: ^mkdocs_rss_plugin/.*\.py$
+        types: [python]
+        args: ["--config=setup.cfg", "--select=E9,F63,F7,F82"]

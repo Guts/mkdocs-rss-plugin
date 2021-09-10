@@ -51,8 +51,7 @@ setup(
         "test": ["pytest", "pytest-cov"],
     },
     install_requires=[
-        "GitPython==3.1.*",
-        "Jinja2>=2,<3",
+        "GitPython>=3.1,<3.2",
         "mkdocs>=1.1,<1.3",
     ],
     # metadata
