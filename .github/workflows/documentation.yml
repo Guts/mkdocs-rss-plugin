@@ -26,12 +26,12 @@ jobs:
         fetch-depth: 0
 
     - name: Set up Python
-      uses: actions/setup-python@v2.2.2
+      uses: actions/setup-python@v2
       with:
         python-version: 3.8
 
     - name: Cache project dependencies (pip)
-      uses: actions/cache@v2.1.6
+      uses: actions/cache@v2
       with:
         path: ~/.cache/pip          # This path is specific to Ubuntu
         # Look to see if there is a cache hit for the corresponding requirements file
@@ -45,7 +45,6 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install -U -r requirements.txt
         python -m pip install -U -r requirements/documentation.txt
-        python -m pip install -e .
 
     - name: Deploy to Github Pages
       run: mkdocs gh-deploy --clean --force --verbose

@@ -57,4 +57,23 @@ For further information, [see the user documentation](https://guts.github.io/mkd
 
 ## Development
 
-For further information, [see the technical documentation](https://mkdocs-rss-plugin.readthedocs.io/).
+Clone the repository:
+
+```bash
+# install project as editable
+python -m pip install -U -r requirements.txt
+
+# install development dependencies
+python -m pip install -U -r requirements/development.txt
+
+# install git hooks
+pre-commit install
+
+# run tests
+pytest
+
+# install dependencies for documentation
+python -m pip install -U -r requirements/documentation.txt
+```
+
+Then follow the [contribution guidelines](CONTRIBUTING.md).
