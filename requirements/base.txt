@@ -1,5 +1,5 @@
 # Common requirements
 # -----------------------
 
-setuptools<58
+setuptools<59
 wheel
