@@ -3,14 +3,14 @@ site_name: MkDocs RSS Plugin
 site_description: Documentation about the MkDocs RSS Plugin
 site_author: dev@ingeoveritas.com (Julien M.)
 site_url: https://guts.github.io/mkdocs-rss-plugin/
-copyright: 'Guts - In Geo Veritas'
+copyright: "Guts - In Geo Veritas"
 
 # Repository
-repo_name: 'guts/mkdocs-rss-plugin'
-repo_url: 'https://github.com/guts/mkdocs-rss-plugin/'
-edit_uri: 'blob/master/docs/usage/'
+repo_name: "guts/mkdocs-rss-plugin"
+repo_url: "https://github.com/guts/mkdocs-rss-plugin/"
+edit_uri: "blob/master/docs/"
 
-docs_dir: 'docs/usage'
+docs_dir: "docs/"
 use_directory_urls: true
 
 plugins:
@@ -41,14 +41,12 @@ markdown_extensions:
   - meta
   - pymdownx.emoji
   - pymdownx.snippets:
-      base_path: '.'
+      base_path: "."
       check_paths: true
   - toc:
-      permalink: '#'
-
+      permalink: "#"
 
 nav:
-- "Home": 'index.md'
-- "Settings": 'configuration.md'
-- "Changelog": 'changelog.md'
-- "API Reference": 'https://mkdocs-rss-plugin.readthedocs.io/'
+  - "Home": "index.md"
+  - "Settings": "configuration.md"
+  - "Changelog": "changelog.md"
