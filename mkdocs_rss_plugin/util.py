@@ -264,7 +264,7 @@ class Util:
 
         :param Page in_page: page to look at
         :param int chars_count: if page.meta.description is not set, number of chars \
-        of the content to use. Defaults to: None (unlimited) - optional
+        of the content to use. Defaults to: 160 - optional
 
         :return: page description to use
         :rtype: str
