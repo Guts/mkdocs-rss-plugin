@@ -258,31 +258,34 @@ class Util:
 
         return out_date.timestamp()
 
-    def get_description_or_abstract(self, in_page: Page, chars_count: int = 150) -> str:
+    def get_description_or_abstract(self, in_page: Page, chars_count: int = 160) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
         {chars_count} first characters from page content (in markdown).
 
         :param Page in_page: page to look at
         :param int chars_count: if page.meta.description is not set, number of chars \
-        of the content to use. Defaults to: 150 - optional
+        of the content to use. Defaults to: 160 - optional
 
         :return: page description to use
         :rtype: str
         """
-        if in_page.meta.get("description"):
-            return in_page.meta.get("description")
-        elif in_page.content:
-            if len(in_page.content) < chars_count:
-                return markdown.markdown(
-                    in_page.content[:chars_count], output_format="html5"
-                )
-            else:
-                return markdown.markdown(
-                    "{}...".format(in_page.content[: chars_count - 3]),
-                    output_format="html5",
-                )
+        description = in_page.meta.get("description")
+
+        # Set chars_count to None if it is set to be unlimited, for slicing.
+        if chars_count < 0:
+            chars_count = None
+
+        # If the abstract chars is not unlimited and the description exists,
+        # return the description.
+        if description and chars_count != None:
+            return description
+        # If chars count is unlimited, use the html content
+        elif in_page.content and chars_count == None:
+            if chars_count == None or len(in_page.content) < chars_count:
+                return in_page.content[:chars_count]
+        # Use markdown
         elif in_page.markdown:
-            if len(in_page.markdown) < chars_count:
+            if chars_count == None or len(in_page.markdown) < chars_count:
                 return markdown.markdown(
                     in_page.markdown[:chars_count], output_format="html5"
                 )
@@ -291,8 +294,9 @@ class Util:
                     "{}...".format(in_page.markdown[: chars_count - 3]),
                     output_format="html5",
                 )
+        # Unlimited chars_count but no content is found, then return the description.
         else:
-            return ""
+            return description if description else ""
 
     def get_image(self, in_page: Page, base_url: str) -> tuple:
         """Get image from page meta and returns properties.
