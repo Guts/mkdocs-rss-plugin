@@ -15,6 +15,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed -->
 
+## 0.18.0 - 2021-09-20
+
+### Added
+
+- option to get the full page content into thed. Contributed by [liang2kl](https://github.com/liang2kl) with [PR 88](https://github.com/Guts/mkdocs-rss-plugin/pull/88). See the [related documentation section](https://guts.github.io/mkdocs-rss-plugin/configuration/#item-description-length).
+
+### Changed
+
+- documentation on ReadTheDocs has been removed to reduce confusion and dependencies. [PR #89](https://github.com/Guts/mkdocs-rss-plugin/pull/89).
+
+----
+
+## 0.17.0 - 2021-06-14
+
+### Changed
+
+- bump MkDocs maximal version
+
+### Fixed
+
+- improve DockerFile used to test, fixing it after Material removed some dependencies
+
+----
+
 ## 0.16.1
 
 ### Fixed

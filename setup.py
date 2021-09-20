@@ -51,9 +51,8 @@ setup(
         "test": ["pytest", "pytest-cov"],
     },
     install_requires=[
-        "GitPython==3.1.*",
-        "Jinja2>=2,<3",
-        "mkdocs>=1.1,<1.2",
+        "GitPython>=3.1,<3.2",
+        "mkdocs>=1.1,<1.3",
     ],
     # metadata
     keywords="mkdocs rss git plugin",
