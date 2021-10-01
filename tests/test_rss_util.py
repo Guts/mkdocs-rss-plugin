@@ -72,14 +72,14 @@ class TestRssUtil(unittest.TestCase):
     def test_local_image_ok(self):
         """Test local image length calculation."""
         img_length = self.plg_utils.get_local_image_length(
-            page_path="docs/usage/index.md", path_to_append="rss_icon.svg"
+            page_path="docs/index.md", path_to_append="rss_icon.svg"
         )
         self.assertIsInstance(img_length, int)
 
     def test_local_image_none(self):
         """Test local image length calculation on non-existing image."""
         img_length = self.plg_utils.get_local_image_length(
-            page_path="docs/usage/index.md", path_to_append="inexisting_image.svg"
+            page_path="docs/index.md", path_to_append="inexisting_image.svg"
         )
         self.assertIsNone(img_length)
 

@@ -1,9 +1,15 @@
 # Reference: https://squidfunk.github.io/mkdocs-material/getting-started/#with-docker
 FROM squidfunk/mkdocs-material
 
-RUN pip install --no-cache-dir \
-        'mkdocs-awesome-pages-plugin>=2.2.1' \
-        'mkdocs-git-revision-date-localized-plugin>=0.4' \
-        'mkdocs-minify-plugin>=0.3' \
-        'mkdocs-redirects>=1.0' \
-        'mkdocs-rss-plugin>=0.6.1'
+COPY . .
+
+RUN ls -a -r
+
+RUN \
+    apk upgrade --update-cache -a \
+    && apk add --no-cache --virtual .build gcc musl-dev
+
+RUN python3 -m pip install --no-cache-dir .
+
+RUN apk del .build \
+    && rm -rf /tmp/* /root/.cache

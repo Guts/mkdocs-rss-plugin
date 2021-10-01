@@ -1,2 +1,4 @@
 -i https://pypi.org/simple
 -r requirements/base.txt
+
+-e "."
