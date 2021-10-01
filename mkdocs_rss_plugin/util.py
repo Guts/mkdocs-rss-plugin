@@ -11,7 +11,7 @@ from datetime import date, datetime
 from email.utils import formatdate
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Tuple
+from typing import Iterable, Tuple
 from urllib import request
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse, urlunparse
@@ -189,20 +189,6 @@ class Util:
                 get_build_timestamp(),
             )
 
-    def get_category(self, in_page: Page) -> str:
-        """Returns category from page meta.
-
-        :param Page in_page: input page to parse
-
-        :return: page category to use
-        :rtype: str
-        """
-        cat_possible_values = ("category", "Category", "categories", "Categories")
-        if in_page.meta.get("category"):
-            return in_page.meta.get("category")
-        else:
-            return ""
-
     def get_authors_from_meta(self, in_page: Page) -> Tuple[str] or None:
         """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
         str and iterable as values types.
@@ -240,6 +226,36 @@ class Util:
                     type(in_page.meta.get("authors")),
                 )
                 return None
+
+    def get_categories_from_meta(
+        self, in_page: Page, categories_labels: Iterable
+    ) -> tuple:
+        """Returns category from page meta.
+
+        :param in_page: input page to parse
+        :type in_page: Page
+        :param categories_labels: meta tags to look into
+        :type categories_labels: Iterable
+
+        :return: found categories
+        :rtype: tuple
+        """
+        output_categories = []
+        for category_label in categories_labels:
+            print(category_label)
+            if category_label in in_page.meta:
+                print("got it")
+                if isinstance(in_page.meta.get(category_label), (list, tuple)):
+                    print("yop")
+                    output_categories.extend(in_page.meta.get(category_label))
+                elif isinstance(in_page.meta.get(category_label), str):
+                    output_categories.append(in_page.meta.get(category_label))
+                else:
+                    pass
+            else:
+                continue
+        print(in_page.title, output_categories)
+        return sorted(output_categories)
 
     def get_date_from_meta(
         self, date_metatag_value: str, meta_datetime_format: str
@@ -495,6 +511,7 @@ class Util:
             filtered_pages.append(
                 {
                     "authors": page.authors,
+                    "categories": page.categories,
                     "comments_url": page.url_comments,
                     "description": page.description,
                     "guid": page.guid,
