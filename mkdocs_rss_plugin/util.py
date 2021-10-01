@@ -242,11 +242,8 @@ class Util:
         """
         output_categories = []
         for category_label in categories_labels:
-            print(category_label)
             if category_label in in_page.meta:
-                print("got it")
                 if isinstance(in_page.meta.get(category_label), (list, tuple)):
-                    print("yop")
                     output_categories.extend(in_page.meta.get(category_label))
                 elif isinstance(in_page.meta.get(category_label), str):
                     output_categories.append(in_page.meta.get(category_label))
@@ -254,7 +251,6 @@ class Util:
                     pass
             else:
                 continue
-        print(in_page.title, output_categories)
         return sorted(output_categories)
 
     def get_date_from_meta(
@@ -522,5 +518,4 @@ class Util:
                 }
             )
 
-        # print(len(filtered_pages))
         return filtered_pages
