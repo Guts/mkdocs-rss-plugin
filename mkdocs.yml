@@ -17,6 +17,8 @@ plugins:
   - minify:
       minify_html: true
   - rss:
+      categories:
+        - tags
       date_from_meta:
         as_creation: "date"
         as_update: false
