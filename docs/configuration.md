@@ -4,6 +4,10 @@ author: "Julien Moura"
 date: 2020-12-31 14:20
 description: Configuration steps and settings for MkDocs RSS plugin
 image: "https://svgsilh.com/png-512/97849.png"
+tags:
+  - settings
+  - options
+  - plugin
 ---
 
 # Configuration
