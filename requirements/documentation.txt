@@ -3,4 +3,4 @@
 mkdocs-bootswatch>=1,<2
 mkdocs-minify-plugin==0.4.*
 pygments>=2.5,<3
-pymdown-extensions>=7,<9
+pymdown-extensions>=7,<10
