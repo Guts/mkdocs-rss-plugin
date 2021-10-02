@@ -4,6 +4,10 @@ author: "Julien Moura"
 date: 2020-12-31 14:20
 description: Configuration steps and settings for MkDocs RSS plugin
 image: "https://svgsilh.com/png-512/97849.png"
+tags:
+  - settings
+  - options
+  - plugin
 ---
 
 # Configuration
@@ -49,6 +53,7 @@ Basically, each page is an item element in the RSS feed.
 | creation or last update datetime according git log. Can be overridden by dates in page.meta. If not, then it uses [MkDcos build date](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/utils/__init__.py#L111-L118) | **recomended** | [`pubDate`](https://www.w3schools.com/xml/rss_tag_pubdate_item.asp) |
 | [`page.meta.image`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) | *optional* | item element [`enclosure`](https://www.w3schools.com/xml/rss_tag_enclosure.asp). Some HTTP requests can be performed to retrieve remote images length. |
 | [`page.meta.authors`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) or `page.meta.author`. Accepted value types: `str` `list`, `tuple`. <br />To comply with the standard, the page writer is responsible to fill this field following this syntax: `john@doe.com (John Doe)` ([read this SO](https://stackoverflow.com/a/6079731/2556577)). | *optional* | [`author`](https://www.w3schools.com/XML/rss_tag_author.asp) |
+| [`page.meta.tags`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) or any tags value (for example `page.meta.categories`...). Accepted value types: `str` `list`. | *optional* | [`category`](https://www.w3schools.com/xml/rss_tag_category_item.asp) |
 
 ----
 
@@ -121,6 +126,70 @@ To fill each [item description element](https://www.w3schools.com/xml/rss_tag_ti
 `abstract_chars_count`: number of characters to use as item description.
 
 Default: `150`
+
+----
+
+### Item categories
+
+`categories`: list of page metadata values to use as [RSS item categories](https://www.w3schools.com/xml/rss_tag_category_item.asp).
+
+Default: `None`.
+
+#### Example
+
+In configuration:
+
+```yaml
+- rss:
+    categories:
+      - tags        # will look into page.meta.tags
+      - categories  # will also look into page.meta.categories
+```
+
+In page 1:
+
+```markdown
+---
+title: "Lorem Ipsum 1"
+tags:
+  - tag x
+  - tag Y
+---
+
+[...]
+```
+
+In page 2
+
+```markdown
+---
+title: "Page 2"
+categories: ["Release notes", "test"]
+---
+
+[...]
+```
+
+Output:
+
+```xml
+  [...]
+  <item>
+    <title>Lorem Ipsum 1</title>
+    <category>tag x</category>
+    <category>tag Y</category>
+    [...]
+  </item>
+  <item>
+    <title>Page 2</title>
+    <category>Release notes</category>
+    <category>test</category>
+    [...]
+  </item>
+  [...]
+```
+
+----
 
 ### Dates overriding
 

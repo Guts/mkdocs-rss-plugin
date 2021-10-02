@@ -45,7 +45,7 @@ class GitRssPlugin(BasePlugin):
 
     config_scheme = (
         ("abstract_chars_count", config_options.Type(int, default=160)),
-        ("category", config_options.Type(str, default=None)),
+        ("categories", config_options.Type(list, default=None)),
         ("comments_path", config_options.Type(str, default=None)),
         ("date_from_meta", config_options.Type(dict, default=None)),
         ("feed_ttl", config_options.Type(int, default=1440)),
@@ -93,7 +93,6 @@ class GitRssPlugin(BasePlugin):
         base_feed = {
             "author": config.get("site_author", None),
             "buildDate": formatdate(get_build_timestamp()),
-            "category": self.config.get("category", None),
             "copyright": config.get("copyright", None),
             "description": config.get("site_description", None),
             "entries": [],
@@ -212,6 +211,9 @@ class GitRssPlugin(BasePlugin):
             PageInformation(
                 abs_path=Path(page.file.abs_src_path),
                 authors=self.util.get_authors_from_meta(in_page=page),
+                categories=self.util.get_categories_from_meta(
+                    in_page=page, categories_labels=self.config.get("categories")
+                ),
                 created=page_dates[0],
                 description=self.util.get_description_or_abstract(
                     in_page=page, chars_count=self.config.get("abstract_chars_count")

@@ -9,7 +9,6 @@
 
     {# Optional elements #}
     {% if feed.author is not none %}<managingEditor>{{ feed.author }}</managingEditor>{% endif %}
-    {% if feed.category is not none %}<category>{{ feed.category }}</category>{% endif %}
     {% if feed.repo_url is not none %}<docs>{{ feed.repo_url }}</docs>{% endif %}
     {% if feed.language is not none %}<language>{{ feed.language }}</language>{% endif %}
 
@@ -38,6 +37,12 @@
       {% if item.authors is not none %}
         {% for author in item.authors %}
       <author>{{ author }}</author>
+        {% endfor %}
+      {% endif %}
+      {# Categories loop #}
+      {% if item.categories is not none %}
+        {% for categorie in item.categories %}
+      <category>{{ categorie }}</category>
         {% endfor %}
       {% endif %}
       <description>{{ item.description|e }}</description>

@@ -17,6 +17,7 @@ class PageInformation(NamedTuple):
     """Data type to set and get page information in order to produce the RSS feed."""
 
     abs_path: Path = None
+    categories: list = None
     authors: tuple = None
     created: datetime = None
     description: str = None
