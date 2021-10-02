@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed -->
 
+## 0.19.0 - 2021-10-02
+
+### Added
+
+- new option to include [RSS `<category>` item element](https://www.w3schools.com/xml/rss_tag_category_item.asp) using page metadata (YAML frontmatter). It's customizable to get custom meta keys for keywords/tags. PR [#4](https://github.com/Guts/mkdocs-rss-plugin/pull/4)
+
+----
+
 ## 0.18.0 - 2021-09-20
 
 ### Added
