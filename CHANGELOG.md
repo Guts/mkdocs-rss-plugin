@@ -15,6 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed -->
 
+
+## 0.19.1 - 2021-10-04
+
+### Fixed
+
+- Fix #95: introduced logic did not handle case where categories meta keys are not defined
+
+----
+
 ## 0.19.0 - 2021-10-02
 
 ### Added
