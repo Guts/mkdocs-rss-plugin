@@ -240,6 +240,9 @@ class Util:
         :return: found categories
         :rtype: tuple
         """
+        if not categories_labels:
+            return None
+
         output_categories = []
         for category_label in categories_labels:
             if category_label in in_page.meta:
