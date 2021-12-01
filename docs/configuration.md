@@ -59,7 +59,7 @@ Basically, each page is an item element in the RSS feed.
 
 ## Plugin options
 
-For a sample see [homepage](/#usage).
+For a sample see [homepage](../#usage).
 
 ### Channel image
 
