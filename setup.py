@@ -45,7 +45,7 @@ setup(
     # run
     entry_points={"mkdocs.plugins": ["rss = mkdocs_rss_plugin.plugin:GitRssPlugin"]},
     # dependencies
-    python_requires=">=3.6, <4",
+    python_requires=">=3.7, <4",
     extras_require={
         "dev": ["black", "flake8", "pre-commit"],
         "test": ["pytest", "pytest-cov"],
@@ -60,8 +60,6 @@ setup(
         "Intended Audience :: Developers",
         "Intended Audience :: Information Technology",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
