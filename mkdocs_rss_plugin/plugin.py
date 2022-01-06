@@ -48,6 +48,7 @@ class GitRssPlugin(BasePlugin):
         ("categories", config_options.Type(list, default=None)),
         ("comments_path", config_options.Type(str, default=None)),
         ("date_from_meta", config_options.Type(dict, default=None)),
+        ("enabled", config_options.Type(bool, default=True)),
         ("feed_ttl", config_options.Type(int, default=1440)),
         ("image", config_options.Type(str, default=None)),
         ("length", config_options.Type(int, default=20)),
@@ -83,6 +84,9 @@ class GitRssPlugin(BasePlugin):
         :return: plugin configuration object
         :rtype: dict
         """
+        if not self.config.get("enabled"):
+            return config
+
         # check template dirs
         if not Path(DEFAULT_TEMPLATE_FILENAME).is_file():
             raise FileExistsError(DEFAULT_TEMPLATE_FILENAME)

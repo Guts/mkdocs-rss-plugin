@@ -1,6 +1,7 @@
 ---
 title: Configuration
-author: "Julien Moura"
+authors:
+  - "Julien Moura"
 date: 2020-12-31 14:20
 description: Configuration steps and settings for MkDocs RSS plugin
 image: "https://svgsilh.com/png-512/97849.png"
@@ -60,6 +61,23 @@ Basically, each page is an item element in the RSS feed.
 ## Plugin options
 
 For a sample see [homepage](../#usage).
+
+### Disabling the plugin
+
+You can use the `enabled` option to optionally disable this plugin. A possible use case is local development where you might want faster build times. It's recommended to use this option with an environment variable together with a default fallback (introduced in `mkdocs` v1.2.1, see [docs](https://www.mkdocs.org/user-guide/configuration/#environment-variables)). Example:
+
+```yaml
+plugins:
+  - rss:
+      enabled: !ENV [MKDOCS_ENABLE_RSS_PLUGIN, True]
+```
+
+Which enables you to disable the plugin locally using:
+
+```bash
+export MKDOCS_ENABLE_RSS_PLUGIN=false
+mkdocs serve
+```
 
 ### Channel image
 
@@ -208,7 +226,8 @@ For example, in your `best_article.md` created in 2019, you can write the front-
 ```markdown
 ---
 title: "This page title is a perfect clickbait!"
-authors: ["Julien M."]
+authors:
+  - "Julien M."
 date: "2020-10-22 17:18"
 ---
 
