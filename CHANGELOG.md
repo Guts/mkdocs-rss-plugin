@@ -13,8 +13,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-### Removed -->
+### Removed
 
+-->
+
+----
+
+## 0.20.0 - 2022-01-06
+
+### Added
+
+- option to enable/disable the plugin, for example through an environment variable (default: enabled). See: PR #103, [related doc section](https://guts.github.io/mkdocs-rss-plugin/configuration/#disabling-the-plugin)
+
+### Changed
+
+- CI: Python version used to build and publish package is now 3.9
+
+### Removed
+
+- support for Python 3.6 (EOL)
+
+----
 
 ## 0.19.1 - 2021-10-04
 
