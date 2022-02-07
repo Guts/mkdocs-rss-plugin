@@ -1,6 +1,6 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
-exclude: "node_modules|migrations|.venv|tests/dev/|tests/fixtures/"
+exclude: "node_modules|migrations|.venv|.direnv|tests/dev/|tests/fixtures/"
 fail_fast: false
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

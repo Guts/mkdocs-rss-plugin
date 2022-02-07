@@ -1,0 +1,12 @@
+site_name: Test RSS Plugin
+site_description: Test RSS Plugin
+
+use_directory_urls: true
+
+plugins:
+    - search
+    - rss:
+          enabled: False
+
+theme:
+    name: mkdocs
