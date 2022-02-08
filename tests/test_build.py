@@ -16,7 +16,11 @@
 # Standard library
 import tempfile
 import unittest
+
+# logging
+from logging import DEBUG, getLogger
 from pathlib import Path
+from traceback import format_exception
 
 # 3rd party
 import feedparser
@@ -24,6 +28,8 @@ import feedparser
 # test suite
 from tests.base import BaseTest
 
+logger = getLogger(__name__)
+logger.setLevel(DEBUG)
 
 # #############################################################################
 # ########## Classes ###############
@@ -59,6 +65,20 @@ class TestBuildRss(BaseTest):
                 mkdocs_yml_filepath=Path("mkdocs.yml"),
                 output_path=tmpdirname,
             )
+            self.assertEqual(run_result.exit_code, 0)
+            self.assertIsNone(run_result.exception)
+
+    def test_simple_build_disabled(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            run_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_disabled.yml"),
+                output_path=tmpdirname,
+            )
+            if run_result.exception is not None:
+                e = run_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
             self.assertEqual(run_result.exit_code, 0)
             self.assertIsNone(run_result.exception)
 

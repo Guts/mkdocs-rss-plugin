@@ -84,6 +84,8 @@ class GitRssPlugin(BasePlugin):
         :return: plugin configuration object
         :rtype: dict
         """
+
+        # Skip if disabled
         if not self.config.get("enabled"):
             return config
 
@@ -179,6 +181,11 @@ class GitRssPlugin(BasePlugin):
         :return: HTML rendered from Markdown source as string
         :rtype: str
         """
+
+        # Skip if disabled
+        if not self.config.get("enabled"):
+            return
+
         # skip pages that don't match the config var match_path
         if not self.match_path_pattern.match(page.file.src_path):
             return
@@ -243,6 +250,11 @@ class GitRssPlugin(BasePlugin):
         :return: global configuration object
         :rtype: dict
         """
+
+        # Skip if disabled
+        if not self.config.get("enabled"):
+            return
+
         # pretty print or not
         pretty_print = self.config.get("pretty_print", False)
 
