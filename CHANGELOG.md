@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 0.20.1 - 2022-02-08
+
+### Fixed
+
+- Error when using "enabled: false" together with "match_path" (see #104 - PR #107). Reported by @prcr, fixed by @dcode. Thanks to them!
+
 ----
 
 ## 0.20.0 - 2022-01-06
