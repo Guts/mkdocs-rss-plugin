@@ -11,13 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- JSON Schema for configuration validation
-
 ### Changed
 
 ### Removed
 
 -->
+
+## 0.21.0 - 2022-02-10
+
+### Added
+
+- JSON Schema for configuration validation
+- compatible with Python 3.10
+
+----
 
 ## 0.20.1 - 2022-02-08
 
