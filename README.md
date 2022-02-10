@@ -58,6 +58,8 @@ plugins:
 
 For further information, [see the user documentation](https://guts.github.io/mkdocs-rss-plugin/).
 
+Following initiative from the author of Material for MkDocs, this plugin provides its own JSON schema to validate configuration: [source](https://github.com/Guts/mkdocs-rss-plugin/blob/main/docs/schema.json) - [documentation](https://guts.github.io/mkdocs-rss-plugin/schema.json).
+
 ## Development
 
 Clone the repository:
