@@ -22,7 +22,7 @@
             },
             "categories": {
               "title": "List of page metadata keys to use as item categories.",
-              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/##item-categories",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#item-categories",
               "type": "array",
               "default": null,
               "items": {
