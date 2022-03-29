@@ -95,7 +95,7 @@ class TestBuildRss(BaseTest):
             # created items
             feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
             for feed_item in feed_parsed.entries:
-                print(feed_item.keys())
+
                 # mandatory properties
                 self.assertTrue("description" in feed_item)
                 self.assertTrue("guid" in feed_item)
@@ -104,10 +104,12 @@ class TestBuildRss(BaseTest):
                 self.assertTrue("source" in feed_item)
                 self.assertTrue("title" in feed_item)
                 # optional - following should not be present in the feed by default
-                self.assertTrue("author" not in feed_item)
                 self.assertTrue("category" not in feed_item)
                 self.assertTrue("comments" not in feed_item)
                 self.assertTrue("enclosure" not in feed_item)
+
+                if feed_item.title in ("Test page with meta",):
+                    self.assertTrue("author" in feed_item)
 
     def test_simple_build_disabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
