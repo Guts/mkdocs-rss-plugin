@@ -34,6 +34,8 @@ logger.setLevel(DEBUG)
 # #############################################################################
 # ########## Classes ###############
 # ##################################
+
+
 class TestBuildRss(BaseTest):
     """Test MkDocs build with RSS plugin."""
 
@@ -81,6 +83,32 @@ class TestBuildRss(BaseTest):
 
             self.assertEqual(run_result.exit_code, 0)
             self.assertIsNone(run_result.exception)
+
+    def test_simple_build_feed_length(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            run_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_feed_length_custom.yml"
+                ),
+                output_path=tmpdirname,
+            )
+            if run_result.exception is not None:
+                e = run_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(run_result.exit_code, 0)
+            self.assertIsNone(run_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            # updated items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            self.assertEqual(len(feed_parsed.entries), 3)
 
     def test_rss_feed_validation(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
