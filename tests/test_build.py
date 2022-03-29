@@ -147,6 +147,30 @@ class TestBuildRss(BaseTest):
             feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
             self.assertEqual(len(feed_parsed.entries), 3)
 
+    def test_simple_build_feed_ttl(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_feed_ttl_custom.yml"),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertNotEqual(feed_parsed.feed.ttl, "1440")
+            self.assertEqual(feed_parsed.feed.ttl, "90")
+
+            # updated items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
+            self.assertNotEqual(feed_parsed.feed.ttl, "1440")
+            self.assertEqual(feed_parsed.feed.ttl, "90")
+
     def test_simple_build_item_categories_enabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
