@@ -262,6 +262,54 @@ class TestBuildRss(BaseTest):
                 if feed_item.title not in ("Page without meta with short text",):
                     self.assertGreaterEqual(len(feed_item.description), 150)
 
+    def test_simple_build_pretty_print_enabled(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_pretty_print_enabled.yml"
+                ),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            with Path(Path(tmpdirname) / "feed_rss_created.xml").open("r") as f:
+                self.assertGreater(len(f.readlines()), 0)
+
+            # updated items
+            with Path(Path(tmpdirname) / "feed_rss_updated.xml").open("r") as f:
+                self.assertGreater(len(f.readlines()), 0)
+
+    def test_simple_build_pretty_print_disabled(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_pretty_print_disabled.yml"
+                ),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            with Path(Path(tmpdirname) / "feed_rss_created.xml").open("r") as f:
+                self.assertEqual(len(f.readlines()), 1)
+
+            # updated items
+            with Path(Path(tmpdirname) / "feed_rss_updated.xml").open("r") as f:
+                self.assertEqual(len(f.readlines()), 1)
+
     def test_rss_feed_validation(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
