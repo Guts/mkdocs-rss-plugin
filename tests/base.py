@@ -60,7 +60,11 @@ class BaseTest(unittest.TestCase):
         return plugin_loaded.config
 
     def build_docs_setup(
-        self, testproject_path: Path, mkdocs_yml_filepath: Path, output_path: Path
+        self,
+        testproject_path: Path,
+        mkdocs_yml_filepath: Path,
+        output_path: Path,
+        strict: bool = True,
     ):
         """Runs the `mkdocs build` command.
 

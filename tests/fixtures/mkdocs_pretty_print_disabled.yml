@@ -5,7 +5,8 @@ use_directory_urls: true
 
 plugins:
     - search
-    - rss
+    - rss:
+          pretty_print: False
 
 theme:
     name: mkdocs

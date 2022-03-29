@@ -1,0 +1,11 @@
+site_name: Test RSS Plugin
+# site_description: Test RSS Plugin
+site_url: https://guts.github.io/mkdocs-rss-plugin
+
+use_directory_urls: true
+
+plugins:
+    - rss
+
+theme:
+    name: mkdocs

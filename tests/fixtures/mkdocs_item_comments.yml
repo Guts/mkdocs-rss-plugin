@@ -13,10 +13,7 @@ use_directory_urls: true
 
 plugins:
   - rss:
-      abstract_chars_count: 200
       comments_path: "#__comments"
-      feed_ttl: 90
-      length: 3
 
 theme:
   name: readthedocs

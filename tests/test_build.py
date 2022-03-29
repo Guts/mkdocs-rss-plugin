@@ -34,6 +34,8 @@ logger.setLevel(DEBUG)
 # #############################################################################
 # ########## Classes ###############
 # ##################################
+
+
 class TestBuildRss(BaseTest):
     """Test MkDocs build with RSS plugin."""
 
@@ -60,35 +62,268 @@ class TestBuildRss(BaseTest):
     # -- TESTS ---------------------------------------------------------
     def test_simple_build(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
-            run_result = self.build_docs_setup(
+            cli_result = self.build_docs_setup(
                 testproject_path="docs",
                 mkdocs_yml_filepath=Path("mkdocs.yml"),
                 output_path=tmpdirname,
+                strict=False,
             )
-            self.assertEqual(run_result.exit_code, 0)
-            self.assertIsNone(run_result.exception)
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+    def test_simple_build_minimal(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_minimal.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            for feed_item in feed_parsed.entries:
+                print(feed_item.keys())
+                # mandatory properties
+                self.assertTrue("description" in feed_item)
+                self.assertTrue("guid" in feed_item)
+                self.assertTrue("link" in feed_item)
+                self.assertTrue("published" in feed_item)
+                self.assertTrue("source" in feed_item)
+                self.assertTrue("title" in feed_item)
+                # optional - following should not be present in the feed by default
+                self.assertTrue("author" not in feed_item)
+                self.assertTrue("category" not in feed_item)
+                self.assertTrue("comments" not in feed_item)
+                self.assertTrue("enclosure" not in feed_item)
 
     def test_simple_build_disabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
-            run_result = self.build_docs_setup(
+            cli_result = self.build_docs_setup(
                 testproject_path="docs",
                 mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_disabled.yml"),
                 output_path=tmpdirname,
             )
-            if run_result.exception is not None:
-                e = run_result.exception
+            if cli_result.exception is not None:
+                e = cli_result.exception
                 logger.debug(format_exception(type(e), e, e.__traceback__))
 
-            self.assertEqual(run_result.exit_code, 0)
-            self.assertIsNone(run_result.exception)
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+    def test_simple_build_feed_length(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_feed_length_custom.yml"
+                ),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertEqual(len(feed_parsed.entries), 3)
+
+            # updated items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
+            self.assertEqual(len(feed_parsed.entries), 3)
+
+    def test_simple_build_feed_ttl(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_feed_ttl_custom.yml"),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertNotEqual(feed_parsed.feed.ttl, "1440")
+            self.assertEqual(feed_parsed.feed.ttl, "90")
+
+            # updated items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
+            self.assertNotEqual(feed_parsed.feed.ttl, "1440")
+            self.assertEqual(feed_parsed.feed.ttl, "90")
+
+    def test_simple_build_item_categories_enabled(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_item_categories.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+
+            for feed_item in feed_parsed.entries:
+                if feed_item.title in ("Test page with meta",):
+                    self.assertTrue("category" in feed_item)
+
+    def test_simple_build_item_comments_enabled(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_item_comments.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            for feed_item in feed_parsed.entries:
+                self.assertTrue("comments" in feed_item)
+
+    def test_simple_build_item_comments_disabled(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_item_no_comments.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            for feed_item in feed_parsed.entries:
+                self.assertTrue("comments" not in feed_item)
+
+    def test_simple_build_item_length_unlimited(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_item_length_unlimited.yml"
+                ),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            for feed_item in feed_parsed.entries:
+                if feed_item.title not in ("Page without meta with short text",):
+                    self.assertGreaterEqual(len(feed_item.description), 150)
+
+    def test_simple_build_pretty_print_enabled(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_pretty_print_enabled.yml"
+                ),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            with Path(Path(tmpdirname) / "feed_rss_created.xml").open("r") as f:
+                self.assertGreater(len(f.readlines()), 0)
+
+            # updated items
+            with Path(Path(tmpdirname) / "feed_rss_updated.xml").open("r") as f:
+                self.assertGreater(len(f.readlines()), 0)
+
+    def test_simple_build_pretty_print_disabled(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_pretty_print_disabled.yml"
+                ),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            with Path(Path(tmpdirname) / "feed_rss_created.xml").open("r") as f:
+                self.assertEqual(len(f.readlines()), 1)
+
+            # updated items
+            with Path(Path(tmpdirname) / "feed_rss_updated.xml").open("r") as f:
+                self.assertEqual(len(f.readlines()), 1)
 
     def test_rss_feed_validation(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
-            self.build_docs_setup(
+            cli_result = self.build_docs_setup(
                 testproject_path="docs",
                 mkdocs_yml_filepath=Path("mkdocs.yml"),
                 output_path=tmpdirname,
             )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
 
             # created items
             feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
@@ -100,6 +335,19 @@ class TestBuildRss(BaseTest):
 
             # some feed characteristics
             self.assertEqual(feed_parsed.version, "rss20")
+
+    def test_bad_config(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("mkdocs_bad_config.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            # cli should returns an error code (2)
+            self.assertEqual(cli_result.exit_code, 2)
+            self.assertIsNotNone(cli_result.exception)
 
 
 # ##############################################################################
