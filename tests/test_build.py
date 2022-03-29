@@ -116,6 +116,50 @@ class TestBuildRss(BaseTest):
 
             self.assertEqual(len(feed_parsed.entries), 3)
 
+    def test_simple_build_item_comments_enabled(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_item_comments.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            for feed_item in feed_parsed.entries:
+                self.assertTrue("comments" in feed_item)
+
+    def test_simple_build_item_comments_disabled(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_item_no_comments.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            for feed_item in feed_parsed.entries:
+                self.assertTrue("comments" not in feed_item)
+
     def test_simple_build_item_length_unlimited(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
@@ -137,10 +181,9 @@ class TestBuildRss(BaseTest):
             feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
             self.assertEqual(feed_parsed.bozo, 0)
 
-            for item in feed_parsed.entries:
-                print(item.title, len(item.description))
-                if item.title not in ("Page without meta with short text",):
-                    self.assertGreaterEqual(len(item.description), 150)
+            for feed_item in feed_parsed.entries:
+                if feed_item.title not in ("Page without meta with short text",):
+                    self.assertGreaterEqual(len(feed_item.description), 150)
 
     def test_rss_feed_validation(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
