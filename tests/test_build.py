@@ -62,43 +62,49 @@ class TestBuildRss(BaseTest):
     # -- TESTS ---------------------------------------------------------
     def test_simple_build(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
-            run_result = self.build_docs_setup(
+            cli_result = self.build_docs_setup(
                 testproject_path="docs",
                 mkdocs_yml_filepath=Path("mkdocs.yml"),
                 output_path=tmpdirname,
+                strict=True,
             )
-            self.assertEqual(run_result.exit_code, 0)
-            self.assertIsNone(run_result.exception)
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
 
     def test_simple_build_disabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
-            run_result = self.build_docs_setup(
+            cli_result = self.build_docs_setup(
                 testproject_path="docs",
                 mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_disabled.yml"),
                 output_path=tmpdirname,
             )
-            if run_result.exception is not None:
-                e = run_result.exception
+            if cli_result.exception is not None:
+                e = cli_result.exception
                 logger.debug(format_exception(type(e), e, e.__traceback__))
 
-            self.assertEqual(run_result.exit_code, 0)
-            self.assertIsNone(run_result.exception)
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
 
     def test_simple_build_feed_length(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
-            run_result = self.build_docs_setup(
+            cli_result = self.build_docs_setup(
                 testproject_path="docs",
                 mkdocs_yml_filepath=Path(
                     "tests/fixtures/mkdocs_feed_length_custom.yml"
                 ),
                 output_path=tmpdirname,
             )
-            if run_result.exception is not None:
-                e = run_result.exception
+            if cli_result.exception is not None:
+                e = cli_result.exception
                 logger.debug(format_exception(type(e), e, e.__traceback__))
 
-            self.assertEqual(run_result.exit_code, 0)
-            self.assertIsNone(run_result.exception)
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
 
             # created items
             feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
@@ -112,11 +118,18 @@ class TestBuildRss(BaseTest):
 
     def test_rss_feed_validation(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
-            self.build_docs_setup(
+            cli_result = self.build_docs_setup(
                 testproject_path="docs",
                 mkdocs_yml_filepath=Path("mkdocs.yml"),
                 output_path=tmpdirname,
             )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
 
             # created items
             feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
@@ -128,6 +141,19 @@ class TestBuildRss(BaseTest):
 
             # some feed characteristics
             self.assertEqual(feed_parsed.version, "rss20")
+
+    def test_bad_config(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("mkdocs_bad_config.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            # cli should returns an error code (2)
+            self.assertEqual(cli_result.exit_code, 2)
+            self.assertIsNotNone(cli_result.exception)
 
 
 # ##############################################################################
