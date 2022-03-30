@@ -1,10 +1,11 @@
 ---
-title: Use the MkDocs RSS Plugin with confidence
+title: Page with complete meta
 authors:
     - Guts
     - Tim Vink
     - liang2kl
 date: 2020-03-20 10:20
+update: 2022-03-30 10:20
 description: First test page of mkdocs-rss-plugin test suite
 image: "https://svgsilh.com/png-512/97849.png"
 tags:
