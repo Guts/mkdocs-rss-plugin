@@ -373,6 +373,9 @@ class TestBuildRss(BaseTest):
             self.assertEqual(cli_result.exit_code, 0)
             self.assertIsNone(cli_result.exception)
 
+        # rm page
+        temp_page.unlink(missing_ok=True)
+
 
 # ##############################################################################
 # ##### Stand alone program ########
