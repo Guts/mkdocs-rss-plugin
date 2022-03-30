@@ -351,6 +351,28 @@ class TestBuildRss(BaseTest):
             self.assertEqual(cli_result.exit_code, 2)
             self.assertIsNotNone(cli_result.exception)
 
+    def test_not_in_git_log(self):
+        # add a new page without tracking it
+        md_str = """# This page is dynamically created for test purposes\n\nHi!\n
+        """
+        temp_page = Path("tests/fixtures/docs/temp_page_not_in_git_log.md")
+        if temp_page.exists():
+            temp_page.unlink()
+        temp_page.write_text(md_str)
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_disabled.yml"),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
 
 # ##############################################################################
 # ##### Stand alone program ########
