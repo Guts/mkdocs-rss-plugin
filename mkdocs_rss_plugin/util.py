@@ -131,7 +131,7 @@ class Util:
 
         if source_date_update != "git" and in_page.meta.get(source_date_update):
             dt_updated = self.get_date_from_meta(
-                date_metatag_value=in_page.meta.get(source_date_creation),
+                date_metatag_value=in_page.meta.get(source_date_update),
                 meta_datetime_format=meta_datetime_format,
             )
             if isinstance(dt_updated, str):
