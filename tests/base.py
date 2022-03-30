@@ -80,19 +80,20 @@ class BaseTest(unittest.TestCase):
         :return: Object with results of command
         :rtype: click.testing.Result
         """
+        cmd_args = [
+            "--clean",
+            "--config-file",
+            f"{mkdocs_yml_filepath}",
+            "--site-dir",
+            f"{output_path}",
+            "--verbose",
+        ]
+        if strict:
+            cmd_args.append("--strict")
+
         try:
             runner = CliRunner()
-            run = runner.invoke(
-                build_command,
-                [
-                    "--clean",
-                    "--config-file",
-                    f"{mkdocs_yml_filepath}",
-                    "--site-dir",
-                    f"{output_path}",
-                    "--verbose",
-                ],
-            )
+            run = runner.invoke(build_command, cmd_args)
             return run
         except Exception as err:
             logging.critical(err)

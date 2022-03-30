@@ -59,8 +59,8 @@ class TestBuildRss(BaseTest):
         """Executed after the last test."""
         # In case of some tests failure, ensure that everything is cleaned up
         temp_page = Path("tests/fixtures/docs/temp_page_not_in_git_log.md")
-        if temp_page.exists():
-            temp_page.unlink()
+        # if temp_page.exists():
+        #     temp_page.unlink()
 
         git_dir = Path("_git")
         if git_dir.exists():
@@ -379,7 +379,7 @@ class TestBuildRss(BaseTest):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
-                mkdocs_yml_filepath=Path("mkdocs.yml"),
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_complete.yml"),
                 output_path=tmpdirname,
             )
 
@@ -410,8 +410,8 @@ class TestBuildRss(BaseTest):
                 strict=True,
             )
 
-            # cli should returns an error code (2)
-            self.assertEqual(cli_result.exit_code, 2)
+            # cli should returns an error code (1)
+            self.assertEqual(cli_result.exit_code, 1)
             self.assertIsNotNone(cli_result.exception)
 
     def test_bad_date_format(self):
@@ -431,8 +431,9 @@ class TestBuildRss(BaseTest):
                 strict=True,
             )
 
-            self.assertEqual(cli_result.exit_code, 0)
-            self.assertIsNone(cli_result.exception)
+            # cli should returns an error code (1)
+            self.assertEqual(cli_result.exit_code, 1)
+            self.assertIsNotNone(cli_result.exception)
 
         # rm page
         temp_page.unlink()
@@ -451,10 +452,8 @@ class TestBuildRss(BaseTest):
                 testproject_path="docs",
                 mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_disabled.yml"),
                 output_path=tmpdirname,
+                strict=True,
             )
-            if cli_result.exception is not None:
-                e = cli_result.exception
-                logger.debug(format_exception(type(e), e, e.__traceback__))
 
             self.assertEqual(cli_result.exit_code, 0)
             self.assertIsNone(cli_result.exception)
@@ -471,8 +470,9 @@ class TestBuildRss(BaseTest):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
-                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_disabled.yml"),
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_minimal.yml"),
                 output_path=tmpdirname,
+                strict=True,
             )
             if cli_result.exception is not None:
                 e = cli_result.exception
