@@ -374,7 +374,7 @@ class TestBuildRss(BaseTest):
             self.assertIsNone(cli_result.exception)
 
         # rm page
-        temp_page.unlink(missing_ok=True)
+        temp_page.unlink()
 
 
 # ##############################################################################
