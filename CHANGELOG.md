@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+No feature in this release, just focusing on quality and code cleanliness.
 
 ### Changed
 
-### Removed
+- Test coverage reaches 80%
+- Mkdocs version bumped to `mkdocs>=1.1,<1.4`
 
 -->
 
