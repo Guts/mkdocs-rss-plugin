@@ -118,6 +118,48 @@ class TestBuildRss(BaseTest):
                 if feed_item.title in ("Test page with meta",):
                     self.assertTrue("author" in feed_item)
 
+    def test_simple_build_complete(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_complete.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            for feed_item in feed_parsed.entries:
+
+                # mandatory properties
+                self.assertTrue("description" in feed_item)
+                self.assertTrue("guid" in feed_item)
+                self.assertTrue("link" in feed_item)
+                self.assertTrue("published" in feed_item)
+                self.assertTrue("source" in feed_item)
+                self.assertTrue("title" in feed_item)
+
+                # optional - following should not be present in the feed by default
+                if (
+                    "without_meta" in feed_item.title
+                    or feed_item.title == "Test home page"
+                ):
+                    self.assertTrue("category" not in feed_item)
+                    self.assertTrue("comments" in feed_item)
+                elif "with_meta" in feed_item.title:
+                    self.assertTrue("author" in feed_item)
+                    self.assertTrue("category" in feed_item)
+                    self.assertTrue("enclosure" in feed_item)
+                else:
+                    pass
+
     def test_simple_build_disabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
