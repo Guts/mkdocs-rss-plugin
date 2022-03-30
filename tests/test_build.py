@@ -57,7 +57,14 @@ class TestBuildRss(BaseTest):
     @classmethod
     def tearDownClass(cls):
         """Executed after the last test."""
-        pass
+        # In case of some tests failure, ensure that everything is cleaned up
+        temp_page = Path("tests/fixtures/docs/temp_page_not_in_git_log.md")
+        if temp_page.exists():
+            temp_page.unlink()
+
+        git_dir = Path("_git")
+        if git_dir.exists():
+            git_dir.replace(git_dir.with_name(".git"))
 
     # -- TESTS ---------------------------------------------------------
     def test_simple_build(self):
@@ -375,6 +382,28 @@ class TestBuildRss(BaseTest):
 
         # rm page
         temp_page.unlink()
+
+    def test_not_git_repo(self):
+        # temporarily rename the git folder to fake a non-git repo
+        git_dir = Path(".git")
+        git_dir_tmp = git_dir.with_name("_git")
+        git_dir.replace(git_dir_tmp)
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_disabled.yml"),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 1)
+            self.assertIsNotNone(cli_result.exception)
+
+        # restore name
+        git_dir_tmp.replace(git_dir)
 
 
 # ##############################################################################
