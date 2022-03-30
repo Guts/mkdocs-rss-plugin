@@ -57,7 +57,14 @@ class TestBuildRss(BaseTest):
     @classmethod
     def tearDownClass(cls):
         """Executed after the last test."""
-        pass
+        # In case of some tests failure, ensure that everything is cleaned up
+        temp_page = Path("tests/fixtures/docs/temp_page_not_in_git_log.md")
+        # if temp_page.exists():
+        #     temp_page.unlink()
+
+        git_dir = Path("_git")
+        if git_dir.exists():
+            git_dir.replace(git_dir.with_name(".git"))
 
     # -- TESTS ---------------------------------------------------------
     def test_simple_build(self):
@@ -111,11 +118,67 @@ class TestBuildRss(BaseTest):
                 if feed_item.title in ("Test page with meta",):
                     self.assertTrue("author" in feed_item)
 
+    def test_simple_build_complete(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_complete.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            for feed_item in feed_parsed.entries:
+
+                # mandatory properties
+                self.assertTrue("description" in feed_item)
+                self.assertTrue("guid" in feed_item)
+                self.assertTrue("link" in feed_item)
+                self.assertTrue("published" in feed_item)
+                self.assertTrue("source" in feed_item)
+                self.assertTrue("title" in feed_item)
+
+                # optional - following should not be present in the feed by default
+                if (
+                    "without_meta" in feed_item.title
+                    or feed_item.title == "Test home page"
+                ):
+                    self.assertTrue("category" not in feed_item)
+                    self.assertTrue("comments" in feed_item)
+                elif "with_meta" in feed_item.title:
+                    self.assertTrue("author" in feed_item)
+                    self.assertTrue("category" in feed_item)
+                    self.assertTrue("enclosure" in feed_item)
+                else:
+                    pass
+
     def test_simple_build_disabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
                 mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_disabled.yml"),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+    def test_simple_build_item_dates(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_dates_overridden.yml"),
                 output_path=tmpdirname,
             )
             if cli_result.exception is not None:
@@ -316,7 +379,7 @@ class TestBuildRss(BaseTest):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
-                mkdocs_yml_filepath=Path("mkdocs.yml"),
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_complete.yml"),
                 output_path=tmpdirname,
             )
 
@@ -342,14 +405,84 @@ class TestBuildRss(BaseTest):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
-                mkdocs_yml_filepath=Path("mkdocs_bad_config.yml"),
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_bad_config.yml"),
                 output_path=tmpdirname,
                 strict=True,
             )
 
-            # cli should returns an error code (2)
-            self.assertEqual(cli_result.exit_code, 2)
+            # cli should returns an error code (1)
+            self.assertEqual(cli_result.exit_code, 1)
             self.assertIsNotNone(cli_result.exception)
+
+    def test_bad_date_format(self):
+        # add a new page without tracking it
+        md_str = """---\ndate: 13 April 2022\n---\n\n# This page is dynamically created for test purposes\n\nHi!\n
+        """
+        temp_page = Path("tests/fixtures/docs/temp_page_not_in_git_log.md")
+        if temp_page.exists():
+            temp_page.unlink()
+        temp_page.write_text(md_str)
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("mkdocs.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            # cli should returns an error code (1)
+            self.assertEqual(cli_result.exit_code, 1)
+            self.assertIsNotNone(cli_result.exception)
+
+        # rm page
+        temp_page.unlink()
+
+    def test_not_in_git_log(self):
+        # add a new page without tracking it
+        md_str = """# This page is dynamically created for test purposes\n\nHi!\n
+        """
+        temp_page = Path("tests/fixtures/docs/temp_page_not_in_git_log.md")
+        if temp_page.exists():
+            temp_page.unlink()
+        temp_page.write_text(md_str)
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_disabled.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+        # rm page
+        temp_page.unlink()
+
+    def test_not_git_repo(self):
+        # temporarily rename the git folder to fake a non-git repo
+        git_dir = Path(".git")
+        git_dir_tmp = git_dir.with_name("_git")
+        git_dir.replace(git_dir_tmp)
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_minimal.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 1)
+            self.assertIsNotNone(cli_result.exception)
+
+        # restore name
+        git_dir_tmp.replace(git_dir)
 
 
 # ##############################################################################
