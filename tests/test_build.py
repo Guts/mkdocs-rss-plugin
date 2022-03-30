@@ -188,12 +188,6 @@ class TestBuildRss(BaseTest):
             self.assertEqual(cli_result.exit_code, 0)
             self.assertIsNone(cli_result.exception)
 
-            # created items
-            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
-
-            # updated items
-            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
-
     def test_simple_build_feed_length(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
@@ -411,7 +405,7 @@ class TestBuildRss(BaseTest):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
-                mkdocs_yml_filepath=Path("mkdocs_bad_config.yml"),
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_bad_config.yml"),
                 output_path=tmpdirname,
                 strict=True,
             )
@@ -419,6 +413,29 @@ class TestBuildRss(BaseTest):
             # cli should returns an error code (2)
             self.assertEqual(cli_result.exit_code, 2)
             self.assertIsNotNone(cli_result.exception)
+
+    def test_bad_date_format(self):
+        # add a new page without tracking it
+        md_str = """---\ndate: 13 April 2022\n---\n\n# This page is dynamically created for test purposes\n\nHi!\n
+        """
+        temp_page = Path("tests/fixtures/docs/temp_page_not_in_git_log.md")
+        if temp_page.exists():
+            temp_page.unlink()
+        temp_page.write_text(md_str)
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("mkdocs.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+        # rm page
+        temp_page.unlink()
 
     def test_not_in_git_log(self):
         # add a new page without tracking it
