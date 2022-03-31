@@ -9,14 +9,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No feature in this release, just focusing on quality and code cleanliness.
+### Added
 
 ### Changed
 
-- Test coverage reaches 80%
-- Mkdocs version bumped to `mkdocs>=1.1,<1.4`
+### Removed
 
 -->
+
+## 1.0.0 - 2022-03-31
+
+First stable release according to semver.  
+So, no feature in this release, just focusing on quality and code cleanliness.
+
+### Added
+
+- Unit tests to reach a 80% coverage score
+
+### Changed
+
+- Supported Mkdocs versions range increased to `mkdocs>=1.1,<1.4`
+
+### Fixed
+
+- Minor bugs fixes
+- Minor documentation improvments
+
+----
 
 ## 0.21.0 - 2022-02-10
 
