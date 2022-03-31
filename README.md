@@ -82,3 +82,9 @@ python -m pip install -U -r requirements/documentation.txt
 ```
 
 Then follow the [contribution guidelines](CONTRIBUTING.md).
+
+## Release workflow
+
+1. Fill the `CHANGELOG.md`
+2. Apply a git tag with the relevant version: `git tag -a 0.3.0 {git commit hash} -m "New awesome feature"`
+3. Push tag to main branch: `git push origin 0.3.0`

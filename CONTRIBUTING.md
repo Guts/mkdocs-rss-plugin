@@ -29,8 +29,10 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
 
 ```jsonc
 {
-    "python.pythonPath": ".venv/bin/python",
+    "python.defaultInterpreterPath": ".venv/bin/python",
     // Editor
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs":"active",
     "editor.rulers": [
         88
     ],
@@ -51,9 +53,16 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
         "--verbose"
     ],
     "python.linting.pylintEnabled": false,
+    // Tests
+    "python.testing.pytestArgs": [],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
     // Git
     "git.enableCommitSigning": true,
     // Extensions
-    "autoDocstring.docstringFormat": "sphinx"
+    "autoDocstring.docstringFormat": "sphinx",
+    "yaml.schemas": {
+        "https://squidfunk.github.io/mkdocs-material/schema.json": "mkdocs*.yml"
+    }
 }
 ```
