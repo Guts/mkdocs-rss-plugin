@@ -5,7 +5,8 @@ name: Upload Python Package
 
 on:
   push:
-    tags: "*"
+    tags:
+      - "*"
 
 jobs:
   deploy:
@@ -25,7 +26,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install --upgrade twine
           python -m pip install -r requirements.txt
-          python -m pip install -r requirements/development.txt
 
       - name: Build and publish
         env:
@@ -34,3 +34,10 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
           twine upload dist/*
+
+      - name: Transform git tag into GitHub Release with assets
+        uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: dist/*
