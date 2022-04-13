@@ -56,6 +56,78 @@ Basically, each page is an item element in the RSS feed.
 | [`page.meta.authors`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) or `page.meta.author`. Accepted value types: `str` `list`, `tuple`. <br />To comply with the standard, the page writer is responsible to fill this field following this syntax: `john@doe.com (John Doe)` ([read this SO](https://stackoverflow.com/a/6079731/2556577)). | *optional* | [`author`](https://www.w3schools.com/XML/rss_tag_author.asp) |
 | [`page.meta.tags`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) or any tags value (for example `page.meta.categories`...). Accepted value types: `str` `list`. | *optional* | [`category`](https://www.w3schools.com/xml/rss_tag_category_item.asp) |
 
+### Item image (enclosure)
+
+To add an image to a feed item as [enclosure](https://www.w3schools.com/xml/rss_tag_enclosure.asp), the page writer is responsible to fill the `page.meta.image`. The plugin tries to retrieve the image length and mime-type to complete the enclosure tag.
+
+Accepted keys:
+
+- `image`: preferred
+- `illustration`: alternative to make it easier to comply with some themes
+
+Accepted values:
+
+- remote image URL: must be reachable from the build environment.
+- relative path to the image: the plugin adds the `site_url` to the path to ensure that image will be reachable by external feed readers once the site is published.
+
+#### Examples
+
+##### Local image
+
+`mkdocs.yml` :
+
+```yaml
+site_url: https://blog.mydomain.com
+```
+
+Page:
+
+```markdown
+---
+[...]
+image: "featured_images.png"
+---
+
+# Page h1 title
+
+Some page text.
+```
+
+Output:
+
+```xml
+<item>
+  [...]
+  <title>Page h1 title</title>
+  <enclosure url="https://blog.mydomain.com/featured_images.png" type="image/png" length="219753"/>
+  [...]
+</item>
+```
+
+##### Remote image
+
+```markdown
+---
+[...]
+image: "http://example.com/image.jpg"
+---
+
+# Page h1 title
+
+Some page text.
+```
+
+Output:
+
+```xml
+<item>
+  [...]
+  <title>Page h1 title</title>
+  <enclosure url="http://example.com/image.jpg" type="image/jpg" length="19753"/>
+  [...]
+</item>
+```
+
 ----
 
 ## Plugin options
@@ -84,6 +156,14 @@ mkdocs serve
 `image`: URL to image to use as feed illustration.
 
 Default: `None`.
+
+#### Example
+
+```yaml
+plugins:
+  - rss:
+      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+```
 
 Output:
 
