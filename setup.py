@@ -29,7 +29,7 @@ setup(
     author=__about__.__author__,
     author_email=__about__.__email__,
     description=__about__.__summary__,
-    license="GPL3",
+    license="MIT",
     long_description=README,
     long_description_content_type="text/markdown",
     project_urls={
@@ -66,7 +66,9 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: Implementation :: CPython",
         "Development Status :: 5 - Production/Stable",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+        "Topic :: Documentation",
+        "Topic :: Text Processing :: Markup :: Markdown",
     ],
 )
