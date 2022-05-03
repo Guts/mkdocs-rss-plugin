@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-First off, thanks for considering to contribute to this project! :tada::+1:
+First off, thanks for considering to contribute to this project!
 
 These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
