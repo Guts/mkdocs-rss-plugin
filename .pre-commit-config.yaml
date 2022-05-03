@@ -28,11 +28,6 @@ repos:
     rev: 22.3.0
     hooks:
       - id: black
-        exclude_types: [directory]
-        language_version: python3
-        log_file: ./dev_precommit_black.log
-        require_serial: true
-        types: [file, python]
 
   - repo: https://github.com/pycqa/flake8
     rev: 4.0.1
