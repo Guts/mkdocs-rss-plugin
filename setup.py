@@ -52,7 +52,7 @@ setup(
     },
     install_requires=[
         "GitPython>=3.1,<3.2",
-        "mkdocs>=1.1,<1.4",
+        "mkdocs>=1.1,<1.5",
     ],
     # metadata
     keywords="mkdocs rss git plugin",
