@@ -21,13 +21,26 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 with open(HERE / "requirements/base.txt") as f:
-    requirements = f.read().splitlines()
+    requirements = [
+        line
+        for line in f.read().splitlines()
+        if not line.startswith(("#", "-")) and len(line)
+    ]
 
 with open(HERE / "requirements/development.txt") as f:
-    requirements_dev = f.read().splitlines()
+    requirements_dev = [
+        line
+        for line in f.read().splitlines()
+        if not line.startswith(("#", "-")) and len(line)
+    ]
+
 
 with open(HERE / "requirements/documentation.txt") as f:
-    requirements_docs = f.read().splitlines()
+    requirements_docs = [
+        line
+        for line in f.read().splitlines()
+        if not line.startswith(("#", "-")) and len(line)
+    ]
 
 
 # ############################################################################
