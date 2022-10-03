@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.2.0 - 2022-10-03
+
+### Changed
+
+- compatibility with Mkdocs 1.4
+- dependencies update
+
 ## 1.1.0 - 2022-04-27
 
 ### Changed
