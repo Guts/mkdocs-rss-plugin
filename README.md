@@ -65,11 +65,12 @@ Following initiative from the author of Material for MkDocs, this plugin provide
 Clone the repository:
 
 ```bash
-# install project as editable
-python -m pip install -U -r requirements.txt
-
 # install development dependencies
 python -m pip install -U -r requirements/development.txt
+# alternatively: pip install -e .[dev]
+
+# install project as editable
+python -m pip install -e .
 
 # install git hooks
 pre-commit install
@@ -79,6 +80,7 @@ pytest
 
 # install dependencies for documentation
 python -m pip install -U -r requirements/documentation.txt
+# alternatively: pip install -e .[doc]
 ```
 
 Then follow the [contribution guidelines](CONTRIBUTING.md).

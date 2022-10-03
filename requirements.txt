@@ -1,4 +1,6 @@
--i https://pypi.org/simple
+setuptools
+wheel
+
 -r requirements/base.txt
 
 -e "."

@@ -20,6 +20,29 @@ from mkdocs_rss_plugin import __about__
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
+with open(HERE / "requirements/base.txt") as f:
+    requirements = [
+        line
+        for line in f.read().splitlines()
+        if not line.startswith(("#", "-")) and len(line)
+    ]
+
+with open(HERE / "requirements/development.txt") as f:
+    requirements_dev = [
+        line
+        for line in f.read().splitlines()
+        if not line.startswith(("#", "-")) and len(line)
+    ]
+
+
+with open(HERE / "requirements/documentation.txt") as f:
+    requirements_docs = [
+        line
+        for line in f.read().splitlines()
+        if not line.startswith(("#", "-")) and len(line)
+    ]
+
+
 # ############################################################################
 # ########## Setup #############
 # ##############################
@@ -47,13 +70,10 @@ setup(
     # dependencies
     python_requires=">=3.7, <4",
     extras_require={
-        "dev": ["black", "flake8", "pre-commit"],
-        "test": ["pytest", "pytest-cov"],
+        "dev": requirements_dev,
+        "doc": requirements_docs,
     },
-    install_requires=[
-        "GitPython>=3.1,<3.2",
-        "mkdocs>=1.1,<1.5",
-    ],
+    install_requires=requirements,
     # metadata
     keywords="mkdocs rss git plugin",
     classifiers=[
