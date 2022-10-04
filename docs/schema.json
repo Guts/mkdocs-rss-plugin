@@ -4,7 +4,9 @@
   "oneOf": [
     {
       "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/",
-      "enum": ["rss"]
+      "enum": [
+        "rss"
+      ]
     },
     {
       "type": "object",
@@ -45,13 +47,29 @@
               "default": null,
               "properties": {
                 "as_creation": {
-                  "type": ["boolean", "string"]
+                  "type": [
+                    "boolean",
+                    "string"
+                  ]
                 },
                 "as_update": {
-                  "type": ["boolean", "string"]
+                  "type": [
+                    "boolean",
+                    "string"
+                  ]
                 },
                 "datetime_format": {
-                  "type": ["null", "string"]
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "default_timezone": {
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": "UTC"
                 }
               }
             },
