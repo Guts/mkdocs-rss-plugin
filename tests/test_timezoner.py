@@ -88,11 +88,11 @@ class TestTimezoner(unittest.TestCase):
         # with timezone
         self.assertEqual(
             set_datetime_zoneinfo(test_datetime_summer_naive, "Europe/Paris"),
-            datetime.strptime("2022-07-14 14:00:00+02:00", self.fmt_datetime_aware),
+            datetime.strptime("2022-07-14 12:00:00+02:00", self.fmt_datetime_aware),
         )
         self.assertEqual(
             set_datetime_zoneinfo(test_datetime_winter_naive, "Europe/Paris"),
-            datetime.strptime("2022-12-25 23:00:00+01:00", self.fmt_datetime_aware),
+            datetime.strptime("2022-12-25 22:00:00+01:00", self.fmt_datetime_aware),
         )
 
     def test_tz_datetimes_aware(self):
