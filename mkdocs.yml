@@ -37,6 +37,7 @@ theme:
 
 # Extensions to enhance markdown
 markdown_extensions:
+  - admonition
   - attr_list
   - codehilite
   - meta
