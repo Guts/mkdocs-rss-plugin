@@ -193,6 +193,24 @@ class Util:
                 dt_created,
                 dt_updated,
             )
+        elif dt_created:
+            logger.info(
+                f"[rss-plugin] Updated date could not be retrieved for page: "
+                f"{in_page.file.abs_src_path}. Maybe it has never been committed yet?"
+            )
+            return (
+                dt_created,
+                get_build_datetime(),
+            )
+        elif dt_updated:
+            logger.info(
+                f"[rss-plugin] Creation date could not be retrieved for page: "
+                f"{in_page.file.abs_src_path}. Maybe it has never been committed yet?"
+            )
+            return (
+                get_build_datetime(),
+                dt_updated,
+            )
         else:
             logging.warning(
                 f"[rss-plugin] Dates could not be retrieved for page: {in_page.file.abs_src_path}."
