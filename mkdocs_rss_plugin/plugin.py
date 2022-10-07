@@ -7,6 +7,7 @@
 # standard library
 import logging
 from copy import deepcopy
+from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from re import compile
@@ -14,6 +15,7 @@ from re import compile
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from mkdocs.config import config_options
+from mkdocs.exceptions import PluginError
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
@@ -65,6 +67,7 @@ class GitRssPlugin(BasePlugin):
         self.src_date_created = self.src_date_updated = "git"
         self.meta_datetime_format = None
         self.meta_default_timezone = "UTC"
+        self.meta_default_time = None
         # pages storage
         self.pages_to_filter = []
         # prepare output feeds
@@ -133,6 +136,21 @@ class GitRssPlugin(BasePlugin):
             self.meta_default_timezone = self.config.get("date_from_meta").get(
                 "default_timezone", "UTC"
             )
+            self.meta_default_time = self.config.get("date_from_meta").get(
+                "default_time", None
+            )
+            if self.meta_default_time:
+                try:
+                    self.meta_default_time = datetime.strptime(
+                        self.meta_default_time, "%H:%M"
+                    )
+                except ValueError as err:
+                    raise PluginError(
+                        "[rss-plugin] Config error: `date_from_meta.default_time` value "
+                        f"'{self.meta_default_time}' format doesn't match the expected "
+                        f"format %H:%M. Trace: {err}"
+                    )
+
             logger.debug(
                 "[rss-plugin] Dates will be retrieved from page meta (yaml "
                 "frontmatter). The git log will be used as fallback."
@@ -201,6 +219,7 @@ class GitRssPlugin(BasePlugin):
             source_date_update=self.src_date_updated,
             meta_datetime_format=self.meta_datetime_format,
             meta_default_timezone=self.meta_default_timezone,
+            meta_default_time=self.meta_default_time,
         )
 
         # handle custom URL parameters
