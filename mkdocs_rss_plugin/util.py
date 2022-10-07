@@ -8,8 +8,8 @@
 import logging
 import ssl
 import sys
-from datetime import date, datetime, timedelta, timezone
-from email.utils import format_datetime, formatdate
+from datetime import date, datetime
+from email.utils import format_datetime
 from mimetypes import guess_type
 from pathlib import Path
 from typing import Iterable, Tuple
@@ -63,11 +63,11 @@ class Util:
             self.git_is_valid = 1
         except InvalidGitRepositoryError as err:
             logging.warning(
-                "[rss-plugin] Path is not a valid git directory. " " Trace: %s" % err
+                f"[rss-plugin] Path '{path}' is not a valid git directory. Trace: {err}"
             )
             self.git_is_valid = 0
         except Exception as err:
-            logging.warning("[rss-plugin] Git issue: %s" % err)
+            logging.warning(f"[rss-plugin] Git issue: {err}")
             self.git_is_valid = 0
 
         # Checks if user is running builds on CI and raise appropriate warnings
@@ -164,15 +164,15 @@ class Util:
                     )
             except GitCommandError as err:
                 logging.warning(
-                    "[rss-plugin] Unable to read git logs of '%s'. Is git log readable?"
-                    " Falling back to build date. "
-                    " Trace: %s" % (in_page.file.abs_src_path, err)
+                    f"[rss-plugin] Unable to read git logs of '{in_page.file.abs_src_path}'. "
+                    "Is git log readable? Falling back to build date. "
+                    f"Trace: {err}"
                 )
             except GitCommandNotFound as err:
                 logging.error(
                     "[rss-plugin] Unable to perform command 'git log'. Is git installed? "
                     " Falling back to build date. "
-                    " Trace: %s" % err
+                    f"Trace: {err}"
                 )
                 self.git_is_valid = 0
             # convert timestamps into datetimes
@@ -195,8 +195,7 @@ class Util:
             )
         else:
             logging.warning(
-                "[rss-plugin] Dates could not be retrieved for page: %s."
-                % in_page.file.abs_src_path
+                f"[rss-plugin] Dates could not be retrieved for page: {in_page.file.abs_src_path}."
             )
             return (
                 get_build_datetime(),
@@ -221,10 +220,10 @@ class Util:
                 return tuple(in_page.meta.get("author"))
             else:
                 logging.warning(
-                    "[rss-plugin] Type of author value in page.meta (%s) is not valid. "
-                    "It should be str, list or tuple, not: %s."
-                    % in_page.file.abs_src_path,
-                    type(in_page.meta.get("author")),
+                    "[rss-plugin] Type of author value in page.meta "
+                    f"({in_page.file.abs_src_path}) is not valid. "
+                    "It should be str, list or tuple, "
+                    f"not: {type(in_page.meta.get('author'))}."
                 )
                 return None
         elif "authors" in in_page.meta:
@@ -328,15 +327,15 @@ class Util:
 
         # If the abstract chars is not unlimited and the description exists,
         # return the description.
-        if description and chars_count != None:
+        if description and chars_count is not None:
             return description
         # If chars count is unlimited, use the html content
-        elif in_page.content and chars_count == None:
-            if chars_count == None or len(in_page.content) < chars_count:
+        elif in_page.content and chars_count is None:
+            if chars_count is None or len(in_page.content) < chars_count:
                 return in_page.content[:chars_count]
         # Use markdown
         elif in_page.markdown:
-            if chars_count == None or len(in_page.markdown) < chars_count:
+            if chars_count is None or len(in_page.markdown) < chars_count:
                 return markdown.markdown(
                     in_page.markdown[:chars_count], output_format="html5"
                 )
@@ -437,9 +436,9 @@ class Util:
             img_length = remote_img.getheader("content-length")
         except (HTTPError, URLError) as err:
             logging.warning(
-                "[rss-plugin] Remote image could not been reached: {}. "
-                "Trying again with GET and disabling SSL verification. Attempt: {}. "
-                "Trace: {}".format(image_url, attempt, err)
+                f"[rss-plugin] Remote image could not been reached: {image_url}. "
+                f"Trying again with GET and disabling SSL verification. Attempt: {attempt}. "
+                f"Trace: {err}"
             )
             if attempt < 2:
                 return self.get_remote_image_length(
@@ -450,12 +449,8 @@ class Util:
                 )
             else:
                 logging.error(
-                    "[rss-plugin] Remote image is not reachable: {} after {} attempts. "
-                    " Trace: {}".format(
-                        image_url,
-                        attempt,
-                        err,
-                    )
+                    f"[rss-plugin] Remote image is not reachable: {image_url} after "
+                    f"{attempt} attempts. Trace: {err}"
                 )
                 return None
 
