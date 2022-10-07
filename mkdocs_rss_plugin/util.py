@@ -130,7 +130,7 @@ class Util:
                 meta_datetime_timezone=meta_default_timezone,
             )
             if isinstance(dt_created, str):
-                logger.error(dt_created)
+                logger.error(f"Creation date is a string: {dt_created}")
                 dt_created = None
 
         if source_date_update != "git" and in_page.meta.get(source_date_update):
@@ -140,7 +140,7 @@ class Util:
                 meta_datetime_timezone=meta_default_timezone,
             )
             if isinstance(dt_updated, str):
-                logger.error(dt_updated)
+                logger.error(f"Update date is a string: {dt_updated}")
                 dt_updated = None
 
         # explore git log
