@@ -101,6 +101,7 @@ class Util:
         source_date_update: str = "git",
         meta_datetime_format: str = "%Y-%m-%d %H:%M",
         meta_default_timezone: str = "UTC",
+        meta_default_time: datetime = None,
     ) -> Tuple[int, int]:
         """Extract creation and update dates from page metadata (yaml frontmatter) or \
             git log for given file.
@@ -128,6 +129,7 @@ class Util:
                 date_metatag_value=in_page.meta.get(source_date_creation),
                 meta_datetime_format=meta_datetime_format,
                 meta_datetime_timezone=meta_default_timezone,
+                meta_default_time=meta_default_time.time(),
             )
             if isinstance(dt_created, str):
                 logger.error(f"Creation date is a string: {dt_created}")
@@ -292,6 +294,7 @@ class Util:
         date_metatag_value: str,
         meta_datetime_format: str,
         meta_datetime_timezone: str,
+        meta_default_time: datetime.time,
     ) -> datetime:
         """Get date from page.meta handling str with associated datetime format and \
             date already transformed by MkDocs.
@@ -302,6 +305,8 @@ class Util:
         :type meta_datetime_format: str
         :param meta_datetime_timezone: timezone to use
         :type meta_datetime_timezone: str
+        :param meta_default_time: time to set if not specified
+        :type meta_default_time: datetime.time
 
         :return: datetime
         :rtype: datetime
@@ -311,15 +316,15 @@ class Util:
             if isinstance(date_metatag_value, str):
                 out_date = datetime.strptime(date_metatag_value, meta_datetime_format)
             elif isinstance(date_metatag_value, (date, datetime)):
-                out_date = datetime.combine(date_metatag_value, datetime.min.time())
+                out_date = datetime.combine(
+                    date_metatag_value, meta_default_time or datetime.min.time()
+                )
             else:
                 return "[rss-plugin] Incompatible date type."
         except ValueError as err:
-            return "[rss-plugin] Incompatible date found. Trace: {}".format(err)
+            return f"[rss-plugin] Incompatible date found. Trace: {err}"
         except Exception as err:
-            return "[rss-plugin] Unable to retrieve creation date. Trace: {}".format(
-                err
-            )
+            return f"[rss-plugin] Unable to retrieve creation date. Trace: {err}"
 
         if not out_date.tzinfo:
             out_date = set_datetime_zoneinfo(out_date, meta_datetime_timezone)
