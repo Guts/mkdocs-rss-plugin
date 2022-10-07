@@ -450,7 +450,7 @@ class TestBuildRss(BaseTest):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
-                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_disabled.yml"),
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_complete.yml"),
                 output_path=tmpdirname,
                 strict=True,
             )
