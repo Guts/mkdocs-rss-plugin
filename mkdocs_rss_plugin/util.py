@@ -102,23 +102,27 @@ class Util:
         meta_datetime_format: str = "%Y-%m-%d %H:%M",
         meta_default_timezone: str = "UTC",
         meta_default_time: datetime = None,
-    ) -> Tuple[int, int]:
-        """Extract creation and update dates from page metadata (yaml frontmatter) or \
-            git log for given file.
+    ) -> Tuple[datetime, datetime]:
+        """Extract creation and update dates from page metadata (yaml frontmatter) or
+        git log for given file.
 
         :param in_page: input page to work with
         :type in_page: Page
-        :param source_date_creation: which source to use (git or meta tag) for creation \
-            date, defaults to "git"
+        :param source_date_creation: which source to use (git or meta tag) for creation
+        date, defaults to "git"
         :type source_date_creation: str, optional
-        :param source_date_update: which source to use (git or meta tag) for update \
-            date, defaults to "git"
+        :param source_date_update: which source to use (git or meta tag) for update
+        date, defaults to "git"
         :type source_date_update: str, optional
         :param meta_datetime_format: datetime string format, defaults to "%Y-%m-%d %H:%M"
         :type meta_datetime_format: str, optional
+        :param meta_default_timezone: timezone to use, defaults to "UTC"
+        :type meta_default_timezone: str, optional
+        :param meta_default_time: time to set if not specified, defaults to None
+        :type meta_default_time: datetime, optional
 
         :return: tuple of timestamps (creation date, last commit date)
-        :rtype: Tuple[int, int]
+        :rtype: Tuple[datetime, datetime]
         """
         # empty vars
         dt_created = dt_updated = None
@@ -129,7 +133,7 @@ class Util:
                 date_metatag_value=in_page.meta.get(source_date_creation),
                 meta_datetime_format=meta_datetime_format,
                 meta_datetime_timezone=meta_default_timezone,
-                meta_default_time=meta_default_time.time(),
+                meta_default_time=meta_default_time,
             )
             if isinstance(dt_created, str):
                 logger.error(f"Creation date is a string: {dt_created}")
@@ -294,7 +298,7 @@ class Util:
         date_metatag_value: str,
         meta_datetime_format: str,
         meta_datetime_timezone: str,
-        meta_default_time: datetime.time,
+        meta_default_time: datetime,
     ) -> datetime:
         """Get date from page.meta handling str with associated datetime format and \
             date already transformed by MkDocs.
@@ -306,7 +310,7 @@ class Util:
         :param meta_datetime_timezone: timezone to use
         :type meta_datetime_timezone: str
         :param meta_default_time: time to set if not specified
-        :type meta_default_time: datetime.time
+        :type meta_default_time: datetime
 
         :return: datetime
         :rtype: datetime
@@ -316,9 +320,11 @@ class Util:
             if isinstance(date_metatag_value, str):
                 out_date = datetime.strptime(date_metatag_value, meta_datetime_format)
             elif isinstance(date_metatag_value, (date, datetime)):
-                out_date = datetime.combine(
-                    date_metatag_value, meta_default_time or datetime.min.time()
-                )
+                if isinstance(meta_default_time, datetime):
+                    time_to_add = meta_default_time.time()
+                else:
+                    time_to_add = datetime.min.time()
+                out_date = datetime.combine(date_metatag_value, time_to_add)
             else:
                 return "[rss-plugin] Incompatible date type."
         except ValueError as err:
