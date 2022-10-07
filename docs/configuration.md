@@ -298,8 +298,8 @@ So, it's possible to use the dates manually specified into the [page metadata] t
 - `as_creation`: meta tag name to use as creation date. Default to `False`.
 - `as_update`: meta tag name to use as update date. Default to `False`.
 - `datetime_format`: datetime format. Default to `"%Y-%m-%d %H:%M"`.
-- `default_timezone`: timezone to use by default to make aware datetimes. Default to `UTC`.
-- `default_time`: time to use if page contains only a date. Useful to avoid the 'midnight syndrom' or have to specify hour in every single page. Default to `None`. 24h-clock format is expected: `%H:%M`. Example: `"14:20"`.
+- `default_timezone`: timezone to use by default to make aware datetimes. Default to `UTC`. Introduced in version 1.3.0 with [PR 142](https://github.com/Guts/mkdocs-rss-plugin/pull/142).
+- `default_time`: time to use if page contains only a date. Useful to avoid the 'midnight syndrom' or have to specify hour in every single page. Default to `None`. 24h-clock format is expected: `%H:%M`. Example: `"14:20"`. Introduced in version 1.4.0 with [PR 145](https://github.com/Guts/mkdocs-rss-plugin/pull/145).
 
 #### Example
 
