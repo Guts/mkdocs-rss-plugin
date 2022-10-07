@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.4.0 - UNRELEASED
+
+- Feature: add option to set default time on page with date only by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/145>
+
+## 1.3.0 - 2022-10-07
+
+### Added
+
+- Feature: add option to set default timezone by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/142>
+
 ## 1.2.0 - 2022-10-03
 
 ### Changed
