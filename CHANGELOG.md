@@ -17,9 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
-## 1.4.0 - UNRELEASED
+## 1.4.0 - 2022-10-07
 
-- Feature: add option to set default time on page with date only by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/145>
+### Added
+
+- Feature: add default_time option by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/145>
+
+### Changed
+
+- Minor improvments: clean unused imports, lines length and use fstrings in logging by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/143>
+- Improvment: more granular fallback to build timestamp by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/144>
 
 ## 1.3.0 - 2022-10-07
 
