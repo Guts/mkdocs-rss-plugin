@@ -144,6 +144,7 @@ class Util:
                 date_metatag_value=in_page.meta.get(source_date_update),
                 meta_datetime_format=meta_datetime_format,
                 meta_datetime_timezone=meta_default_timezone,
+                meta_default_time=meta_default_time,
             )
             if isinstance(dt_updated, str):
                 logger.error(f"Update date is a string: {dt_updated}")
