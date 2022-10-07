@@ -7,8 +7,9 @@
 # standard library
 import logging
 import ssl
-from datetime import date, datetime
-from email.utils import formatdate
+import sys
+from datetime import date, datetime, timedelta, timezone
+from email.utils import format_datetime, formatdate
 from mimetypes import guess_type
 from pathlib import Path
 from typing import Iterable, Tuple
@@ -21,11 +22,17 @@ import markdown
 from git import GitCommandError, GitCommandNotFound, InvalidGitRepositoryError, Repo
 from mkdocs.config.config_options import Config
 from mkdocs.structure.pages import Page
-from mkdocs.utils import get_build_timestamp
+from mkdocs.utils import get_build_datetime
 
 # package
 from mkdocs_rss_plugin import __about__
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
+
+# conditional imports
+if sys.version_info < (3, 9):
+    from mkdocs_rss_plugin.timezoner_pre39 import set_datetime_zoneinfo
+else:
+    from mkdocs_rss_plugin.timezoner_py39 import set_datetime_zoneinfo
 
 # ############################################################################
 # ########## Globals #############
@@ -35,11 +42,6 @@ REMOTE_REQUEST_HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     "User-Agent": "{}/{}".format(__about__.__title__, __about__.__version__),
 }
-
-
-# ############################################################################
-# ########## Globals ###############
-# ##################################
 
 logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 
@@ -98,6 +100,7 @@ class Util:
         source_date_creation: str = "git",
         source_date_update: str = "git",
         meta_datetime_format: str = "%Y-%m-%d %H:%M",
+        meta_default_timezone: str = "UTC",
     ) -> Tuple[int, int]:
         """Extract creation and update dates from page metadata (yaml frontmatter) or \
             git log for given file.
@@ -124,6 +127,7 @@ class Util:
             dt_created = self.get_date_from_meta(
                 date_metatag_value=in_page.meta.get(source_date_creation),
                 meta_datetime_format=meta_datetime_format,
+                meta_datetime_timezone=meta_default_timezone,
             )
             if isinstance(dt_created, str):
                 logger.error(dt_created)
@@ -133,6 +137,7 @@ class Util:
             dt_updated = self.get_date_from_meta(
                 date_metatag_value=in_page.meta.get(source_date_update),
                 meta_datetime_format=meta_datetime_format,
+                meta_datetime_timezone=meta_default_timezone,
             )
             if isinstance(dt_updated, str):
                 logger.error(dt_updated)
@@ -170,14 +175,23 @@ class Util:
                     " Trace: %s" % err
                 )
                 self.git_is_valid = 0
+            # convert timestamps into datetimes
+            if isinstance(dt_created, (str, float, int)) and dt_created:
+                dt_created = set_datetime_zoneinfo(
+                    datetime.fromtimestamp(float(dt_created)), meta_default_timezone
+                )
+            if isinstance(dt_updated, (str, float, int)) and dt_updated:
+                dt_updated = set_datetime_zoneinfo(
+                    datetime.fromtimestamp(float(dt_updated)), meta_default_timezone
+                )
         else:
             pass
 
         # return results
         if all([dt_created, dt_updated]):
             return (
-                int(dt_created),
-                int(dt_updated),
+                dt_created,
+                dt_updated,
             )
         else:
             logging.warning(
@@ -185,8 +199,8 @@ class Util:
                 % in_page.file.abs_src_path
             )
             return (
-                get_build_timestamp(),
-                get_build_timestamp(),
+                get_build_datetime(),
+                get_build_datetime(),
             )
 
     def get_authors_from_meta(self, in_page: Page) -> Tuple[str] or None:
@@ -257,8 +271,11 @@ class Util:
         return sorted(output_categories)
 
     def get_date_from_meta(
-        self, date_metatag_value: str, meta_datetime_format: str
-    ) -> float:
+        self,
+        date_metatag_value: str,
+        meta_datetime_format: str,
+        meta_datetime_timezone: str,
+    ) -> datetime:
         """Get date from page.meta handling str with associated datetime format and \
             date already transformed by MkDocs.
 
@@ -266,9 +283,11 @@ class Util:
         :type date_metatag_value: str
         :param meta_datetime_format: expected format of datetime
         :type meta_datetime_format: str
+        :param meta_datetime_timezone: timezone to use
+        :type meta_datetime_timezone: str
 
-        :return: datetime as timestamp
-        :rtype: float
+        :return: datetime
+        :rtype: datetime
         """
         out_date = None
         try:
@@ -285,7 +304,10 @@ class Util:
                 err
             )
 
-        return out_date.timestamp()
+        if not out_date.tzinfo:
+            out_date = set_datetime_zoneinfo(out_date, meta_datetime_timezone)
+
+        return out_date
 
     def get_description_or_abstract(self, in_page: Page, chars_count: int = 160) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
@@ -516,7 +538,7 @@ class Util:
                     "guid": page.guid,
                     "image": page.image,
                     "link": page.url_full,
-                    "pubDate": formatdate(getattr(page, attribute)),
+                    "pubDate": format_datetime(dt=getattr(page, attribute)),
                     "title": page.title,
                 }
             )

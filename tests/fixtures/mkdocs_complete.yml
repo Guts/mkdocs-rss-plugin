@@ -3,17 +3,17 @@ site_name: MkDocs RSS Plugin - TEST
 site_description: Basic setup to test against MkDocs RSS plugin
 site_author: Julien Moura (Guts)
 site_url: https://guts.github.io/mkdocs-rss-plugin
-copyright: 'Guts - In Geo Veritas'
+copyright: "Guts - In Geo Veritas"
 
 # Repository
-repo_name: 'guts/mkdocs-rss-plugin'
-repo_url: 'https://github.com/guts/mkdocs-rss-plugin'
+repo_name: "guts/mkdocs-rss-plugin"
+repo_url: "https://github.com/guts/mkdocs-rss-plugin"
 
 use_directory_urls: true
 
 plugins:
   - rss:
-      abstract_chars_count: 160  # -1 for full content
+      abstract_chars_count: 160 # -1 for full content
       categories:
         - tags
       comments_path: "#__comments"
@@ -21,6 +21,7 @@ plugins:
         as_creation: "date"
         as_update: false
         datetime_format: "%Y-%m-%d %H:%M"
+        default_timezone: Europe/Paris
       enabled: true
       feed_ttl: 1440
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png

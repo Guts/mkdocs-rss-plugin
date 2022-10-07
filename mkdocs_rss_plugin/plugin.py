@@ -64,6 +64,7 @@ class GitRssPlugin(BasePlugin):
         # dates source
         self.src_date_created = self.src_date_updated = "git"
         self.meta_datetime_format = None
+        self.meta_default_timezone = "UTC"
         # pages storage
         self.pages_to_filter = []
         # prepare output feeds
@@ -128,6 +129,9 @@ class GitRssPlugin(BasePlugin):
             )
             self.meta_datetime_format = self.config.get("date_from_meta").get(
                 "datetime_format", "%Y-%m-%d %H:%M"
+            )
+            self.meta_default_timezone = self.config.get("date_from_meta").get(
+                "default_timezone", "UTC"
             )
             logger.debug(
                 "[rss-plugin] Dates will be retrieved from page meta (yaml "
@@ -196,6 +200,7 @@ class GitRssPlugin(BasePlugin):
             source_date_creation=self.src_date_created,
             source_date_update=self.src_date_updated,
             meta_datetime_format=self.meta_datetime_format,
+            meta_default_timezone=self.meta_default_timezone,
         )
 
         # handle custom URL parameters
