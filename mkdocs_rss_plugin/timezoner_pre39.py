@@ -50,4 +50,4 @@ def set_datetime_zoneinfo(
         return input_datetime.replace(tzinfo=pytz.utc)
     else:
         config_tz = pytz.timezone(config_timezone)
-        return config_tz.fromutc(input_datetime)
+        return config_tz.localize(input_datetime)
