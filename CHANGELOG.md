@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.4.1 - 2022-10-07
+
+### Changed
+
+- Set Mkdocs upper cap to major version by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/146> to comply with the discussion opened by @oprypin in #137
+
 ## 1.4.0 - 2022-10-07
 
 ### Added
