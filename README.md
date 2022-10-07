@@ -44,6 +44,7 @@ plugins:
         as_creation: "date"
         as_update: false
         datetime_format: "%Y-%m-%d %H:%M"
+        default_timezone: Europe/Paris
       enabled: true
       feed_ttl: 1440
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
