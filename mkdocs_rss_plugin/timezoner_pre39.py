@@ -13,7 +13,6 @@
 # standard library
 import logging
 from datetime import datetime
-from functools import lru_cache
 
 # 3rd party
 import pytz
@@ -51,4 +50,4 @@ def set_datetime_zoneinfo(
         return input_datetime.replace(tzinfo=pytz.utc)
     else:
         config_tz = pytz.timezone(config_timezone)
-        return input_datetime.replace(tzinfo=config_tz)
+        return config_tz.fromutc(input_datetime)
