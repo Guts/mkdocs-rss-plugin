@@ -16,7 +16,6 @@
 # Standard library
 import unittest
 from datetime import datetime
-from pathlib import Path
 
 # plugin target
 from mkdocs_rss_plugin.util import set_datetime_zoneinfo
