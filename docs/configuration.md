@@ -298,6 +298,7 @@ So, it's possible to use the dates manually specified into the [page metadata] t
 - `as_creation`: meta tag name to use as creation date. Default to False.
 - `as_update`: meta tag name to use as update date. Default to False.
 - `datetime_format`: datetime format. Default to "%Y-%m-%d %H:%M".
+- `default_timezone`: timezone to use by default to make aware datetimes. Default: "UTC".
 
 #### Example
 
@@ -325,6 +326,7 @@ plugins:
         as_creation: "date"
         as_update: false
         datetime_format: "%Y-%m-%d %H:%M"
+        default_timezone: Europe/Paris
 ```
 
 At the end, into the RSS you will get:
@@ -333,11 +335,16 @@ At the end, into the RSS you will get:
 <item>
   <title>This page title is a perfect clickbait!</title>
   <link>https://website.com/articles/best_article/</link>
-  <pubDate>Thu, 22 Oct 2020 17:18:00 -0000</pubDate>
+  <pubDate>Thu, 22 Oct 2020 17:18:00 +0200</pubDate>
   [...]
 
 </item>
 ```
+
+!!! note "Timezone dependencies"
+    The timezones data depends on the Python version used to build:
+        - for Python >= 3.9, it uses the standard library and ships [tzdata](https://pypi.org/project/tzdata/) only on Windows which do not provide such data
+        - for Python < 3.9, [pytz](https://pypi.org/project/pytz/) is shipped.
 
 ### Prettified output
 
