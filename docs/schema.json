@@ -70,6 +70,19 @@
                     "string"
                   ],
                   "default": "UTC"
+                },
+                "default_time": {
+                  "examples": [
+                    "08:15",
+                    "16:47",
+                    "22:22"
+                  ],
+                  "description": "Default time in 24h-clock syntax (i.e. 16:30) to apply to pages with date but time specified.",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
                 }
               }
             },
