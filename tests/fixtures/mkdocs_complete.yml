@@ -35,6 +35,7 @@ plugins:
         utm_campaign: "feed-syndication"
 theme:
   name: readthedocs
+  locale: fr
 
 # Extensions to enhance markdown
 markdown_extensions:
