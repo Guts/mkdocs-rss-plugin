@@ -172,7 +172,7 @@ class GitRssPlugin(BasePlugin):
                 base_feed.get("html_url") + OUTPUT_FEED_UPDATED
             )
         else:
-            logging.warning(
+            logger.error(
                 "[rss-plugin] The variable `site_url` is not set in the MkDocs "
                 "configuration file whereas a URL is mandatory to publish. "
                 "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
