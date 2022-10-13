@@ -401,6 +401,21 @@ class TestBuildRss(BaseTest):
             # some feed characteristics
             self.assertEqual(feed_parsed.version, "rss20")
 
+    def test_config_no_site_url(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_minimal_no_site_url.yml"
+                ),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            # cli should returns an error code (1)
+            self.assertEqual(cli_result.exit_code, 1)
+            self.assertIsNotNone(cli_result.exception)
+
     def test_bad_config(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
