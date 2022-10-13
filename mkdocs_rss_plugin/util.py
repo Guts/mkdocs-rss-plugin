@@ -87,6 +87,13 @@ class Util:
         :return: complete and valid URL
         :rtype: str
         """
+        if not base_url:
+            logger.error(
+                "[rss-plugin] Base url not set, probably because 'site_url' is not set "
+                "in Mkdocs configuration file. Using an empty string instead."
+            )
+            base_url = ""
+
         # Returns a list in the structure of urlparse.ParseResult
         url_parts = list(urlparse(base_url))
         url_parts[2] += path
