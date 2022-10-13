@@ -212,6 +212,11 @@ class GitRssPlugin(BasePlugin):
         if not self.match_path_pattern.match(page.file.src_path):
             return
 
+        # skip pages with draft=true
+        if page.meta.get("draft", False) is True:
+            logger.debug(f"Page {page.title} ignored because it's a draft")
+            return
+
         # retrieve dates from git log
         page_dates = self.util.get_file_dates(
             in_page=page,
