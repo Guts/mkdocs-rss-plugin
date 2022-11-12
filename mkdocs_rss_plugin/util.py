@@ -6,6 +6,7 @@
 
 # standard library
 import logging
+import re
 import ssl
 import sys
 from datetime import date, datetime
@@ -347,7 +348,8 @@ class Util:
 
     def get_description_or_abstract(self, in_page: Page, chars_count: int = 160) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
-        {chars_count} first characters from page content (in markdown).
+        {chars_count} first characters from page content (in markdown). If {chars_count} \
+        set to 0, use characters up to '<!-- more -->' delimiter.
 
         :param Page in_page: page to look at
         :param int chars_count: if page.meta.description is not set, number of chars \
@@ -361,6 +363,12 @@ class Util:
         # Set chars_count to None if it is set to be unlimited, for slicing.
         if chars_count < 0:
             chars_count = None
+        # when chars_count set to 0, return chars up to the post delimiter
+        elif chars_count == 0:
+            delim_re = r"<!--\s?more\s?-->"
+            match = re.search(delim_re, in_page.markdown)
+            if match:
+                chars_count = match.start() + 2
 
         # If the abstract chars is not unlimited and the description exists,
         # return the description.

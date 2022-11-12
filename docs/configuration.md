@@ -218,6 +218,7 @@ Output:
 To fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
 - If this value is set to `-1`, then the articles' full HTML content will be filled into the description element.
+- When set to `0`, then content up to the post delimiter `<-- more -->` is retrieved.
 - Otherwise, the plugin first tries to retrieve the value of the keyword `description` from the [page metadata].
 - If the value is non-negative and no `description` meta is found, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted rougthly into HTML.
 
