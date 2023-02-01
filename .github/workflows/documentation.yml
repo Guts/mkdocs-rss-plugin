@@ -9,8 +9,20 @@ on:
     paths:
       - "docs/**"
       - "*.md"
+      - ".github/workflows/documentation.yml"
     tags:
       - "*"
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -35,16 +47,22 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           python -m pip install --upgrade -r requirements.txt
           python -m pip install --upgrade -r requirements/documentation.txt
-          python -m pip install --upgrade ghp-import
 
       - name: Build static website
         run: mkdocs build --verbose
 
-      - name: Deploy to Github Pages
-        run: |
-          git config --global user.name "Guts"
-          git config --global user.email "1596222+Guts@users.noreply.github.com"
-          ghp-import --force --no-jekyll --no-history --push site
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

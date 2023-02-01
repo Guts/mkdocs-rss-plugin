@@ -102,7 +102,6 @@ class TestBuildRss(BaseTest):
             # created items
             feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
             for feed_item in feed_parsed.entries:
-
                 # mandatory properties
                 self.assertTrue("description" in feed_item)
                 self.assertTrue("guid" in feed_item)
@@ -137,7 +136,6 @@ class TestBuildRss(BaseTest):
             # created items
             feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
             for feed_item in feed_parsed.entries:
-
                 # mandatory properties
                 self.assertTrue("description" in feed_item)
                 self.assertTrue("guid" in feed_item)

@@ -37,7 +37,7 @@ jobs:
           twine upload dist/*
 
       - name: Create/update release on GitHub
-        uses: ncipollo/release-action@v1.11.1
+        uses: ncipollo/release-action@v1.12.0
         with:
           allowUpdates: true
           artifacts: "dist/*"
