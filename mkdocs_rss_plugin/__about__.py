@@ -32,7 +32,7 @@ __all__ = [
 __author__ = "Julien Moura"
 __copyright__ = "2020 - {0}, {1}".format(date.today().year, __author__)
 __email__ = "dev@ingeoveritas.com"
-__license__ = "GNU General Public License v3.0"
+__license__ = "MIT"
 __summary__ = (
     "MkDocs plugin which generates a static RSS feed using git log and page.meta."
 )

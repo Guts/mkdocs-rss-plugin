@@ -52,7 +52,7 @@ setup(
     author=__about__.__author__,
     author_email=__about__.__email__,
     description=__about__.__summary__,
-    license="MIT",
+    license=__about__.__license__,
     long_description=README,
     long_description_content_type="text/markdown",
     project_urls={
