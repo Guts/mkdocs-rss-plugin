@@ -17,6 +17,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.6.0 - 2023-02-21
+
+### Bugs fixes 🐛
+
+* Improve: handle missing site url by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/150>
+* Upgrade git hooks to fix fail because of isort by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/170>
+
+### Features and enhancements 🎉
+
+* Tests: more use cases, better coverage by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/152>
+* Handle abstract_chars_count set to 0 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/172>
+* Add new option abstract_delimiter by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/173>
+
+### Tooling 🔧
+
+* Add Python 3.11 to supported versions by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/157>
+* Just a little refresh on CI workflows by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/158>
+* CI : disable fail fast on tests matrix to get all Python versions results by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/159>
+* CI: sse GA to deploy to GH Pages instead of ghp-import by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/171>
+* Remove Python 3.7 support by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/174>
+
 ## 1.5.0 - 2022-10-13
 
 ### Added
