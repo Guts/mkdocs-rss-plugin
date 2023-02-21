@@ -378,14 +378,17 @@ class Util:
                 "because an item must have a description."
             )
             return ""
-        elif abstract_delimiter:
-            if (
+        elif (
+            abstract_delimiter
+            and (
                 excerpt_separator_position := in_page.markdown.find(abstract_delimiter)
-            ) > -1:
-                return markdown.markdown(
-                    in_page.markdown[:excerpt_separator_position],
-                    output_format="html5",
-                )
+            )
+            > -1
+        ):
+            return markdown.markdown(
+                in_page.markdown[:excerpt_separator_position],
+                output_format="html5",
+            )
         # If chars count is unlimited, use the html content
         elif in_page.content and chars_count == -1:
             if chars_count is None or len(in_page.content) < chars_count:
