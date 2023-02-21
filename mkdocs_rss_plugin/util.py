@@ -345,17 +345,21 @@ class Util:
 
         return out_date
 
-    def get_description_or_abstract(self, in_page: Page, chars_count: int = 160) -> str:
+    def get_description_or_abstract(
+        self, in_page: Page, chars_count: int = 160, abstract_delimiter: str = None
+    ) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
         {chars_count} first characters from page content (in markdown).
 
         :param Page in_page: page to look at
         :param int chars_count: if page.meta.description is not set, number of chars \
         of the content to use. Defaults to: 160 - optional
+        :param str abstract_delimiter: description delimeter, defaults to None
 
         :return: page description to use
         :rtype: str
         """
+
         description = in_page.meta.get("description")
 
         # Set chars_count to None if it is set to be unlimited, for slicing.
@@ -374,8 +378,16 @@ class Util:
                 "because an item must have a description."
             )
             return ""
+        elif abstract_delimiter:
+            if (
+                excerpt_separator_position := in_page.markdown.find(abstract_delimiter)
+            ) > -1:
+                return markdown.markdown(
+                    in_page.markdown[:excerpt_separator_position],
+                    output_format="html5",
+                )
         # If chars count is unlimited, use the html content
-        elif in_page.content and chars_count is None:
+        elif in_page.content and chars_count == -1:
             if chars_count is None or len(in_page.content) < chars_count:
                 return in_page.content[:chars_count]
         # Use markdown
