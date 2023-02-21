@@ -366,6 +366,14 @@ class Util:
         # return the description.
         if description and chars_count is not None:
             return description
+        # If no description and chars_count set to 0, return empty string
+        elif not description and chars_count == 0:
+            logger.warning(
+                f"[rss-plugin] No description set for page {in_page.file} "
+                "and 'abstract_chars_count' set to 0. The feed won't be compliant, "
+                "because an item must have a description."
+            )
+            return ""
         # If chars count is unlimited, use the html content
         elif in_page.content and chars_count is None:
             if chars_count is None or len(in_page.content) < chars_count:
