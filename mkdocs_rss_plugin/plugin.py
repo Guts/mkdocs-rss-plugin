@@ -47,6 +47,7 @@ class GitRssPlugin(BasePlugin):
 
     config_scheme = (
         ("abstract_chars_count", config_options.Type(int, default=160)),
+        ("abstract_delimiter", config_options.Type(str, default="<!-- more -->")),
         ("categories", config_options.Type(list, default=None)),
         ("comments_path", config_options.Type(str, default=None)),
         ("date_from_meta", config_options.Type(dict, default=None)),
@@ -256,7 +257,9 @@ class GitRssPlugin(BasePlugin):
                 ),
                 created=page_dates[0],
                 description=self.util.get_description_or_abstract(
-                    in_page=page, chars_count=self.config.get("abstract_chars_count")
+                    in_page=page,
+                    chars_count=self.config.get("abstract_chars_count"),
+                    abstract_delimiter=self.config.get("abstract_delimiter"),
                 ),
                 guid=page.canonical_url,
                 image=self.util.get_image(
