@@ -57,6 +57,7 @@ class TestConfig(BaseTest):
         # default reference
         expected = {
             "abstract_chars_count": 160,
+            "abstract_delimiter": "<!-- more -->",
             "categories": None,
             "comments_path": None,
             "date_from_meta": None,
@@ -80,6 +81,7 @@ class TestConfig(BaseTest):
         # reference
         expected = {
             "abstract_chars_count": 160,
+            "abstract_delimiter": "<!-- more -->",
             "categories": None,
             "comments_path": None,
             "date_from_meta": None,
