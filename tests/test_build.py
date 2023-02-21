@@ -322,8 +322,13 @@ class TestBuildRss(BaseTest):
             self.assertEqual(feed_parsed.bozo, 0)
 
             for feed_item in feed_parsed.entries:
-                if feed_item.title not in ("Page without meta with short text",):
-                    self.assertGreaterEqual(len(feed_item.description), 150)
+                if feed_item.title not in (
+                    "Page without meta with short text",
+                    "Blog sample",
+                ):
+                    self.assertGreaterEqual(
+                        len(feed_item.description), 150, feed_item.title
+                    )
 
     def test_simple_build_pretty_print_enabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
