@@ -37,6 +37,7 @@ Full options:
 plugins:
   - rss:
       abstract_chars_count: 160  # -1 for full content
+      abstract_delimiter: <!-- more -->
       categories:
         - tags
       comments_path: "#__comments"
