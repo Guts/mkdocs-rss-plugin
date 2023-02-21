@@ -369,7 +369,7 @@ class Util:
         # If no description and chars_count set to 0, return empty string
         elif not description and chars_count == 0:
             logger.warning(
-                f"[rss-plugin] No description set for page {in_page.file} "
+                f"[rss-plugin] No description set for page {in_page.file.src_uri} "
                 "and 'abstract_chars_count' set to 0. The feed won't be compliant, "
                 "because an item must have a description."
             )
