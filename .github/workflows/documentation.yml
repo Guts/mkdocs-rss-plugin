@@ -13,6 +13,12 @@ on:
     tags:
       - "*"
 
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/documentation.yml"
+      - requirements/documentation.txt
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -54,15 +60,26 @@ jobs:
       - name: Build static website
         run: mkdocs build --verbose
 
+      - name: Save build doc as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: site/
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
+        if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
+        if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')
         with:
           # Upload entire repository
-          path: site
+          path: site/
 
       - name: Deploy to GitHub Pages
         id: deployment
+        if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')
         uses: actions/deploy-pages@v1
