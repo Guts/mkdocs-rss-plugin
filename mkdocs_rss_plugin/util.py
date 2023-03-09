@@ -596,7 +596,7 @@ class Util:
                     "image": page.image,
                     "link": page.url_full,
                     "pubDate": format_datetime(dt=pub_date),
-                    "pubDate3339": pub_date.isoformat('T'),
+                    "pubDate3339": pub_date.isoformat("T"),
                     "title": page.title,
                 }
             )
@@ -625,7 +625,9 @@ class Util:
             "feed_url": feed.get("json_url"),
             "description": feed.get("description"),
             "icon": feed.get("logo_url"),
-            "authors": [{ "name": feed.get("author") }] if feed.get("author") is not None else [],
+            "authors": [{"name": feed.get("author")}]
+            if feed.get("author") is not None
+            else [],
             "language": str(feed.get("language")),
             "items": [
                 {
@@ -635,10 +637,7 @@ class Util:
                     "content_html": item.get("description"),
                     "image": (item.get("image") or (None,))[0],
                     entry_date_key: item.get("pubDate3339"),
-                    "authors": [
-                        { "name": name }
-                        for name in item.get("authors", ())
-                    ],
+                    "authors": [{"name": name} for name in item.get("authors", ())],
                     "tags": item.get("categories"),
                 }
                 for item in feed.get("entries", ())
