@@ -585,6 +585,7 @@ class Util:
         for page in sorted(
             pages, key=lambda page: getattr(page, attribute), reverse=True
         )[:length]:
+            pub_date: datetime = getattr(page, attribute)
             filtered_pages.append(
                 {
                     "authors": page.authors,
@@ -594,9 +595,52 @@ class Util:
                     "guid": page.guid,
                     "image": page.image,
                     "link": page.url_full,
-                    "pubDate": format_datetime(dt=getattr(page, attribute)),
+                    "pubDate": format_datetime(dt=pub_date),
+                    "pubDate3339": pub_date.isoformat('T'),
                     "title": page.title,
                 }
             )
 
         return filtered_pages
+
+    @staticmethod
+    def feed_to_json(feed: dict, *, updated: bool = False) -> dict:
+        """Format internal feed representation as a JSON Feed compliant dict.
+
+        :param feed: internal feed structure, i. e.
+            GitRssPlugin.feed_created/feed_updated value
+        :type feed: dict
+        :param updated: True if this is a feed_updated
+        :type updated: bool
+
+        :return: dict that can be passed to json.dump
+        :rtype: dict
+        """
+        entry_date_key = "date_modified" if updated else "date_published"
+
+        return {
+            "version": "https://jsonfeed.org/version/1",
+            "title": feed.get("title"),
+            "home_page_url": feed.get("html_url"),
+            "feed_url": feed.get("json_url"),
+            "description": feed.get("description"),
+            "icon": feed.get("logo_url"),
+            "authors": [{ "name": feed.get("author") }] if feed.get("author") is not None else [],
+            "language": str(feed.get("language")),
+            "items": [
+                {
+                    "id": item.get("guid"),
+                    "url": item.get("link"),
+                    "title": item.get("title"),
+                    "content_html": item.get("description"),
+                    "image": (item.get("image") or (None,))[0],
+                    entry_date_key: item.get("pubDate3339"),
+                    "authors": [
+                        { "name": name }
+                        for name in item.get("authors", ())
+                    ],
+                    "tags": item.get("categories"),
+                }
+                for item in feed.get("entries", ())
+            ],
+        }

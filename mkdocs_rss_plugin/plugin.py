@@ -5,6 +5,7 @@
 # ##################################
 
 # standard library
+import json
 import logging
 from copy import deepcopy
 from datetime import datetime
@@ -33,6 +34,8 @@ DEFAULT_TEMPLATE_FOLDER = Path(__file__).parent / "templates"
 DEFAULT_TEMPLATE_FILENAME = DEFAULT_TEMPLATE_FOLDER / "rss.xml.jinja2"
 OUTPUT_FEED_CREATED = "feed_rss_created.xml"
 OUTPUT_FEED_UPDATED = "feed_rss_updated.xml"
+OUTPUT_JSON_CREATED = "feed_created.json"
+OUTPUT_JSON_UPDATED = "feed_updated.json"
 
 logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 
@@ -172,6 +175,12 @@ class GitRssPlugin(BasePlugin):
             self.feed_updated["rss_url"] = (
                 base_feed.get("html_url") + OUTPUT_FEED_UPDATED
             )
+            self.feed_created["json_url"] = (
+                base_feed.get("html_url") + OUTPUT_JSON_CREATED
+            )
+            self.feed_updated["json_url"] = (
+                base_feed.get("html_url") + OUTPUT_JSON_UPDATED
+            )
         else:
             logger.error(
                 "[rss-plugin] The variable `site_url` is not set in the MkDocs "
@@ -293,6 +302,8 @@ class GitRssPlugin(BasePlugin):
         # output filepaths
         out_feed_created = Path(config.get("site_dir")) / OUTPUT_FEED_CREATED
         out_feed_updated = Path(config.get("site_dir")) / OUTPUT_FEED_UPDATED
+        out_json_created = Path(config.get("site_dir")) / OUTPUT_JSON_CREATED
+        out_json_updated = Path(config.get("site_dir")) / OUTPUT_JSON_UPDATED
 
         # created items
         self.feed_created.get("entries").extend(
@@ -361,3 +372,9 @@ class GitRssPlugin(BasePlugin):
                         continue
                     prev_char = char
                     fifeed_updated.write(char)
+
+            with out_json_created.open(mode="w", encoding="UTF8") as fp:
+                json.dump(self.util.feed_to_json(self.feed_created), fp)
+
+            with out_json_updated.open(mode="w", encoding="UTF8") as fp:
+                json.dump(self.util.feed_to_json(self.feed_updated, updated=True), fp)
