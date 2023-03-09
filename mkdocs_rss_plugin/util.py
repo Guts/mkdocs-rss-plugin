@@ -637,7 +637,7 @@ class Util:
                     "content_html": item.get("description"),
                     "image": (item.get("image") or (None,))[0],
                     entry_date_key: item.get("pubDate3339"),
-                    "authors": [{"name": name} for name in item.get("authors", ())],
+                    "authors": [{"name": name} for name in (item.get("authors") or ())],
                     "tags": item.get("categories"),
                 }
                 for item in feed.get("entries", ())
