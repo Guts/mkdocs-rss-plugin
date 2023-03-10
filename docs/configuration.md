@@ -27,8 +27,8 @@ To produce a valid RSS feed, the plugin uses:
 | [`site_name`](https://www.mkdocs.org/user-guide/configuration/#site_name) | **required** | [`title`](https://www.w3schools.com/xml/rss_tag_title_link_description_channel.asp) and also as [`source` URL label](https://www.w3schools.com/xml/rss_tag_source.asp) for each feed item |
 | [`site_url`](https://www.mkdocs.org/user-guide/configuration/#site_url) | **required** | [`link`](https://www.w3schools.com/xml/rss_tag_title_link_description_channel.asp) |
 | ---- | ---- | ---- |
-| [`repo_url`](https://www.mkdocs.org/user-guide/configuration/#repo_url) | **recomended** | [`docs`](https://www.w3schools.com/xml/rss_tag_docs.asp) |
-| [`site_author`](https://www.mkdocs.org/user-guide/configuration/#site_author) | **recomended** | [`managingEditor`](https://www.w3schools.com/xml/rss_tag_managingeditor.asp) |
+| [`repo_url`](https://www.mkdocs.org/user-guide/configuration/#repo_url) | **recommended** | [`docs`](https://www.w3schools.com/xml/rss_tag_docs.asp) |
+| [`site_author`](https://www.mkdocs.org/user-guide/configuration/#site_author) | **recommended** | [`managingEditor`](https://www.w3schools.com/xml/rss_tag_managingeditor.asp) |
 | ---- | ---- | ---- |
 | [`copyright`](https://www.mkdocs.org/user-guide/configuration/#copyright) | *optional* | [`copyright`](https://www.w3schools.com/xml/rss_tag_copyright.asp) |
 | [`locale` or `theme/locale` or `theme/language`](https://github.com/squidfunk/mkdocs-material/issues/1350#issuecomment-559095892) | *optional* | [`language`](https://www.w3schools.com/xml/rss_tag_language.asp) |
@@ -51,7 +51,7 @@ Basically, each page is an item element in the RSS feed.
 | [`page.canonical_url`](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py#L97-L105) | **required** and *optional* | mandatory item element [`link`](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp) and also used as [`guid`](https://www.w3schools.com/xml/rss_tag_guid.asp) |
 | [`page.meta.title`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) | **required** | [`title`](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp) |
 | [`page.meta.description`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) if present, else extract headlines from the content. See below the [item_description_length option](/configuration/#item-description-length). | **required** | [`description`](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp) |
-| creation or last update datetime according git log. Can be overridden by dates in page.meta. If not, then it uses [MkDcos build date](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/utils/__init__.py#L111-L118) | **recomended** | [`pubDate`](https://www.w3schools.com/xml/rss_tag_pubdate_item.asp) |
+| creation or last update datetime according git log. Can be overridden by dates in page.meta. If not, then it uses [MkDocs build date](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/utils/__init__.py#L111-L118) | **recommended** | [`pubDate`](https://www.w3schools.com/xml/rss_tag_pubdate_item.asp) |
 | [`page.meta.image`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) | *optional* | item element [`enclosure`](https://www.w3schools.com/xml/rss_tag_enclosure.asp). Some HTTP requests can be performed to retrieve remote images length. |
 | [`page.meta.authors`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) or `page.meta.author`. Accepted value types: `str` `list`, `tuple`. <br />To comply with the standard, the page writer is responsible to fill this field following this syntax: `john@doe.com (John Doe)` ([read this SO](https://stackoverflow.com/a/6079731/2556577)). | *optional* | [`author`](https://www.w3schools.com/XML/rss_tag_author.asp) |
 | [`page.meta.tags`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) or any tags value (for example `page.meta.categories`...). Accepted value types: `str` `list`. | *optional* | [`category`](https://www.w3schools.com/xml/rss_tag_category_item.asp) |
@@ -219,7 +219,7 @@ To fill each [item description element](https://www.w3schools.com/xml/rss_tag_ti
 
 - If this value is set to `-1`, then the articles' full HTML content will be filled into the description element.
 - Otherwise, the plugin first tries to retrieve the value of the keyword `description` from the [page metadata].
-- If the value is non-negative and no `description` meta is found, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted rougthly into HTML.
+- If the value is non-negative and no `description` meta is found, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted roughly into HTML.
 
 `abstract_chars_count`: number of characters to use as item description.
 
@@ -299,7 +299,7 @@ So, it's possible to use the dates manually specified into the [page metadata] t
 - `as_update`: meta tag name to use as update date. Default to `False`.
 - `datetime_format`: datetime format. Default to `"%Y-%m-%d %H:%M"`.
 - `default_timezone`: timezone to use by default to make aware datetimes. Default to `UTC`. Introduced in version 1.3.0 with [PR 142](https://github.com/Guts/mkdocs-rss-plugin/pull/142).
-- `default_time`: time to use if page contains only a date. Useful to avoid the 'midnight syndrom' or have to specify hour in every single page. Default to `None`. 24h-clock format is expected: `%H:%M`. Example: `"14:20"`. Introduced in version 1.4.0 with [PR 145](https://github.com/Guts/mkdocs-rss-plugin/pull/145).
+- `default_time`: time to use if page contains only a date. Useful to avoid the 'midnight syndrome' or have to specify hour in every single page. Default to `None`. 24h-clock format is expected: `%H:%M`. Example: `"14:20"`. Introduced in version 1.4.0 with [PR 145](https://github.com/Guts/mkdocs-rss-plugin/pull/145).
 
 #### Example
 
@@ -417,7 +417,7 @@ Default: `None`.
 
 ### Reference RSS feeds in HTML meta-tags
 
-To facilitate the discovery of RSS feeds, it's recomended to add relevant meta-tags into the pages `<head>`, through template customization in `main.html` :
+To facilitate the discovery of RSS feeds, it's recommended to add relevant meta-tags into the pages `<head>`, through template customization in `main.html` :
 
 ```html
 {% extends "base.html" %}

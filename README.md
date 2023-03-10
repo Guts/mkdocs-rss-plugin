@@ -80,6 +80,8 @@ pre-commit install
 
 # run tests
 pytest
+# note that some tests are for documentation,
+# so they'll fail without requirements/documentation.txt.
 
 # install dependencies for documentation
 python -m pip install -U -r requirements/documentation.txt
