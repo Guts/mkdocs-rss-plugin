@@ -560,7 +560,8 @@ class Util:
 
         # Some themes implement a locale or a language setting
         if "theme" in mkdocs_config and "locale" in mkdocs_config.get("theme"):
-            return mkdocs_config.get("theme")._vars.get("locale")
+            locale = mkdocs_config.get("theme")._vars.get("locale")
+            return f"{locale.language}-{locale.territory}"
         elif "theme" in mkdocs_config and "language" in mkdocs_config.get("theme"):
             return mkdocs_config.get("theme")._vars.get("language")
         else:
