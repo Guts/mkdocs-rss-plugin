@@ -17,7 +17,7 @@ Make sure your code *roughly* follows [PEP-8](https://www.python.org/dev/peps/pe
 - docstrings: [sphinx-style](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html#the-sphinx-docstring-format) is used to write technical documentation.
 - formatting: [black](https://black.readthedocs.io/) is used to automatically format the code without debate.
 - sorted imports: [isort](https://pycqa.github.io/isort/) is used to sort imports
-- static analisis: [flake8](https://flake8.pycqa.org/en/latest/) is used to catch some dizziness and keep the source code healthy.
+- static analysis: [flake8](https://flake8.pycqa.org/en/latest/) is used to catch some dizziness and keep the source code healthy.
 
 ----
 
@@ -30,6 +30,8 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
 ```jsonc
 {
     "python.defaultInterpreterPath": ".venv/bin/python",
+    // 👆 For Windows, change it to "./.venv/Scripts/python.exe".
+    // Or you can manually select one when VS Code asks for it.
     // Editor
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs":"active",

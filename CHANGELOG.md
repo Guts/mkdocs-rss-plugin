@@ -62,8 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Minor improvments: clean unused imports, lines length and use fstrings in logging by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/143>
-* Improvment: more granular fallback to build timestamp by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/144>
+* Minor improvements: clean unused imports, lines length and use fstrings in logging by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/143>
+* Improvement: more granular fallback to build timestamp by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/144>
 
 ## 1.3.0 - 2022-10-07
 
@@ -100,7 +100,7 @@ So, no feature in this release, just focusing on quality and code cleanliness.
 ### Fixed
 
 * Minor bugs fixes
-* Minor documentation improvments
+* Minor documentation improvements
 
 ----
 
@@ -157,7 +157,7 @@ So, no feature in this release, just focusing on quality and code cleanliness.
 
 ### Added
 
-* option to get the full page content into thed. Contributed by [liang2kl](https://github.com/liang2kl) with [PR 88](https://github.com/Guts/mkdocs-rss-plugin/pull/88). See the [related documentation section](https://guts.github.io/mkdocs-rss-plugin/configuration/#item-description-length).
+* option to get the full page content into thread. Contributed by [liang2kl](https://github.com/liang2kl) with [PR 88](https://github.com/Guts/mkdocs-rss-plugin/pull/88). See the [related documentation section](https://guts.github.io/mkdocs-rss-plugin/configuration/#item-description-length).
 
 ### Changed
 
@@ -333,7 +333,7 @@ So, no feature in this release, just focusing on quality and code cleanliness.
 
 ### Changed
 
-* docs: minor improvments
+* docs: minor improvements
 
 ----
 
