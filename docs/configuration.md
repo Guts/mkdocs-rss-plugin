@@ -218,12 +218,27 @@ Output:
 To fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
 - If this value is set to `-1`, then the articles' full HTML content will be filled into the description element.
+- be careful: if set to `0` and there is no description, the feed's compliance is broken (an item must have a description)
 - Otherwise, the plugin first tries to retrieve the value of the keyword `description` from the [page metadata].
 - If the value is non-negative and no `description` meta is found, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted roughly into HTML.
 
 `abstract_chars_count`: number of characters to use as item description.
 
 Default: `150`
+
+----
+
+#### Abstract delimiter
+
+Used to fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
+
+- If this value is set to `-1`, then the full HTML content will be filled into the description element.
+- Otherwise, the plugin first tries to retrieve the value of the key `description` from the page metadata.
+- If the value is non-negative and no `description` meta is found, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted rougthly into HTML (i.e. without extension, etc.).
+
+`abstract_delimiter`: string to mark .
+
+Default: `<!-- more -->`
 
 ----
 
