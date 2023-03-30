@@ -420,9 +420,9 @@ class Util:
         :rtype: tuple
         """
         if in_page.meta.get("image"):
-            img_url = in_page.meta.get("image")
+            img_url = in_page.meta.get("image").strip()
         elif in_page.meta.get("illustration"):
-            img_url = in_page.meta.get("illustration")
+            img_url = in_page.meta.get("illustration").strip()
         else:
             return None
 
