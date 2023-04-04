@@ -127,6 +127,18 @@
               "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#url-parameters",
               "type": "object",
               "default": null
+            },
+            "category_feeds": {
+              "title": "Separate feeds for each category",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#category_feeds",
+              "type": "boolean",
+              "default": false
+            },
+            "category_feeds_dir": {
+              "title": "Directory to put category feeds into",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#category_feeds_directory",
+              "type": "string",
+              "default": "rss"
             }
           },
           "additionalProperties": false
