@@ -52,26 +52,39 @@ logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 
 
 class Util:
-    def __init__(self, path: str = "."):
+    """Plugin logic."""
+
+    git_is_valid: bool = False
+
+    def __init__(self, path: str = ".", use_git: bool = True):
         """Class hosting the plugin logic.
 
         :param str path: path tot the git repository to use. Defaults to: "." - optional
+        :param bool use_git: flag to use git under the hood or not, defaults to True
         """
-        try:
-            git_repo = Repo(path, search_parent_directories=True)
-            self.repo = git_repo.git
-            self.git_is_valid = 1
-        except InvalidGitRepositoryError as err:
-            logging.warning(
-                f"[rss-plugin] Path '{path}' is not a valid git directory. Trace: {err}"
-            )
-            self.git_is_valid = 0
-        except Exception as err:
-            logging.warning(f"[rss-plugin] Git issue: {err}")
-            self.git_is_valid = 0
+        if use_git:
+            logger.debug("[rss-plugin] Git use is disabled.")
+            try:
+                git_repo = Repo(path, search_parent_directories=True)
+                self.repo = git_repo.git
+                self.git_is_valid: bool = True
+            except InvalidGitRepositoryError as err:
+                logging.warning(
+                    f"[rss-plugin] Path '{path}' is not a valid git directory. Trace: {err}"
+                )
+                self.git_is_valid = False
+            except Exception as err:
+                logging.warning(f"[rss-plugin] Git issue: {err}")
+                self.git_is_valid = False
 
-        # Checks if user is running builds on CI and raise appropriate warnings
-        CiHandler(git_repo.git).raise_ci_warnings()
+            # Checks if user is running builds on CI and raise appropriate warnings
+            CiHandler(git_repo.git).raise_ci_warnings()
+        else:
+            self.git_is_valid = False
+            logger.debug("[rss-plugin] Git use is disabled.")
+
+        # save git enable/disable status
+        self.use_git = use_git
 
     def build_url(self, base_url: str, path: str, args_dict: dict = None) -> str:
         """Build URL using base URL, cumulating existing and passed path, \
@@ -135,7 +148,9 @@ class Util:
         dt_created = dt_updated = None
 
         # if enabled, try to retrieve dates from page metadata
-        if source_date_creation != "git" and in_page.meta.get(source_date_creation):
+        if not self.use_git or (
+            source_date_creation != "git" and in_page.meta.get(source_date_creation)
+        ):
             dt_created = self.get_date_from_meta(
                 date_metatag_value=in_page.meta.get(source_date_creation),
                 meta_datetime_format=meta_datetime_format,
@@ -146,7 +161,9 @@ class Util:
                 logger.error(f"Creation date is a string: {dt_created}")
                 dt_created = None
 
-        if source_date_update != "git" and in_page.meta.get(source_date_update):
+        if not self.use_git or (
+            source_date_update != "git" and in_page.meta.get(source_date_update)
+        ):
             dt_updated = self.get_date_from_meta(
                 date_metatag_value=in_page.meta.get(source_date_update),
                 meta_datetime_format=meta_datetime_format,
@@ -177,6 +194,7 @@ class Util:
                         format="%at",
                     )
             except GitCommandError as err:
+                print("youpi", self.git_is_valid)
                 logging.warning(
                     f"[rss-plugin] Unable to read git logs of '{in_page.file.abs_src_path}'. "
                     "Is git log readable? Falling back to build date. "

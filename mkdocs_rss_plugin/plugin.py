@@ -58,12 +58,11 @@ class GitRssPlugin(BasePlugin):
         ("match_path", config_options.Type(str, default=".*")),
         ("pretty_print", config_options.Type(bool, default=False)),
         ("url_parameters", config_options.Type(dict, default=None)),
+        ("use_git", config_options.Type(bool, default=True)),
     )
 
     def __init__(self):
         """Instanciation."""
-        # tooling
-        self.util = Util()
         # dates source
         self.src_date_created = self.src_date_updated = "git"
         self.meta_datetime_format = None
@@ -93,6 +92,9 @@ class GitRssPlugin(BasePlugin):
         # Skip if disabled
         if not self.config.get("enabled"):
             return config
+
+        # instanciate plugin tooling
+        self.util = Util(use_git=self.config.get("use_git", True))
 
         # check template dirs
         if not Path(DEFAULT_TEMPLATE_FILENAME).is_file():
@@ -152,10 +154,17 @@ class GitRssPlugin(BasePlugin):
                         f"format %H:%M. Trace: {err}"
                     )
 
-            logger.debug(
-                "[rss-plugin] Dates will be retrieved from page meta (yaml "
-                "frontmatter). The git log will be used as fallback."
-            )
+            if self.config.get("use_git", True):
+                logger.debug(
+                    "[rss-plugin] Dates will be retrieved FIRSTLY from page meta (yaml "
+                    "frontmatter). The git log will be used as fallback."
+                )
+            else:
+                logger.debug(
+                    "[rss-plugin] Dates will be retrieved ONLY from page meta (yaml "
+                    "frontmatter). The build date will be used as fallback, without any "
+                    "call to Git."
+                )
         else:
             logger.debug("[rss-plugin] Dates will be retrieved from git log.")
 

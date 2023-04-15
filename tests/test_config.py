@@ -68,6 +68,7 @@ class TestConfig(BaseTest):
             "pretty_print": False,
             "match_path": ".*",
             "url_parameters": None,
+            "use_git": True,
         }
 
         # load
