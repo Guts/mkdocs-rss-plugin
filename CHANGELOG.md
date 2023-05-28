@@ -17,6 +17,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.7.0 - 2023-05-28
+
+### Bugs fixes 🐛
+
+* Fix tests: restore missing `__init__.py` file to make tests a subpackage by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/190>
+
+### Features and enhancements 🎉
+
+* Comply language codes with RSS Spec by @YDX-2147483647 in <https://github.com/Guts/mkdocs-rss-plugin/pull/178>
+
+### Tooling 🔧
+
+* Documentation: housekeeping dependencies and CI by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/175>
+
+### Documentation 📖
+
+* Doc: typo & tips by @YDX-2147483647 in <https://github.com/Guts/mkdocs-rss-plugin/pull/179>
+
+### Other Changes
+
+* Improve: strip image URL to avoid common errors by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/180>
+* Dev tooling: extend git hooks by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/189>
+
 ## 1.6.0 - 2023-02-21
 
 ### Bugs fixes 🐛
