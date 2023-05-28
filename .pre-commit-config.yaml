@@ -19,8 +19,6 @@ repos:
       - id: fix-byte-order-marker
       - id: fix-encoding-pragma
         args: [--remove]
-      - id: name-tests-test
-        args: [--pytest-test-first]
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
 
