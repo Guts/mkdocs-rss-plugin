@@ -14,6 +14,7 @@ changelog:
     - title: Tooling 🔧
       labels:
         - ci-cd
+        - tooling
     - title: Documentation 📖
       labels:
         - documentation
