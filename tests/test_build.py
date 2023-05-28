@@ -58,7 +58,7 @@ class TestBuildRss(BaseTest):
     def tearDownClass(cls):
         """Executed after the last test."""
         # In case of some tests failure, ensure that everything is cleaned up
-        temp_page = Path("tests/fixtures/docs/temp_page_not_in_git_log.md")
+        # temp_page = Path("tests/fixtures/docs/temp_page_not_in_git_log.md")
         # if temp_page.exists():
         #     temp_page.unlink()
 

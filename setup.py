@@ -57,7 +57,7 @@ setup(
     long_description_content_type="text/markdown",
     project_urls={
         "Docs": "https://guts.github.io/mkdocs-rss-plugin/",
-        "Bug Reports": "{}issues/".format(__about__.__uri__),
+        "Bug Reports": f"{__about__.__uri__}issues/",
         "Source": __about__.__uri__,
     },
     # packaging

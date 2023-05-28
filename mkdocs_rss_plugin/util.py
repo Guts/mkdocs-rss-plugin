@@ -40,7 +40,7 @@ else:
 
 REMOTE_REQUEST_HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "User-Agent": "{}/{}".format(__about__.__title__, __about__.__version__),
+    "User-Agent": f"{__about__.__title__}/{__about__.__version__}",
 }
 
 logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
@@ -401,7 +401,7 @@ class Util:
                 )
             else:
                 return markdown.markdown(
-                    "{}...".format(in_page.markdown[: chars_count - 3]),
+                    f"{in_page.markdown[: chars_count - 3]}...",
                     output_format="html5",
                 )
         # Unlimited chars_count but no content is found, then return the description.

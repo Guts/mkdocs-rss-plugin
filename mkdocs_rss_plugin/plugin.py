@@ -107,7 +107,7 @@ class GitRssPlugin(BasePlugin):
             "copyright": config.get("copyright", None),
             "description": config.get("site_description", None),
             "entries": [],
-            "generator": "{} - v{}".format(__title__, __version__),
+            "generator": f"{__title__} - v{__version__}",
             "html_url": self.util.get_site_url(config),
             "language": self.util.guess_locale(config),
             "pubDate": formatdate(get_build_timestamp()),
