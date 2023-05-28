@@ -8,15 +8,37 @@ repos:
     hooks:
       - id: check-added-large-files
         args: ["--maxkb=500"]
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-case-conflict
       - id: check-json
       - id: check-toml
       - id: check-yaml
       - id: detect-private-key
       - id: end-of-file-fixer
+      - id: fix-byte-order-marker
       - id: fix-encoding-pragma
         args: [--remove]
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0 # Use the ref you want to point at
+    hooks:
+      - id: python-use-type-annotations
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.4.0
+    hooks:
+      - id: pyupgrade
+        args:
+          - "--py38-plus"
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.270"
+    hooks:
+      - id: ruff
+        args: ["--fix-only"]
 
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0

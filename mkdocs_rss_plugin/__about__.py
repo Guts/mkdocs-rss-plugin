@@ -30,7 +30,7 @@ __all__ = [
 ]
 
 __author__ = "Julien Moura"
-__copyright__ = "2020 - {0}, {1}".format(date.today().year, __author__)
+__copyright__ = f"2020 - {date.today().year}, {__author__}"
 __email__ = "dev@ingeoveritas.com"
 __license__ = "MIT"
 __summary__ = (
