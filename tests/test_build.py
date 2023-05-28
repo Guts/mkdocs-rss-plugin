@@ -26,7 +26,7 @@ from traceback import format_exception
 import feedparser
 
 # test suite
-from base import BaseTest
+from tests.base import BaseTest
 
 logger = getLogger(__name__)
 logger.setLevel(DEBUG)
