@@ -26,8 +26,6 @@ repos:
     rev: v1.10.0 # Use the ref you want to point at
     hooks:
       - id: python-use-type-annotations
-      - id: rst-directive-colons
-      - id: rst-inline-touching-normal
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.4.0
