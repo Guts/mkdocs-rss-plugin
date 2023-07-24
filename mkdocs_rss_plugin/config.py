@@ -28,3 +28,4 @@ class RssPluginConfig(Config):
     match_path = config_options.Type(str, default=".*")
     pretty_print = config_options.Type(bool, default=False)
     url_parameters = config_options.Type(dict, default=None)
+    use_git = config_options.Type(bool, default=True)
