@@ -32,6 +32,8 @@ plugins:
         utm_source: "documentation"
         utm_medium: "RSS"
         utm_campaign: "feed-syndication"
+      category_feeds: false
+      category_feeds_dir: rss
   - search
 
 theme:

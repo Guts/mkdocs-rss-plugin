@@ -426,6 +426,18 @@ Will result in:
 
 Default: `None`.
 
+### Category feeds
+
+Enables generating separate feeds for each category.
+
+Default: `false`.
+
+### Category feeds directory
+
+Directory to put category feeds into
+
+Default: `rss_dir`.
+
 ----
 
 ## Integration

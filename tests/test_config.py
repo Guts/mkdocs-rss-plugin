@@ -68,6 +68,8 @@ class TestConfig(BaseTest):
             "pretty_print": False,
             "match_path": ".*",
             "url_parameters": None,
+            "category_feeds": False,
+            "category_feeds_dir": "rss",
         }
 
         # load
@@ -92,6 +94,8 @@ class TestConfig(BaseTest):
             "pretty_print": False,
             "match_path": ".*",
             "url_parameters": None,
+            "category_feeds": False,
+            "category_feeds_dir": "rss",
         }
 
         # custom config

@@ -4,8 +4,10 @@
 # ########## Libraries #############
 # ##################################
 
-# standard library
 import logging
+
+# standard library
+import os
 from copy import deepcopy
 from datetime import datetime
 from email.utils import formatdate
@@ -58,6 +60,8 @@ class GitRssPlugin(BasePlugin):
         ("match_path", config_options.Type(str, default=".*")),
         ("pretty_print", config_options.Type(bool, default=False)),
         ("url_parameters", config_options.Type(dict, default=None)),
+        ("category_feeds", config_options.Type(bool, default=False)),
+        ("category_feeds_dir", config_options.Type(str, default="rss")),
     )
 
     def __init__(self):
@@ -71,9 +75,13 @@ class GitRssPlugin(BasePlugin):
         self.meta_default_time = None
         # pages storage
         self.pages_to_filter = []
+        # config
+        self.category_feeds = False
+        self.category_feeds_dir = "rss"
         # prepare output feeds
         self.feed_created = dict
         self.feed_updated = dict
+        self.category_feed = dict
 
     def on_config(self, config: config_options.Config) -> dict:
         """The config event is the first event called on build and
@@ -123,6 +131,9 @@ class GitRssPlugin(BasePlugin):
         # pattern to match pages included in output
         self.match_path_pattern = compile(self.config.get("match_path"))
 
+        self.category_feeds = self.config.get("category_feeds")
+        self.category_feeds_dir = self.config.get("category_feeds_dir")
+
         # date handling
         if self.config.get("date_from_meta") is not None:
             self.src_date_created = self.config.get("date_from_meta").get(
@@ -162,6 +173,7 @@ class GitRssPlugin(BasePlugin):
         # create 2 final dicts
         self.feed_created = deepcopy(base_feed)
         self.feed_updated = deepcopy(base_feed)
+        self.category_feed = deepcopy(base_feed)
 
         # final feed url
         if base_feed.get("html_url"):
@@ -272,6 +284,41 @@ class GitRssPlugin(BasePlugin):
             )
         )
 
+    def render_feed(self, pretty_print: bool, feed_name: str, feed: dict):
+        if pretty_print:
+            # load Jinja environment and template
+            env = Environment(
+                autoescape=select_autoescape(["html", "xml"]),
+                loader=FileSystemLoader(self.tpl_folder),
+            )
+
+            template = env.get_template(self.tpl_file.name)
+
+            # write feed to file
+            with feed_name.open(mode="w", encoding="UTF8") as fifeed:
+                fifeed.write(template.render(feed=feed))
+        else:
+            # load Jinja environment and template
+            env = Environment(
+                autoescape=select_autoescape(["html", "xml"]),
+                loader=FileSystemLoader(self.tpl_folder),
+                lstrip_blocks=True,
+                trim_blocks=True,
+            )
+            template = env.get_template(self.tpl_file.name)
+
+            # write feed to file stripping out spaces and new lines
+            with feed_name.open(mode="w", encoding="UTF8") as fifeed:
+                prev_char = ""
+                for char in template.render(feed=feed):
+                    if char == "\n":
+                        continue
+                    if char == " " and prev_char == " ":
+                        prev_char = char
+                        continue
+                    prev_char = char
+                    fifeed.write(char)
+
     def on_post_build(self, config: config_options.Config) -> dict:
         """The post_build event does not alter any variables. \
         Use this event to call post-build scripts. \
@@ -312,52 +359,37 @@ class GitRssPlugin(BasePlugin):
             )
         )
 
-        # write feeds according to the pretty print option
-        if pretty_print:
-            # load Jinja environment and template
-            env = Environment(
-                autoescape=select_autoescape(["html", "xml"]),
-                loader=FileSystemLoader(self.tpl_folder),
-            )
+        # Render main feeds
+        self.render_feed(pretty_print, out_feed_created, self.feed_created)
+        self.render_feed(pretty_print, out_feed_updated, self.feed_updated)
 
-            template = env.get_template(self.tpl_file.name)
+        # Render category feeds if enabled
+        if self.category_feeds:
+            feeds = {}
+            # collect feeds of pages per category
+            for page in self.pages_to_filter:
+                for category in page.categories:
+                    feeds.setdefault(category, []).append(page)
 
-            # write feeds to files
-            with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
-                fifeed_created.write(template.render(feed=self.feed_created))
+            # Ensure target directory exists
+            path = Path(config.get("site_dir")) / self.category_feeds_dir
+            os.makedirs(path, exist_ok=True)
 
-            with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
-                fifeed_updated.write(template.render(feed=self.feed_updated))
-
-        else:
-            # load Jinja environment and template
-            env = Environment(
-                autoescape=select_autoescape(["html", "xml"]),
-                loader=FileSystemLoader(self.tpl_folder),
-                lstrip_blocks=True,
-                trim_blocks=True,
-            )
-            template = env.get_template(self.tpl_file.name)
-
-            # write feeds to files stripping out spaces and new lines
-            with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
-                prev_char = ""
-                for char in template.render(feed=self.feed_created):
-                    if char == "\n":
-                        continue
-                    if char == " " and prev_char == " ":
-                        prev_char = char
-                        continue
-                    prev_char = char
-                    fifeed_created.write(char)
-
-            with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
-                for char in template.render(feed=self.feed_updated):
-                    if char == "\n":
-                        prev_char = char
-                        continue
-                    if char == " " and prev_char == " ":
-                        prev_char = char
-                        continue
-                    prev_char = char
-                    fifeed_updated.write(char)
+            for category, pages in feeds.items():
+                # Create a feed per category
+                filename = f"{category}.xml"
+                feed = deepcopy(self.category_feed)
+                feed["rss_url"] = (
+                    self.category_feed.get("html_url")
+                    + self.category_feeds_dir
+                    + "/"
+                    + filename
+                )
+                feed.get("entries").extend(
+                    self.util.filter_pages(
+                        pages=pages,
+                        length=self.config.get("length", 20),
+                        attribute="created",
+                    )
+                )
+                self.render_feed(pretty_print, path / filename, feed)
