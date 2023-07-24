@@ -171,12 +171,17 @@ class Util:
                 meta_datetime_timezone=meta_default_timezone,
                 meta_default_time=meta_default_time,
             )
-            if isinstance(dt_created, str) or dt_created is None:
-                logger.warning(
+            if isinstance(dt_created, str):
+                logger.info(
                     f"[rss-plugin] Creation date of {in_page.file.abs_src_path} is an "
-                    f"unrecognized type: {dt_created} ({type(dt_created)})"
+                    f"a character string: {dt_created} ({type(dt_created)})"
                 )
-                dt_created = None
+
+            elif dt_created is None:
+                logger.info(
+                    f"[rss-plugin] Creation date of {in_page.file.abs_src_path} has not "
+                    "been recognized."
+                )
 
         if not self.use_git or (
             source_date_update != "git" and in_page.meta.get(source_date_update)
@@ -187,12 +192,18 @@ class Util:
                 meta_datetime_timezone=meta_default_timezone,
                 meta_default_time=meta_default_time,
             )
-            if isinstance(dt_updated, str) or dt_updated is None:
-                logger.warning(
+
+            if isinstance(dt_updated, str):
+                logger.info(
+                    f"[rss-plugin] Update date of {in_page.file.abs_src_path} is an "
+                    f"a character string: {dt_updated} ({type(dt_updated)})"
+                )
+
+            elif dt_updated is None:
+                logger.info(
                     f"[rss-plugin] Update date of {in_page.file.abs_src_path} is an "
                     f"unrecognized type: {dt_updated} ({type(dt_updated)})"
                 )
-                dt_updated = None
 
         # explore git log
         if self.git_is_valid:
