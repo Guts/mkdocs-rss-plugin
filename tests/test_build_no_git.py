@@ -5,8 +5,9 @@
     .. code-block:: python
 
         # for whole test
-        python -m unittest tests.test_build
-
+        python -m unittest tests.test_build_no_git
+        # for specific test
+        python -m unittest tests.test_build_no_git.TestBuildRssNoGit.test_not_git_repo_without_option
 """
 
 # #############################################################################
@@ -76,12 +77,37 @@ class TestBuildRssNoGit(BaseTest):
                 output_path=tmpdirname,
                 strict=True,
             )
-            if cli_result.exception is not None:
-                e = cli_result.exception
-                logger.debug(format_exception(type(e), e, e.__traceback__))
 
-            self.assertEqual(cli_result.exit_code, 1)
+            self.assertIsNone(cli_result.exception)
+            self.assertEqual(cli_result.exit_code, 0, cli_result)
+
+        # restore name
+        git_dir_tmp.replace(git_dir)
+
+    def test_not_git_repo_without_option(self):
+        # temporarily rename the git folder to fake a non-git repo
+        git_dir = Path(".git")
+        git_dir_tmp = git_dir.with_name("_git")
+        git_dir.replace(git_dir_tmp)
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_complete.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
             self.assertIsNotNone(cli_result.exception)
+            self.assertEqual(
+                cli_result.exit_code,
+                1,
+                format_exception(
+                    type(cli_result.exception),
+                    cli_result.exception,
+                    cli_result.exception.__traceback__,
+                ),
+            )
 
         # restore name
         git_dir_tmp.replace(git_dir)
