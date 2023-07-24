@@ -67,21 +67,35 @@ class Util:
             try:
                 git_repo = Repo(path, search_parent_directories=True)
                 self.repo = git_repo.git
-                self.git_is_valid: bool = True
+                self.git_is_valid = True
             except InvalidGitRepositoryError as err:
-                logging.warning(
-                    f"[rss-plugin] Path '{path}' is not a valid git directory. Trace: {err}"
+                logger.warning(
+                    f"[rss-plugin] Path '{path}' is not a valid git directory. "
+                    "Only page.meta (YAML frontmatter will be used). "
+                    "To disable this warning, set 'use_git: false' in plugin options."
+                    f"Trace: {err}"
                 )
                 self.git_is_valid = False
+                use_git = False
             except Exception as err:
-                logging.warning(f"[rss-plugin] Git issue: {err}")
+                logger.warning(
+                    f"[rss-plugin] Unrecognized git issue. "
+                    "Only page.meta (YAML frontmatter will be used). "
+                    "To disable this warning, set 'use_git: false' in plugin options."
+                    f"Trace: {err}"
+                )
                 self.git_is_valid = False
+                use_git = False
 
             # Checks if user is running builds on CI and raise appropriate warnings
-            CiHandler(git_repo.git).raise_ci_warnings()
+            if self.git_is_valid:
+                CiHandler(git_repo.git).raise_ci_warnings()
         else:
             self.git_is_valid = False
-            logger.debug("[rss-plugin] Git use is disabled.")
+            logger.debug(
+                "[rss-plugin] Git use is disabled. "
+                "Only page.meta (YAML frontmatter will be used). "
+            )
 
         # save git enable/disable status
         self.use_git = use_git
