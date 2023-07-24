@@ -105,8 +105,10 @@ class TestConfig(BaseTest):
         self.assertEqual(warnings, [])
 
     def test_plugin_config_through_mkdocs(self):
-        plg_cfg = self.get_plugin_config_from_mkdocs(Path("mkdocs.yml"), "rss")
-        self.assertIsInstance(plg_cfg, Config)
+        for config_filepath in self.config_files:
+            plg_cfg = self.get_plugin_config_from_mkdocs(config_filepath, "rss")
+            print(config_filepath)
+            self.assertIsInstance(plg_cfg, Config)
 
 
 # ##############################################################################
