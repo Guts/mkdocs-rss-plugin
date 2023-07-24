@@ -72,7 +72,7 @@ class Util:
                 logger.warning(
                     f"[rss-plugin] Path '{path}' is not a valid git directory. "
                     "Only page.meta (YAML frontmatter will be used). "
-                    "To disable this warning, set 'use_git: false' in plugin options."
+                    "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
                 self.git_is_valid = False
@@ -81,7 +81,7 @@ class Util:
                 logger.warning(
                     f"[rss-plugin] Unrecognized git issue. "
                     "Only page.meta (YAML frontmatter will be used). "
-                    "To disable this warning, set 'use_git: false' in plugin options."
+                    "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
                 self.git_is_valid = False
@@ -171,8 +171,11 @@ class Util:
                 meta_datetime_timezone=meta_default_timezone,
                 meta_default_time=meta_default_time,
             )
-            if isinstance(dt_created, str):
-                logger.error(f"Creation date is a string: {dt_created}")
+            if isinstance(dt_created, str) or dt_created is None:
+                logger.warning(
+                    f"[rss-plugin] Creation date of {in_page.file.abs_src_path} is an "
+                    f"unrecognized type: {dt_created} ({type(dt_created)})"
+                )
                 dt_created = None
 
         if not self.use_git or (
@@ -184,8 +187,11 @@ class Util:
                 meta_datetime_timezone=meta_default_timezone,
                 meta_default_time=meta_default_time,
             )
-            if isinstance(dt_updated, str):
-                logger.error(f"Update date is a string: {dt_updated}")
+            if isinstance(dt_updated, str) or dt_updated is None:
+                logger.warning(
+                    f"[rss-plugin] Update date of {in_page.file.abs_src_path} is an "
+                    f"unrecognized type: {dt_updated} ({type(dt_updated)})"
+                )
                 dt_updated = None
 
         # explore git log
@@ -208,16 +214,17 @@ class Util:
                         format="%at",
                     )
             except GitCommandError as err:
-                print("youpi", self.git_is_valid)
                 logging.warning(
                     f"[rss-plugin] Unable to read git logs of '{in_page.file.abs_src_path}'. "
                     "Is git log readable? Falling back to build date. "
+                    "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
             except GitCommandNotFound as err:
                 logging.error(
                     "[rss-plugin] Unable to perform command 'git log'. Is git installed? "
-                    " Falling back to build date. "
+                    "Falling back to build date. "
+                    "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
                 self.git_is_valid = 0
@@ -366,11 +373,22 @@ class Util:
                     time_to_add = datetime.min.time()
                 out_date = datetime.combine(date_metatag_value, time_to_add)
             else:
-                return "[rss-plugin] Incompatible date type."
+                logger.debug(
+                    f"[rss-plugin] Incompatible date type: {type(date_metatag_value)}"
+                )
+                return out_date
         except ValueError as err:
-            return f"[rss-plugin] Incompatible date found. Trace: {err}"
+            logger.error(
+                f"[rss-plugin] Incompatible date found: {date_metatag_value=} "
+                f"{type(date_metatag_value)}. Trace: {err}"
+            )
+            return out_date
         except Exception as err:
-            return f"[rss-plugin] Unable to retrieve creation date. Trace: {err}"
+            logger.error(
+                f"[rss-plugin] Unable to retrieve creation date: {date_metatag_value=} "
+                f"{type(date_metatag_value)}. Trace: {err}"
+            )
+            return out_date
 
         if not out_date.tzinfo:
             out_date = set_datetime_zoneinfo(out_date, meta_datetime_timezone)
