@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 -->
+## 1.8.0 - 2023-07-24
+
+### Bugs fixes 🐛
+
+* Fix tests config by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/196>
+
+### Features and enhancements 🎉
+
+* Add option to enable/disable git use. by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/187>
 
 ## 1.7.0 - 2023-05-28
 
