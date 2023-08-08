@@ -28,14 +28,14 @@ repos:
       - id: python-use-type-annotations
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.8.0
+    rev: v3.10.1
     hooks:
       - id: pyupgrade
         args:
           - "--py38-plus"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.0.276"
+    rev: "v0.0.282"
     hooks:
       - id: ruff
         args: ["--fix-only"]
@@ -47,12 +47,12 @@ repos:
         args: ["--profile", "black", "--filter-files"]
 
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.7.0
     hooks:
       - id: black
 
   - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
         language: python
