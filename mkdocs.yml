@@ -34,6 +34,9 @@ plugins:
         utm_campaign: "feed-syndication"
   - search
 
+watch:
+  - README.md
+
 theme:
   name: united
   language: en
