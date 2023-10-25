@@ -65,7 +65,9 @@ Following initiative from the author of Material for MkDocs, this plugin provide
 
 ## Development
 
-Clone the repository:
+Clone the repository. If you are not a collaborator then first [fork it
+on GitHub](https://github.com/Guts/mkdocs-rss-plugin/fork) and clone
+your fork. Change into the directory that contains the code, then:
 
 ```bash
 # install development dependencies
@@ -86,7 +88,7 @@ python -m pip install -U -r requirements/documentation.txt
 # alternatively: pip install -e .[doc]
 ```
 
-Then follow the [contribution guidelines](CONTRIBUTING.md).
+Then follow the [contribution guidelines](https://github.com/Guts/mkdocs-rss-plugin/blob/main/CONTRIBUTING.md)
 
 ## Release workflow
 
