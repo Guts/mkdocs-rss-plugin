@@ -620,13 +620,14 @@ class Util:
             return mkdocs_config.get("locale")
 
         # Some themes implement a locale or a language setting
-        if "theme" in mkdocs_config and "locale" in mkdocs_config.get("theme"):
-            locale = mkdocs_config.get("theme")._vars.get("locale")
-            return f"{locale.language}-{locale.territory}"
-        elif "theme" in mkdocs_config and "language" in mkdocs_config.get("theme"):
-            return mkdocs_config.get("theme")._vars.get("language")
-        else:
-            return None
+        if "theme" in mkdocs_config:
+            theme = mkdocs_config["theme"]
+            if "locale" in theme:
+                locale = theme["locale"]
+                return f"{locale.language}-{locale.territory}"
+            elif "language" in theme:
+                return theme["language"]
+        return None
 
     @staticmethod
     def filter_pages(pages: list, attribute: str, length: int) -> list:
