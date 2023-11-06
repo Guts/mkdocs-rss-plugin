@@ -4,7 +4,7 @@ exclude: "node_modules|migrations|.venv|.direnv|tests/dev/|tests/fixtures/"
 fail_fast: false
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-added-large-files
         args: ["--maxkb=500"]
@@ -28,14 +28,14 @@ repos:
       - id: python-use-type-annotations
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.14.0
+    rev: v3.15.0
     hooks:
       - id: pyupgrade
         args:
           - "--py38-plus"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.0.292"
+    rev: "v0.1.4"
     hooks:
       - id: ruff
         args: ["--fix-only"]
@@ -47,7 +47,7 @@ repos:
         args: ["--profile", "black", "--filter-files"]
 
   - repo: https://github.com/psf/black
-    rev: 23.9.1
+    rev: 23.10.1
     hooks:
       - id: black
 
