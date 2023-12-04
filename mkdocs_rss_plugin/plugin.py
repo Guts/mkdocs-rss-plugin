@@ -89,23 +89,23 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
 
         # start a feed dictionary using global config vars
         base_feed = {
-            "author": config.get("site_author", None),
+            "author": config.site_author or None,
             "buildDate": formatdate(get_build_timestamp()),
-            "copyright": config.get("copyright", None),
-            "description": config.get("site_description", None),
+            "copyright": config.copyright,
+            "description": config.site_description,
             "entries": [],
             "generator": f"{__title__} - v{__version__}",
             "html_url": self.util.get_site_url(config),
             "language": self.util.guess_locale(config),
             "pubDate": formatdate(get_build_timestamp()),
-            "repo_url": config.get("repo_url", config.get("site_url", None)),
+            "repo_url": config.repo_url,
             "title": config.get("site_name", None),
-            "ttl": self.config.get("feed_ttl", None),
+            "ttl": self.config.feed_ttl,
         }
 
         # feed image
-        if self.config.get("image"):
-            base_feed["logo_url"] = self.config.get("image")
+        if self.config.image:
+            base_feed["logo_url"] = self.config.image
 
         # pattern to match pages included in output
         self.match_path_pattern = compile(self.config.get("match_path"))
