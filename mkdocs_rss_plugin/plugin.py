@@ -11,6 +11,7 @@ from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from re import compile
+from typing import Optional
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -23,18 +24,18 @@ from mkdocs.utils import get_build_timestamp
 # package modules
 from mkdocs_rss_plugin.__about__ import __title__, __uri__, __version__
 from mkdocs_rss_plugin.config import RssPluginConfig
-from mkdocs_rss_plugin.customtypes import PageInformation
+from mkdocs_rss_plugin.constants import (
+    DEFAULT_TEMPLATE_FILENAME,
+    DEFAULT_TEMPLATE_FOLDER,
+    OUTPUT_FEED_CREATED,
+    OUTPUT_FEED_UPDATED,
+)
+from mkdocs_rss_plugin.models import PageInformation
 from mkdocs_rss_plugin.util import Util
 
 # ############################################################################
 # ########## Globals #############
 # ################################
-
-DEFAULT_TEMPLATE_FOLDER = Path(__file__).parent / "templates"
-DEFAULT_TEMPLATE_FILENAME = DEFAULT_TEMPLATE_FOLDER / "rss.xml.jinja2"
-OUTPUT_FEED_CREATED = "feed_rss_created.xml"
-OUTPUT_FEED_UPDATED = "feed_rss_updated.xml"
-
 logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 
 
@@ -50,14 +51,14 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         """Instanciation."""
         # dates source
         self.src_date_created = self.src_date_updated = "git"
-        self.meta_datetime_format = None
-        self.meta_default_timezone = "UTC"
-        self.meta_default_time = None
+        self.meta_datetime_format: Optional[str] = None
+        self.meta_default_timezone: str = "UTC"
+        self.meta_default_time: Optional[str] = None
         # pages storage
-        self.pages_to_filter = []
+        self.pages_to_filter: list = []
         # prepare output feeds
-        self.feed_created = dict
-        self.feed_updated = dict
+        self.feed_created: dict = {}
+        self.feed_updated: dict = {}
 
     def on_config(self, config: config_options.Config) -> dict:
         """The config event is the first event called on build and
