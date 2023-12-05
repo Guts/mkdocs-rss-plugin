@@ -76,11 +76,11 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         """
 
         # Skip if disabled
-        if not self.config.get("enabled"):
+        if not self.config.enabled:
             return config
 
         # instanciate plugin tooling
-        self.util = Util(use_git=self.config.get("use_git", True))
+        self.util = Util(use_git=self.config.use_git)
 
         # check template dirs
         if not Path(DEFAULT_TEMPLATE_FILENAME).is_file():
@@ -100,7 +100,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             "language": self.util.guess_locale(config),
             "pubDate": formatdate(get_build_timestamp()),
             "repo_url": config.repo_url,
-            "title": config.get("site_name", None),
+            "title": config.site_name,
             "ttl": self.config.feed_ttl,
         }
 
@@ -109,23 +109,19 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             base_feed["logo_url"] = self.config.image
 
         # pattern to match pages included in output
-        self.match_path_pattern = compile(self.config.get("match_path"))
+        self.match_path_pattern = compile(self.config.match_path)
 
         # date handling
-        if self.config.get("date_from_meta") is not None:
-            self.src_date_created = self.config.get("date_from_meta").get(
-                "as_creation", False
-            )
-            self.src_date_updated = self.config.get("date_from_meta").get(
-                "as_update", False
-            )
-            self.meta_datetime_format = self.config.get("date_from_meta").get(
+        if self.config.date_from_meta is not None:
+            self.src_date_created = self.config.date_from_meta.get("as_creation", False)
+            self.src_date_updated = self.config.date_from_meta.get("as_update", False)
+            self.meta_datetime_format = self.config.date_from_meta.get(
                 "datetime_format", "%Y-%m-%d %H:%M"
             )
-            self.meta_default_timezone = self.config.get("date_from_meta").get(
+            self.meta_default_timezone = self.config.date_from_meta.get(
                 "default_timezone", "UTC"
             )
-            self.meta_default_time = self.config.get("date_from_meta").get(
+            self.meta_default_time = self.config.date_from_meta.get(
                 "default_time", None
             )
             if self.meta_default_time:
@@ -140,7 +136,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                         f"format %H:%M. Trace: {err}"
                     )
 
-            if self.config.get("use_git", True):
+            if self.config.use_git:
                 logger.debug(
                     "[rss-plugin] Dates will be retrieved FIRSTLY from page meta (yaml "
                     "frontmatter). The git log will be used as fallback."
@@ -201,7 +197,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         """
 
         # Skip if disabled
-        if not self.config.get("enabled"):
+        if not self.config.enabled:
             return
 
         # skip pages that don't match the config var match_path
@@ -224,20 +220,20 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         )
 
         # handle custom URL parameters
-        if self.config.get("url_parameters"):
+        if self.config.url_parameters:
             page_url_full = self.util.build_url(
                 base_url=page.canonical_url,
                 path="",
-                args_dict=self.config.get("url_parameters"),
+                args_dict=self.config.url_parameters,
             )
         else:
             page_url_full = page.canonical_url
 
         # handle URL comment path
-        if self.config.get("comments_path"):
+        if self.config.comments_path:
             page_url_comments = self.util.build_url(
                 base_url=page.canonical_url,
-                path=self.config.get("comments_path"),
+                path=self.config.comments_path,
             )
         else:
             page_url_comments = None
@@ -248,17 +244,19 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 abs_path=Path(page.file.abs_src_path),
                 authors=self.util.get_authors_from_meta(in_page=page),
                 categories=self.util.get_categories_from_meta(
-                    in_page=page, categories_labels=self.config.get("categories")
+                    in_page=page, categories_labels=self.config.categories
                 ),
                 created=page_dates[0],
                 description=self.util.get_description_or_abstract(
                     in_page=page,
-                    chars_count=self.config.get("abstract_chars_count"),
-                    abstract_delimiter=self.config.get("abstract_delimiter"),
+                    chars_count=self.config.abstract_chars_count,
+                    abstract_delimiter=self.config.abstract_delimiter,
                 ),
                 guid=page.canonical_url,
                 image=self.util.get_image(
-                    in_page=page, base_url=config.get("site_url", __uri__)
+                    in_page=page,
+                    # below let it as old dict get method to handle custom fallback value
+                    base_url=config.get("site_url", __uri__),
                 ),
                 title=page.title,
                 updated=page_dates[1],
@@ -279,22 +277,22 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         """
 
         # Skip if disabled
-        if not self.config.get("enabled"):
+        if not self.config.enabled:
             return
 
         # pretty print or not
-        pretty_print = self.config.get("pretty_print", False)
+        pretty_print = self.config.pretty_print
 
         # output filepaths
-        out_feed_created = Path(config.get("site_dir")) / OUTPUT_FEED_CREATED
-        out_feed_updated = Path(config.get("site_dir")) / OUTPUT_FEED_UPDATED
+        out_feed_created = Path(config.site_dir).joinpath(OUTPUT_FEED_CREATED)
+        out_feed_updated = Path(config.site_dir).joinpath(OUTPUT_FEED_UPDATED)
 
         # created items
         self.feed_created.get("entries").extend(
             self.util.filter_pages(
                 pages=self.pages_to_filter,
                 attribute="created",
-                length=self.config.get("length", 20),
+                length=self.config.length,
             )
         )
 
@@ -303,7 +301,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             self.util.filter_pages(
                 pages=self.pages_to_filter,
                 attribute="updated",
-                length=self.config.get("length", 20),
+                length=self.config.length,
             )
         )
 
