@@ -585,7 +585,7 @@ class Util:
         """
         # this method exists because the following line returns an empty string instead of \
         # None (because the key alwayus exists)
-        defined_site_url = mkdocs_config.get("site_url", None)
+        defined_site_url = mkdocs_config.site_url
 
         # cases
         if defined_site_url is None or not len(defined_site_url):
