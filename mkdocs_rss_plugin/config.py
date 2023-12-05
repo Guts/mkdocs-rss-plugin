@@ -18,7 +18,9 @@ class RssPluginConfig(Config):
 
     abstract_chars_count = config_options.Type(int, default=160)
     abstract_delimiter = config_options.Type(str, default="<!-- more -->")
-    categories = config_options.ListOfItems(config_options.Type(str), default=[])
+    categories = config_options.Optional(
+        config_options.ListOfItems(config_options.Type(str))
+    )
     comments_path = config_options.Optional(config_options.Type(str))
     date_from_meta = config_options.Optional(config_options.Type(dict))
     enabled = config_options.Type(bool, default=True)
