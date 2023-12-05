@@ -21,9 +21,10 @@ from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
 # package modules
-from .__about__ import __title__, __uri__, __version__
-from .customtypes import PageInformation
-from .util import Util
+from mkdocs_rss_plugin.__about__ import __title__, __uri__, __version__
+from mkdocs_rss_plugin.config import RssPluginConfig
+from mkdocs_rss_plugin.customtypes import PageInformation
+from mkdocs_rss_plugin.util import Util
 
 # ############################################################################
 # ########## Globals #############
@@ -42,24 +43,8 @@ logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 # ##################################
 
 
-class GitRssPlugin(BasePlugin):
+class GitRssPlugin(BasePlugin[RssPluginConfig]):
     """Main class for MkDocs plugin."""
-
-    config_scheme = (
-        ("abstract_chars_count", config_options.Type(int, default=160)),
-        ("abstract_delimiter", config_options.Type(str, default="<!-- more -->")),
-        ("categories", config_options.Type(list, default=None)),
-        ("comments_path", config_options.Type(str, default=None)),
-        ("date_from_meta", config_options.Type(dict, default=None)),
-        ("enabled", config_options.Type(bool, default=True)),
-        ("feed_ttl", config_options.Type(int, default=1440)),
-        ("image", config_options.Type(str, default=None)),
-        ("length", config_options.Type(int, default=20)),
-        ("match_path", config_options.Type(str, default=".*")),
-        ("pretty_print", config_options.Type(bool, default=False)),
-        ("url_parameters", config_options.Type(dict, default=None)),
-        ("use_git", config_options.Type(bool, default=True)),
-    )
 
     def __init__(self):
         """Instanciation."""
@@ -104,23 +89,23 @@ class GitRssPlugin(BasePlugin):
 
         # start a feed dictionary using global config vars
         base_feed = {
-            "author": config.get("site_author", None),
+            "author": config.site_author or None,
             "buildDate": formatdate(get_build_timestamp()),
-            "copyright": config.get("copyright", None),
-            "description": config.get("site_description", None),
+            "copyright": config.copyright,
+            "description": config.site_description,
             "entries": [],
             "generator": f"{__title__} - v{__version__}",
             "html_url": self.util.get_site_url(config),
             "language": self.util.guess_locale(config),
             "pubDate": formatdate(get_build_timestamp()),
-            "repo_url": config.get("repo_url", config.get("site_url", None)),
+            "repo_url": config.repo_url,
             "title": config.get("site_name", None),
-            "ttl": self.config.get("feed_ttl", None),
+            "ttl": self.config.feed_ttl,
         }
 
         # feed image
-        if self.config.get("image"):
-            base_feed["logo_url"] = self.config.get("image")
+        if self.config.image:
+            base_feed["logo_url"] = self.config.image
 
         # pattern to match pages included in output
         self.match_path_pattern = compile(self.config.get("match_path"))
