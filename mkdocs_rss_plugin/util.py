@@ -612,16 +612,32 @@ class Util:
         # MkDocs locale settings - might be added in future mkdocs versions
         # see: https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/24
         if mkdocs_config.get("locale"):
+            logger.warning(
+                DeprecationWarning(
+                    "[rss-plugin] Mkdocs does not support locale option at the "
+                    "configuration root but under theme sub-configuration. It won't be "
+                    "supported anymore by the plugin in the next version."
+                )
+            )
             return mkdocs_config.get("locale")
 
         # Some themes implement a locale or a language setting
-        if "theme" in mkdocs_config and "locale" in mkdocs_config.get("theme"):
-            locale = mkdocs_config.get("theme")._vars.get("locale")
-            return f"{locale.language}-{locale.territory}"
-        elif "theme" in mkdocs_config and "language" in mkdocs_config.get("theme"):
-            return mkdocs_config.get("theme")._vars.get("language")
-        else:
-            return None
+        if "theme" in mkdocs_config:
+            if "locale" in mkdocs_config.theme:
+                locale = mkdocs_config.theme.locale
+                logger.debug(
+                    "[rss plugin] Locale detected in theme "
+                    f"('{mkdocs_config.theme.name}') settings: {locale=}"
+                )
+                return f"{locale}"
+            elif "language" in mkdocs_config.theme:
+                logger.debug(
+                    "[rss plugin] Language detected in theme "
+                    f"('{mkdocs_config.theme.name}') settings: {mkdocs_config.theme.language}"
+                )
+                return mkdocs_config.theme.language
+
+        return None
 
     @staticmethod
     def filter_pages(pages: list, attribute: str, length: int) -> list:
