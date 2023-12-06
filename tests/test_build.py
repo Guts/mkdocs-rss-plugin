@@ -356,6 +356,32 @@ class TestBuildRss(BaseTest):
             feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
             self.assertEqual(feed_parsed.feed.get("language"), "en-US")
 
+    def test_simple_build_lang_without_territory(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_lang_without_territory.yml"
+                ),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertEqual(feed_parsed.feed.get("language"), "fr")
+
+            # updated items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
+            self.assertEqual(feed_parsed.feed.get("language"), "fr")
+
     def test_simple_build_pretty_print_enabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(

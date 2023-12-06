@@ -629,7 +629,11 @@ class Util:
                     "[rss plugin] Locale detected in theme "
                     f"('{mkdocs_config.theme.name}') settings: {locale=}"
                 )
-                return f"{locale}"
+                return (
+                    f"{locale.language}-{locale.territory}"
+                    if locale.territory
+                    else f"{locale.language}"
+                )
             elif "language" in mkdocs_config.theme:
                 logger.debug(
                     "[rss plugin] Language detected in theme "
