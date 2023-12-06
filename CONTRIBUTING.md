@@ -19,6 +19,10 @@ Make sure your code *roughly* follows [PEP-8](https://www.python.org/dev/peps/pe
 - sorted imports: [isort](https://pycqa.github.io/isort/) is used to sort imports
 - static analysis: [flake8](https://flake8.pycqa.org/en/latest/) is used to catch some dizziness and keep the source code healthy.
 
+## Pulls requests
+
+Pull requests are really welcome since you take the time to push or modify tests related to the code you edit or create.
+
 ----
 
 ## IDE
@@ -29,42 +33,35 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
 
 ```jsonc
 {
-    "python.defaultInterpreterPath": ".venv/bin/python",
-    // 👆 For Windows, change it to "./.venv/Scripts/python.exe".
-    // Or you can manually select one when VS Code asks for it.
     // Editor
-    "editor.bracketPairColorization.enabled": true,
-    "editor.guides.bracketPairs":"active",
-    "editor.rulers": [
-        88
-    ],
-    "editor.wordWrapColumn": 88,
     "files.associations": {
         "./requirements/*.txt": "pip-requirements"
     },
-    // Formatter
-    "python.formatting.provider": "black",
-    "python.formatting.blackArgs": [
-        "--target-version=py38"
-    ],
-    // Linter
-    "python.linting.enabled": true,
-    "python.linting.flake8Enabled": true,
-    "python.linting.flake8Args": [
+    // Python
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.guides.bracketPairs": "active",
+        "editor.rulers": [
+            88
+        ],
+        "editor.wordWrapColumn": 88,
+    },
+    "flake8.args": [
         "--config=setup.cfg",
         "--verbose"
     ],
-    "python.linting.pylintEnabled": false,
-    // Tests
-    "python.testing.pytestArgs": [],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true,
-    // Git
-    "git.enableCommitSigning": true,
-    // Extensions
-    "autoDocstring.docstringFormat": "sphinx",
-    "yaml.schemas": {
-        "https://squidfunk.github.io/mkdocs-material/schema.json": "mkdocs*.yml"
-    }
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "isort.check": true,
+    // extensions
+    "autoDocstring.guessTypes": true,
+    "autoDocstring.docstringFormat": "google",
+    "autoDocstring.generateDocstringOnEnter": false,
 }
 ```

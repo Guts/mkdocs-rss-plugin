@@ -25,7 +25,7 @@ from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_datetime
 
 # package
-from mkdocs_rss_plugin import __about__
+from mkdocs_rss_plugin.constants import REMOTE_REQUEST_HEADERS
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
 
 # conditional imports
@@ -37,11 +37,6 @@ else:
 # ############################################################################
 # ########## Globals #############
 # ################################
-
-REMOTE_REQUEST_HEADERS = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "User-Agent": f"{__about__.__title__}/{__about__.__version__}",
-}
 
 logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 
@@ -590,7 +585,7 @@ class Util:
         """
         # this method exists because the following line returns an empty string instead of \
         # None (because the key alwayus exists)
-        defined_site_url = mkdocs_config.get("site_url", None)
+        defined_site_url = mkdocs_config.site_url
 
         # cases
         if defined_site_url is None or not len(defined_site_url):
