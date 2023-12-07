@@ -67,7 +67,7 @@ Following initiative from the author of Material for MkDocs, this plugin provide
 
 Clone the repository:
 
-```bash
+```sh
 # install development dependencies
 python -m pip install -U -r requirements/development.txt
 # alternatively: pip install -e .[dev]
@@ -77,18 +77,33 @@ python -m pip install -e .
 
 # install git hooks
 pre-commit install
-
-# run tests
-pytest
-
-# install dependencies for documentation
-python -m pip install -U -r requirements/documentation.txt
-# alternatively: pip install -e .[doc]
 ```
 
 Then follow the [contribution guidelines](CONTRIBUTING.md).
 
-## Release workflow
+### Run the tests
+
+```sh
+# install development dependencies
+python -m pip install -U -r requirements/testing.txt
+# alternatively: pip install -e .[test]
+
+# run tests
+pytest
+```
+
+### Build the documentation
+
+```sh
+# install dependencies for documentation
+python -m pip install -U -r requirements/documentation.txt
+# alternatively: pip install -e .[doc]
+
+# build the documentation
+mkdocs build
+```
+
+### Release workflow
 
 1. Fill the `CHANGELOG.md`
 1. Change the version number in `__about__.py`
