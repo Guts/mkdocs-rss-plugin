@@ -11,6 +11,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/mkdocs-rss-plugin/
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+
 
     steps:
       - uses: actions/checkout@v4
@@ -48,6 +54,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
+          print-hash: true
 
       - name: Create/update release on GitHub
         if: startsWith(github.ref, 'refs/tags/')
