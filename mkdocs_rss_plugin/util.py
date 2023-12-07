@@ -621,9 +621,22 @@ class Util:
             )
             return mkdocs_config.get("locale")
 
-        # Some themes implement a locale or a language setting
+        # Some themes implement a locale or a language settings
         if "theme" in mkdocs_config:
-            if "locale" in mkdocs_config.theme:
+            if (
+                mkdocs_config.theme.name == "material"
+                and "language" in mkdocs_config.theme
+            ):
+                # TODO: remove custom behavior when Material theme switches to locale
+                # see: https://github.com/squidfunk/mkdocs-material/discussions/6453
+                logger.debug(
+                    "[rss plugin] Language detected in Material theme "
+                    f"('{mkdocs_config.theme.name}') settings: "
+                    f"{mkdocs_config.theme.get('language')}"
+                )
+                return mkdocs_config.theme.get("language")
+
+            elif "locale" in mkdocs_config.theme:
                 locale = mkdocs_config.theme.locale
                 logger.debug(
                     "[rss plugin] Locale detected in theme "
@@ -634,12 +647,11 @@ class Util:
                     if locale.territory
                     else f"{locale.language}"
                 )
-            elif "language" in mkdocs_config.theme:
+            else:
                 logger.debug(
-                    "[rss plugin] Language detected in theme "
-                    f"('{mkdocs_config.theme.name}') settings: {mkdocs_config.theme.language}"
+                    "[rss plugin] Nor locale or language detected in theme settings "
+                    f"('{mkdocs_config.theme.name}')."
                 )
-                return mkdocs_config.theme.language
 
         return None
 
