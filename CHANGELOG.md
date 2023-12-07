@@ -16,6 +16,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 -->
+
+## 1.9.0 - 2023-12-07
+
+### Bugs fixes 🐛
+
+* fix: deprecation of Theme._vars by using config attributes by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/212> thanks to the excellent work of @alexvoss on <https://github.com/Guts/mkdocs-rss-plugin/issues/205> and <https://github.com/Guts/mkdocs-rss-plugin/pull/206>
+
+### Features and enhancements 🎉
+
+* Road to Mkdocs >= 1.4: plugin's configuration by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/195>
+* Road to Mkdocs 1.4: use  config attributes by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/211>
+* Project: split dev and test dependencies by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/213>
+* refacto: move global variables to constants module and rename customtypes into models by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/210>
+
+### Tooling 🔧
+
+* packaging: add Python 3.12 as supported version by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/214>
+
 ## 1.8.0 - 2023-07-24
 
 ### Bugs fixes 🐛
