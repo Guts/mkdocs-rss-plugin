@@ -6,7 +6,7 @@
 
 # standard library
 from pathlib import Path
-from typing import Union
+from typing import List, Union
 
 # 3rd party
 from setuptools import find_packages, setup
@@ -26,7 +26,7 @@ README = (HERE / "README.md").read_text()
 # ##################################
 
 
-def load_requirements(requirements_files: Union[Path, list[Path]]) -> list:
+def load_requirements(requirements_files: Union[Path, List[Path]]) -> list:
     """Helper to load requirements list from a path or a list of paths.
 
     Args:
