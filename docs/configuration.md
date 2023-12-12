@@ -1,7 +1,7 @@
 ---
 title: Configuration
 authors:
-  - "Julien Moura"
+  - dev@ingeoveritas.com (Julien Moura)
 date: 2020-12-31 14:20
 description: Configuration steps and settings for MkDocs RSS plugin
 icon: material/book-cog

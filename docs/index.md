@@ -1,8 +1,8 @@
 ---
 title: The MkDocs RSS Plugin
 authors:
-  - Julien Moura <dev@ingeoveritas.com>
-  - Tim Vink <vinktim@gmail.com>
+  - dev@ingeoveritas.com (Julien Moura)
+  - vinktim@gmail.com (Tim Vink)
 date: 2020-07-06
 description: "MkDocs RSS plugin: generate RSS feeds for your static website using git log ad YAML frontmatter (markdown pages'metadata header)."
 image: "rss_icon.svg"
