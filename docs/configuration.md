@@ -4,14 +4,12 @@ authors:
   - "Julien Moura"
 date: 2020-12-31 14:20
 description: Configuration steps and settings for MkDocs RSS plugin
-image: "https://svgsilh.com/png-512/97849.png"
+image: https://svgsilh.com/png-512/97849.png
 tags:
   - settings
   - options
   - plugin
 ---
-
-# Configuration
 
 To produce a valid RSS feed, the plugin uses:
 
@@ -132,7 +130,7 @@ Output:
 
 ## Plugin options
 
-For a sample see [homepage](../#usage).
+For a sample see [homepage](./index.md#quickstart).
 
 ### Disabling the plugin
 
@@ -425,24 +423,6 @@ Will result in:
 ```
 
 Default: `None`.
-
-----
-
-## Integration
-
-### Reference RSS feeds in HTML meta-tags
-
-To facilitate the discovery of RSS feeds, it's recommended to add relevant meta-tags into the pages `<head>`, through template customization in `main.html` :
-
-```html
-{% extends "base.html" %}
-
-{% block extrahead %}
-  <!-- RSS Feed -->
-  <link rel="alternate" type="application/rss+xml" title="RSS feed of created content" href="{{ config.site_url }}feed_rss_created.xml">
-  <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="{{ config.site_url }}feed_rss_updated.xml">
-{% endblock %}
-```
 
 <!-- Hyperlinks reference -->
 [page metadata]: https://python-markdown.github.io/extensions/meta_data/

@@ -14,6 +14,15 @@ edit_uri: blob/main/docs/
 docs_dir: "docs/"
 use_directory_urls: true
 
+extra:
+  social:
+    - icon: "fontawesome/brands/mastodon"
+      link: https://mapstodon.space/@geojulien
+      name: "Follow me on Mastodon"
+    - icon: "fontawesome/solid/piggy-bank"
+      link: /team/sponsoring/
+      name: "Sponsor development"
+
 # Extensions to enhance markdown
 markdown_extensions:
   - admonition
@@ -26,10 +35,11 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-      use_pygments: true
+  - pymdownx.inlinehilite
   - pymdownx.snippets:
       base_path: "."
       check_paths: true
+  - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
       slugify: !!python/object/apply:pymdownx.slugs.slugify
@@ -39,9 +49,12 @@ markdown_extensions:
       permalink: "#"
 
 nav:
-  - "Home": "index.md"
-  - "Settings": "configuration.md"
-  - "Changelog": "changelog.md"
+  - Home: index.md
+  - Settings:
+    - configuration.md
+    - integrations.md
+  - Contributing: contributing.md
+  - Changelog: changelog.md
 
 plugins:
   - git-committers:
@@ -68,17 +81,18 @@ plugins:
       cache_dir:
         !ENV [MKDOCS_PLUGIN_PRIVACY_EXTERNAL_CACHE_DIR, .cache/plugins/privacy]
   - rss:
+      abstract_chars_count: 160
+      abstract_delimiter: <!-- more -->
       date_from_meta:
         as_creation: "date"
         as_update: false
         datetime_format: "%Y-%m-%d %H:%M"
         default_timezone: "Europe/Paris"
         default_time: "22:00"
-      abstract_chars_count: 160
-      abstract_delimiter: <!-- more -->
+      enabled: !ENV [MKDOCS_ENABLE_PLUGIN_RSS, true]
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
       match_path: ".*"
-      pretty_print: false
+      pretty_print: true
       url_parameters:
         utm_source: "documentation"
         utm_medium: "RSS"
@@ -88,7 +102,11 @@ plugins:
   - social:
       enabled: !ENV [MKDOCS_ENABLE_PLUGIN_SOCIAL, true]
       cache_dir: !ENV [MKDOCS_PLUGIN_SOCIAL_CACHE_DIR, .cache/plugins/social]
-  - termynal
+  - termynal:
+      title: "Youpi"
+      prompt_literal_start:
+        - "$"
+        - ">"
 
 theme:
   name: material
@@ -96,7 +114,6 @@ theme:
   features:
     - content.action.edit
     - content.action.view
-    - content.code.annotate
     - content.code.copy
     - content.tabs.link
     - content.tooltips
@@ -109,6 +126,7 @@ theme:
     - search.share
     - search.suggest
     - toc.follow
+    - toc.integrate
   font:
     code: Ubuntu Mono
     text: Ubuntu
@@ -124,6 +142,16 @@ theme:
     accent: amber
     primary: deep orange
     scheme: default
+
+validation:
+  links:
+    absolute_links: warn
+    not_found: warn
+    unrecognized_links: warn
+  nav:
+    absolute_links: warn
+    not_found: warn
+    omitted_files: warn
 
 watch:
   - CONTRIBUTING.md
