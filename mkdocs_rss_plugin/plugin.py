@@ -30,6 +30,9 @@ from mkdocs_rss_plugin.constants import (
     OUTPUT_FEED_CREATED,
     OUTPUT_FEED_UPDATED,
 )
+from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
+    is_social_plugin_enabled_mkdocs,
+)
 from mkdocs_rss_plugin.models import PageInformation
 from mkdocs_rss_plugin.util import Util
 
@@ -79,8 +82,16 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         if not self.config.enabled:
             return config
 
+        # integrations - check if theme is Material and if social cards are enabled
+        self.integration_material_social_cards_enabled = (
+            is_social_plugin_enabled_mkdocs(mkdocs_config=config)
+        )
+
         # instanciate plugin tooling
-        self.util = Util(use_git=self.config.use_git)
+        self.util = Util(
+            use_git=self.config.use_git,
+            integration_material=self.integration_material_social_cards_enabled,
+        )
 
         # check template dirs
         if not Path(DEFAULT_TEMPLATE_FILENAME).is_file():
