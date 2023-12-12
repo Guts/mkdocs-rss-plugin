@@ -14,6 +14,12 @@
 
 A plugin for [MkDocs](https://www.mkdocs.org), the static site generator, which creates [RSS 2.0](https://wikipedia.org/wiki/RSS) feeds using the creation and modification dates from [git log](https://git-scm.com/docs/git-log) and page metadata ([YAML frontmatter](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data)).
 
+## Installation
+
+```sh
+pip install mkdocs-rss-plugin
+```
+
 ## Usage
 
 Minimal [`mkdocs.yml` configuration](https://www.mkdocs.org/user-guide/configuration/#project-information):
