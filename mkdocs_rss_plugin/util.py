@@ -27,6 +27,9 @@ from mkdocs.utils import get_build_datetime
 # package
 from mkdocs_rss_plugin.constants import REMOTE_REQUEST_HEADERS
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
+from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
+    is_theme_material,
+)
 
 # conditional imports
 if sys.version_info < (3, 9):
@@ -51,11 +54,19 @@ class Util:
 
     git_is_valid: bool = False
 
-    def __init__(self, path: str = ".", use_git: bool = True):
+    def __init__(
+        self,
+        path: str = ".",
+        use_git: bool = True,
+        integration_material_social_cards: bool = False,
+    ):
         """Class hosting the plugin logic.
 
-        :param str path: path tot the git repository to use. Defaults to: "." - optional
-        :param bool use_git: flag to use git under the hood or not, defaults to True
+        Args:
+            path (str, optional): path to the git repository to use. Defaults to ".".
+            use_git (bool, optional): flag to use git under the hood or not. Defaults to True.
+            integration_material_social_cards (bool, optional): option to enable
+                integration with Social Cards plugin from Material theme. Defaults to False.
         """
         if use_git:
             logger.debug("[rss-plugin] Git use is disabled.")
@@ -94,6 +105,9 @@ class Util:
 
         # save git enable/disable status
         self.use_git = use_git
+
+        # save integrations
+        self.integration_material_social_cards = integration_material_social_cards
 
     def build_url(self, base_url: str, path: str, args_dict: dict = None) -> str:
         """Build URL using base URL, cumulating existing and passed path, \
@@ -624,7 +638,7 @@ class Util:
         # Some themes implement a locale or a language settings
         if "theme" in mkdocs_config:
             if (
-                mkdocs_config.theme.name == "material"
+                is_theme_material(mkdocs_config=mkdocs_config)
                 and "language" in mkdocs_config.theme
             ):
                 # TODO: remove custom behavior when Material theme switches to locale
