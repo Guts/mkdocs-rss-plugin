@@ -63,7 +63,7 @@ Or it could be displayed as a Feedly follow button:
 
 ## Credits
 
-![RSS logo](rss_icon.svg "RSS icon - Wikimedia"){: align=right }
+![RSS logo](assets/rss_icon.svg "RSS icon - Wikimedia"){: align=right }
 
 - Plugin logic is inspired from [Tim Vink git-based plugins](https://github.com/timvink?tab=repositories&q=mkdocs-git&type=&language=) and main parts of Git stuff are nearly copied/pasted.
 - Using magic mainly from:
