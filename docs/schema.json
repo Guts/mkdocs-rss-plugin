@@ -127,6 +127,13 @@
               "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#url-parameters",
               "type": "object",
               "default": null
+            },
+            "use_git": {
+              "title": "Enable/Disable git use.",
+              "description": "Disable it if you want to use only page.meta values.",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#disabling-the-plugin",
+              "type": "boolean",
+              "default": true
             }
           },
           "additionalProperties": false

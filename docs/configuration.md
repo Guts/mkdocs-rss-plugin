@@ -133,7 +133,7 @@ Output:
 
 For a sample see [homepage](./index.md#quickstart).
 
-### Disabling the plugin
+### `enabled`: enabling/disabling the plugin
 
 You can use the `enabled` option to optionally disable this plugin. A possible use case is local development where you might want faster build times. It's recommended to use this option with an environment variable together with a default fallback (introduced in `mkdocs` v1.2.1, see [docs](https://www.mkdocs.org/user-guide/configuration/#environment-variables)). Example:
 
@@ -150,7 +150,7 @@ export MKDOCS_ENABLE_RSS_PLUGIN=false
 mkdocs serve
 ```
 
-### Channel image
+### `image`: set the channel image
 
 `image`: URL to image to use as feed illustration.
 
@@ -176,7 +176,7 @@ Output:
 </image>
 ```
 
-### Item comments path
+### `comments_path`: item comments path
 
 `comments_path`: path to add to each item URL pointing.
 
@@ -194,13 +194,13 @@ For example, if you're using Material for Mkdocs with comment integration (Disqu
 </item>
 ```
 
-### Feed length
+### `length`: number of items to include in feed
 
 `length`: number of pages to include as feed items (entries).
 
 Default: `20`
 
-### Feed TTL
+### `feed_ttl`: feed's cache time
 
 `feed_ttl`: number of minutes to be cached. Inserted as channel `ttl` element. See: [W3C RSS 2.0 documentation](https://www.w3schools.com/xml/rss_tag_ttl.asp).
 
@@ -212,7 +212,7 @@ Output:
 <ttl>1440</ttl>
 ```
 
-### Item description length
+### `abstract_chars_count`: item description length
 
 To fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
@@ -227,7 +227,7 @@ Default: `150`
 
 ----
 
-#### Abstract delimiter
+#### `abstract_delimiter`: abstract delimiter
 
 Used to fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
@@ -241,7 +241,7 @@ Default: `<!-- more -->`
 
 ----
 
-### Item categories
+### `categories`: item categories
 
 `categories`: list of page metadata values to use as [RSS item categories](https://www.w3schools.com/xml/rss_tag_category_item.asp).
 
@@ -303,7 +303,7 @@ Output:
 
 ----
 
-### Dates overriding
+### `date_from_meta`: override dates from git log with page.meta
 
 Basically, the plugin aims to retrieve creation and update dates from git log. But sometimes, it does not match the content workflow: markdown generated from sources, .
 
@@ -361,7 +361,7 @@ At the end, into the RSS you will get:
         - for Python >= 3.9, it uses the standard library and ships [tzdata](https://pypi.org/project/tzdata/) only on Windows which do not provide such data
         - for Python < 3.9, [pytz](https://pypi.org/project/pytz/) is shipped.
 
-### Prettified output
+### `pretty_print`: prettified XML
 
 By default, the output file is minified, using Jinja2 strip options and manual work. It's possible to disable it and prettify the output using `pretty_print: true`.
 
@@ -373,7 +373,7 @@ plugins:
 
 Default: `False`.
 
-### Filter pages
+### `match_path`: filter pages to include in feed
 
 This adds a `match_path` option which should be a regex pattern matching the path to your files within the `docs_dir`. For example if you had a blog under `docs/blog` where `docs_dir` is `docs` you might use:
 
@@ -393,7 +393,7 @@ plugins:
 
 Default: `.*`.
 
-### URL parameters
+### `url_parameters`: additional URL parameters
 
 This option allows you to add parameters to the URLs of the RSS feed items. It works as a dictionary of keys/values that is passed to [Python *urllib.parse.urlencode*](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlencode).  
 One possible use case is the addition of [Urchin Tracking Module (UTM) parameters](https://en.wikipedia.org/wiki/UTM_parameters):
@@ -424,6 +424,14 @@ Will result in:
 ```
 
 Default: `None`.
+
+### `use_git`: enable/disable git log
+
+If `false`, the plugin does not try use the git log nor does not check if this is a valid git repository and use informations exclusively from `page.meta` (YAML frontmatter).
+
+Useful if you build your documentation in an environment where you can't easily install git.
+
+Default: `true`.
 
 <!-- Hyperlinks reference -->
 [page metadata]: https://python-markdown.github.io/extensions/meta_data/
