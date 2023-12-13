@@ -72,6 +72,7 @@ class TestConfig(BaseTest):
             "pretty_print": False,
             "url_parameters": None,
             "use_git": True,
+            "use_material_social_cards": True,
         }
 
         # load
@@ -99,6 +100,7 @@ class TestConfig(BaseTest):
             "pretty_print": False,
             "url_parameters": None,
             "use_git": True,
+            "use_material_social_cards": True,
         }
 
         # custom config
