@@ -47,6 +47,9 @@ markdown_extensions:
           case: lower
   - toc:
       permalink: "#"
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
 
 nav:
   - Home: index.md
@@ -103,7 +106,6 @@ plugins:
       enabled: !ENV [MKDOCS_ENABLE_PLUGIN_SOCIAL, true]
       cache_dir: !ENV [MKDOCS_PLUGIN_SOCIAL_CACHE_DIR, .cache/plugins/social]
   - termynal:
-      title: "Youpi"
       prompt_literal_start:
         - "$"
         - ">"
