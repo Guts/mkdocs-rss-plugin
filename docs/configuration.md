@@ -433,5 +433,11 @@ Useful if you build your documentation in an environment where you can't easily 
 
 Default: `true`.
 
+### `use_material_social_cards`: enable/disable integration with Material Social Cards plugin
+
+If `false`, the integration with Social Cards is disabled.
+
+Default: `true`.
+
 <!-- Hyperlinks reference -->
 [page metadata]: https://python-markdown.github.io/extensions/meta_data/
