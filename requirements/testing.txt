@@ -4,6 +4,6 @@
 # -------
 
 feedparser>=6.0,<6.1
-mkdocs-material>=9
+mkdocs-material[imaging]>=9
 pytest-cov>=4,<4.2
 validator-collection>=1.5,<1.6
