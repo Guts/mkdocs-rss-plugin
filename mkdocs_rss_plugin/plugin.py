@@ -31,7 +31,7 @@ from mkdocs_rss_plugin.constants import (
     OUTPUT_FEED_UPDATED,
 )
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
-    is_social_plugin_enabled_mkdocs,
+    IntegrationMaterialSocialCards,
 )
 from mkdocs_rss_plugin.models import PageInformation
 from mkdocs_rss_plugin.util import Util
@@ -83,21 +83,15 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             return config
 
         # integrations - check if theme is Material and if social cards are enabled
-        if self.config.use_material_social_cards:
-            self.integration_material_social_cards_enabled = (
-                is_social_plugin_enabled_mkdocs(mkdocs_config=config)
-            )
-        else:
-            logger.debug(
-                "[rss-plugin] Integration with Social Cards (Material theme) is "
-                "disabled by option in Mkdocs configuration."
-            )
-            self.integration_material_social_cards_enabled = False
+        self.integration_material_social_cards = IntegrationMaterialSocialCards(
+            mkdocs_config=config,
+            switch_force=self.config.use_material_social_cards,
+        )
 
         # instanciate plugin tooling
         self.util = Util(
             use_git=self.config.use_git,
-            integration_material_social_cards=self.integration_material_social_cards_enabled,
+            integration_material_social_cards=self.integration_material_social_cards,
         )
 
         # check template dirs

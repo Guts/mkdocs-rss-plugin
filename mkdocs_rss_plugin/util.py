@@ -28,7 +28,7 @@ from mkdocs.utils import get_build_datetime
 from mkdocs_rss_plugin.constants import REMOTE_REQUEST_HEADERS
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
-    is_theme_material,
+    IntegrationMaterialSocialCards,
 )
 
 # conditional imports
@@ -58,7 +58,7 @@ class Util:
         self,
         path: str = ".",
         use_git: bool = True,
-        integration_material_social_cards: bool = False,
+        integration_material_social_cards: IntegrationMaterialSocialCards | None = None,
     ):
         """Class hosting the plugin logic.
 
@@ -66,7 +66,7 @@ class Util:
             path (str, optional): path to the git repository to use. Defaults to ".".
             use_git (bool, optional): flag to use git under the hood or not. Defaults to True.
             integration_material_social_cards (bool, optional): option to enable
-                integration with Social Cards plugin from Material theme. Defaults to False.
+                integration with Social Cards plugin from Material theme. Defaults to True.
         """
         if use_git:
             logger.debug("[rss-plugin] Git use is disabled.")
@@ -107,7 +107,7 @@ class Util:
         self.use_git = use_git
 
         # save integrations
-        self.integration_material_social_cards = integration_material_social_cards
+        self.social_cards = integration_material_social_cards
 
     def build_url(self, base_url: str, path: str, args_dict: dict = None) -> str:
         """Build URL using base URL, cumulating existing and passed path, \
@@ -478,21 +478,55 @@ class Util:
         else:
             return description if description else ""
 
-    def get_image(self, in_page: Page, base_url: str) -> tuple:
-        """Get image from page meta and returns properties.
+    def get_image(self, in_page: Page, base_url: str) -> tuple[str, str, int] | None:
+        """Get page's image from page meta or social cards and returns properties.
 
-        :param in_page: page to parse
-        :type in_page: Page
-        :param base_url: website URL to resolve absolute URLs for images referenced with local path.
-        :type base_url: str
+        Args:
+            in_page (Page): page to parse
+            base_url (str): website URL to resolve absolute URLs for images referenced
+                with local path.
 
-        :return: (image url, mime type, image length)
-        :rtype: tuple
+        Returns:
+            tuple[str, str, int] | None: (image url, mime type, image length) or None if
+                there is no image set
         """
         if in_page.meta.get("image"):
             img_url = in_page.meta.get("image").strip()
+            logger.debug(
+                f"[rss-plugin] Image found ({img_url}) in page.meta.image for page: "
+                f"{in_page.file.src_uri}"
+            )
         elif in_page.meta.get("illustration"):
             img_url = in_page.meta.get("illustration").strip()
+            logger.debug(
+                f"[rss-plugin] Image found ({img_url}) in page.meta.illustration for page: "
+                f"{in_page.file.src_uri}"
+            )
+        elif (
+            self.social_cards.IS_ENABLED
+            and self.social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED
+            and self.social_cards.is_social_plugin_enabled_page(
+                mkdocs_page=in_page,
+                fallback_value=self.social_cards,
+            )
+        ):
+            img_local_path = self.social_cards.get_social_card_build_path_for_page(
+                mkdocs_page=in_page
+            )
+            img_url = self.social_cards.get_social_card_url_for_page(
+                mkdocs_page=in_page
+            )
+            logger.debug(
+                f"[rss-plugin] Image found ({img_url}) from social cards for page: "
+                f"{in_page.file.src_uri}. Using local image to get mime and length: "
+                f"{img_local_path}"
+            )
+            return (
+                img_url,
+                guess_type(url=img_local_path, strict=False)[0],
+                img_local_path.stat().st_size,
+            )
+
         else:
             return None
 
@@ -512,19 +546,18 @@ class Util:
         return (img_url, mime_type, img_length)
 
     def get_local_image_length(self, page_path: str, path_to_append: str) -> int:
-        """Build URL using base URL, cumulating existing and passed path, \
-        then adding URL arguments.
+        """Calculates local image size in octets.
 
-        :param page_path: base URL with existing path to use
-        :type base_url: str
-        :param path: URL path to cumulate with existing
-        :type path: str
+        Args:
+            page_path (str): source path to the Mkdocs page
+            path_to_append (str): path to append
 
-        :return: complete and valid path
-        :rtype: int
+        Returns:
+            int: size in octets
         """
         image_path = Path(page_path).parent / Path(path_to_append)
         if not image_path.is_file():
+            logger.debug(f"{image_path} not found")
             return None
 
         return image_path.stat().st_size
@@ -613,8 +646,7 @@ class Util:
 
         return site_url
 
-    @staticmethod
-    def guess_locale(mkdocs_config: Config) -> str or None:
+    def guess_locale(self, mkdocs_config: Config) -> str or None:
         """Extract language code from MkDocs or Theme configuration.
 
         :param mkdocs_config: configuration object
@@ -638,7 +670,7 @@ class Util:
         # Some themes implement a locale or a language settings
         if "theme" in mkdocs_config:
             if (
-                is_theme_material(mkdocs_config=mkdocs_config)
+                self.social_cards.IS_THEME_MATERIAL
                 and "language" in mkdocs_config.theme
             ):
                 # TODO: remove custom behavior when Material theme switches to locale
