@@ -439,5 +439,7 @@ If `false`, the integration with Social Cards is disabled.
 
 Default: `true`.
 
+> See [the related section in integrations page](./integrations.md#social-cards-plugin-from-material-theme).
+
 <!-- Hyperlinks reference -->
 [page metadata]: https://python-markdown.github.io/extensions/meta_data/
