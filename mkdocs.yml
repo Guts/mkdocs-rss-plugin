@@ -1,7 +1,7 @@
 # Project information
 site_name: MkDocs RSS Plugin
 site_description: Documentation about the MkDocs RSS Plugin
-site_author: Julien M. <dev@ingeoveritas.com>
+site_author: dev@ingeoveritas.com (Julien M. )
 site_url: https://guts.github.io/mkdocs-rss-plugin/
 copyright: "Guts - In Geo Veritas (MIT)"
 
