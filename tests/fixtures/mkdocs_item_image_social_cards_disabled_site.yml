@@ -1,0 +1,12 @@
+site_name: Test RSS Plugin
+site_description: Test a language code set in with territory
+site_url: https://guts.github.io/mkdocs-rss-plugin
+
+plugins:
+    - rss
+    - social:
+        enabled: false
+        cards: true
+
+theme:
+    name: material
