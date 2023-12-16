@@ -521,10 +521,19 @@ class Util:
                 f"{in_page.file.src_uri}. Using local image to get mime and length: "
                 f"{img_local_path}"
             )
+
+            if img_local_path.is_file():
+                img_length = img_local_path.stat().st_size
+            else:
+                logger.debug(
+                    f"[rss-plugin] Social card: {img_local_path} still not exists."
+                )
+                img_length = None
+
             return (
                 img_url,
                 guess_type(url=img_local_path, strict=False)[0],
-                img_local_path.stat().st_size,
+                img_length,
             )
 
         else:
