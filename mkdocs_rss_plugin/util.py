@@ -480,7 +480,7 @@ class Util:
         else:
             return description if description else ""
 
-    def get_image(self, in_page: Page, base_url: str) -> Optional[tuple[str, str, int]]:
+    def get_image(self, in_page: Page, base_url: str) -> Optional[Tuple[str, str, int]]:
         """Get page's image from page meta or social cards and returns properties.
 
         Args:
@@ -489,7 +489,7 @@ class Util:
                 with local path.
 
         Returns:
-            Optional[tuple[str, str, int]]: (image url, mime type, image length) or None if
+            Optional[Tuple[str, str, int]]: (image url, mime type, image length) or None if
                 there is no image set
         """
         if in_page.meta.get("image"):

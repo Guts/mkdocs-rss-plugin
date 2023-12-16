@@ -30,8 +30,8 @@ def load_requirements(requirements_files: Union[Path, List[Path]]) -> list:
     """Helper to load requirements list from a path or a list of paths.
 
     Args:
-        requirements_files (Path | list[Path]): path or list to paths of requirements
-            file(s)
+        requirements_files (Union[Path, List[Path]]): path or list to paths of
+            requirements file(s)
 
     Returns:
         list: list of requirements loaded from file(s)
