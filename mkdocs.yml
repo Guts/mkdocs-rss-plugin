@@ -100,11 +100,14 @@ plugins:
         utm_source: "documentation"
         utm_medium: "RSS"
         utm_campaign: "feed-syndication"
+      use_git: true
+      use_material_social_cards: true
   - search:
       lang: en
   - social:
       enabled: !ENV [MKDOCS_ENABLE_PLUGIN_SOCIAL, true]
       cache_dir: !ENV [MKDOCS_PLUGIN_SOCIAL_CACHE_DIR, .cache/plugins/social]
+      cards: true
   - termynal:
       prompt_literal_start:
         - "$"

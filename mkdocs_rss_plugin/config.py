@@ -31,3 +31,4 @@ class RssPluginConfig(Config):
     pretty_print = config_options.Type(bool, default=False)
     url_parameters = config_options.Optional(config_options.Type(dict))
     use_git = config_options.Type(bool, default=True)
+    use_material_social_cards = config_options.Type(bool, default=True)

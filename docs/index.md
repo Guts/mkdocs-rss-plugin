@@ -5,7 +5,7 @@ authors:
   - vinktim@gmail.com (Tim Vink)
 date: 2020-07-06
 description: "MkDocs RSS plugin: generate RSS feeds for your static website using git log ad YAML frontmatter (markdown pages'metadata header)."
-image: "rss_icon.svg"
+image: "assets/rss_icon.svg"
 tags:
   - Mkdocs
   - plugin

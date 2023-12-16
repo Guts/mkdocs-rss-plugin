@@ -134,6 +134,12 @@
               "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#use_git-enabledisable-git-log",
               "type": "boolean",
               "default": true
+            },
+            "use_material_social_cards": {
+              "title": "Enable/Disable integration with Social Cards plugin from Material theme.",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#disabling-the-plugin",
+              "type": "boolean",
+              "default": true
             }
           },
           "additionalProperties": false
