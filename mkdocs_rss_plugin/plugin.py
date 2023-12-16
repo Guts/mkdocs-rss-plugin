@@ -17,7 +17,7 @@ from typing import Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from mkdocs.config import config_options
 from mkdocs.exceptions import PluginError
-from mkdocs.plugins import BasePlugin
+from mkdocs.plugins import BasePlugin, event_priority
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
@@ -186,6 +186,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         # ending event
         return config
 
+    @event_priority(priority=-75)
     def on_page_content(
         self, html: str, page: Page, config: config_options.Config, files
     ) -> str:
