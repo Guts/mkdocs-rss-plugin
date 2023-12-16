@@ -63,6 +63,8 @@ plugins:
         utm_source: "documentation"
         utm_medium: "RSS"
         utm_campaign: "feed-syndication"
+      use_git: true
+      use_material_social_cards: true
 ```
 
 For further information, [see the user documentation](https://guts.github.io/mkdocs-rss-plugin/).
