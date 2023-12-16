@@ -12,7 +12,7 @@ from datetime import date, datetime
 from email.utils import format_datetime
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Iterable, Tuple
+from typing import Iterable, Optional, Tuple
 from urllib import request
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse, urlunparse
@@ -58,7 +58,9 @@ class Util:
         self,
         path: str = ".",
         use_git: bool = True,
-        integration_material_social_cards: IntegrationMaterialSocialCards | None = None,
+        integration_material_social_cards: Optional[
+            IntegrationMaterialSocialCards
+        ] = None,
     ):
         """Class hosting the plugin logic.
 
@@ -478,7 +480,7 @@ class Util:
         else:
             return description if description else ""
 
-    def get_image(self, in_page: Page, base_url: str) -> tuple[str, str, int] | None:
+    def get_image(self, in_page: Page, base_url: str) -> Optional[tuple[str, str, int]]:
         """Get page's image from page meta or social cards and returns properties.
 
         Args:
@@ -487,7 +489,7 @@ class Util:
                 with local path.
 
         Returns:
-            tuple[str, str, int] | None: (image url, mime type, image length) or None if
+            Optional[tuple[str, str, int]]: (image url, mime type, image length) or None if
                 there is no image set
         """
         if in_page.meta.get("image"):
