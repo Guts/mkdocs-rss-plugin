@@ -5,19 +5,22 @@
 # ##################################
 
 # standard library
-import logging
 from pathlib import Path
 from typing import Optional
 
 # 3rd party
 from mkdocs.config.config_options import Config
+from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
+
+# package
+from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
 
 # ############################################################################
 # ########## Globals #############
 # ################################
 
-logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
+logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 
 # ############################################################################
 # ########## Logic ###############
@@ -58,7 +61,7 @@ class IntegrationMaterialSocialCards:
         if switch_force is False:
             self.IS_ENABLED = False
             logger.debug(
-                "[rss-plugin] Integration with Social Cards (Material theme) is "
+                "Integration with Social Cards (Material theme) is "
                 "disabled in plugin's option in Mkdocs configuration."
             )
 
@@ -92,23 +95,21 @@ class IntegrationMaterialSocialCards:
             bool: True if the theme material and the plugin social cards is enabled.
         """
         if not self.is_theme_material(mkdocs_config=mkdocs_config):
-            logger.debug(
-                "[rss-plugin] Installed theme is not 'material'. Integration disabled."
-            )
+            logger.debug("Installed theme is not 'material'. Integration disabled.")
             return False
 
         if not mkdocs_config.plugins.get("material/social"):
-            logger.debug("[rss-plugin] Social plugin not listed in configuration.")
+            logger.debug("Social plugin not listed in configuration.")
             return False
 
         social_plugin_cfg = mkdocs_config.plugins.get("material/social")
 
         if not social_plugin_cfg.config.enabled:
-            logger.debug("[rss-plugin] Social plugin is installed but disabled.")
+            logger.debug("Social plugin is installed but disabled.")
             self.IS_SOCIAL_PLUGIN_ENABLED = False
             return False
 
-        logger.debug("[rss-plugin] Social plugin is enabled in Mkdocs configuration.")
+        logger.debug("Social plugin is enabled in Mkdocs configuration.")
         self.IS_SOCIAL_PLUGIN_CARDS_ENABLED = True
         return True
 
@@ -127,13 +128,11 @@ class IntegrationMaterialSocialCards:
         social_plugin_cfg = mkdocs_config.plugins.get("material/social")
 
         if not social_plugin_cfg.config.cards:
-            logger.debug(
-                "[rss-plugin] Social plugin is installed, present but cards are disabled."
-            )
+            logger.debug("Social plugin is installed, present but cards are disabled.")
             self.IS_SOCIAL_PLUGIN_CARDS_ENABLED = False
             return False
 
-        logger.debug("[rss-plugin] Social cards are enabled in Mkdocs configuration.")
+        logger.debug("Social cards are enabled in Mkdocs configuration.")
         self.IS_SOCIAL_PLUGIN_CARDS_ENABLED = True
         return True
 
@@ -168,7 +167,7 @@ class IntegrationMaterialSocialCards:
         social_plugin_cfg = mkdocs_config.plugins.get("material/social")
 
         logger.debug(
-            "[rss-plugin] Social cards folder in Mkdocs build directory: "
+            "Social cards folder in Mkdocs build directory: "
             f"{social_plugin_cfg.config.cards_dir}."
         )
 
