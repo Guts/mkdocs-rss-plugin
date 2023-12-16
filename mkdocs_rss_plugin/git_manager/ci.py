@@ -39,7 +39,7 @@ class CiHandler:
         # Gitlab Runners
         if environ.get("GITLAB_CI") and n_commits < 50:
             # Default is GIT_DEPTH of 50 for gitlab
-            logger.warning(
+            logger.info(
                 """
                     Running on a gitlab runner might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
@@ -51,7 +51,7 @@ class CiHandler:
         # Github Actions
         if environ.get("GITHUB_ACTIONS") and n_commits == 1:
             # Default is fetch-depth of 1 for github actions
-            logger.warning(
+            logger.info(
                 """
                     Running on github actions might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
@@ -63,7 +63,7 @@ class CiHandler:
         # Bitbucket pipelines
         if environ.get("CI") and n_commits < 50:
             # Default is fetch-depth of 50 for bitbucket pipelines
-            logger.warning(
+            logger.info(
                 """
                     Running on bitbucket pipelines might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
@@ -76,7 +76,7 @@ class CiHandler:
         # Azure Devops Pipeline
         # Does not limit fetch-depth by default
         if environ.get("Agent.Source.Git.ShallowFetchDepth", 10e99) < n_commits:
-            logger.warning(
+            logger.info(
                 """
                     Running on Azure pipelines \
                     with limited fetch-depth might lead to wrong git revision dates \
