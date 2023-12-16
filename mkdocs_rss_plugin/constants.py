@@ -16,6 +16,7 @@ from mkdocs_rss_plugin import __about__
 
 DEFAULT_TEMPLATE_FOLDER = Path(__file__).parent / "templates"
 DEFAULT_TEMPLATE_FILENAME = DEFAULT_TEMPLATE_FOLDER / "rss.xml.jinja2"
+MKDOCS_LOGGER_NAME = "[RSS-plugin]"
 OUTPUT_FEED_CREATED = "feed_rss_created.xml"
 OUTPUT_FEED_UPDATED = "feed_rss_updated.xml"
 REMOTE_REQUEST_HEADERS = {

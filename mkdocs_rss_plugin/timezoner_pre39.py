@@ -11,18 +11,21 @@
 # ##################################
 
 # standard library
-import logging
 from datetime import datetime
 
 # 3rd party
 import pytz
+from mkdocs.plugins import get_plugin_logger
+
+# package
+from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
 
 # ############################################################################
 # ########## Globals #############
 # ################################
 
 
-logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
+logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 
 
 # ############################################################################

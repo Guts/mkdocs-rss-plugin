@@ -5,11 +5,20 @@
 # ##################################
 
 # standard library
-import logging
 from os import environ, path
 
 # 3rd party
 from git import Git
+from mkdocs.plugins import get_plugin_logger
+
+# package
+from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
+
+# ############################################################################
+# ########## Globals #############
+# ################################
+
+logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 
 
 # ############################################################################
@@ -30,9 +39,9 @@ class CiHandler:
         # Gitlab Runners
         if environ.get("GITLAB_CI") and n_commits < 50:
             # Default is GIT_DEPTH of 50 for gitlab
-            logging.warning(
+            logger.warning(
                 """
-                    [rss-plugin] Running on a gitlab runner might lead to wrong \
+                    Running on a gitlab runner might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
                     Make sure to set GIT_DEPTH to 1000 in your .gitlab-ci.yml file. \
                     (see https://docs.gitlab.com/ee/user/project/pipelines/settings.html#git-shallow-clone).
@@ -42,9 +51,9 @@ class CiHandler:
         # Github Actions
         if environ.get("GITHUB_ACTIONS") and n_commits == 1:
             # Default is fetch-depth of 1 for github actions
-            logging.warning(
+            logger.warning(
                 """
-                    [rss-plugin] Running on github actions might lead to wrong \
+                    Running on github actions might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
                     Try setting fetch-depth to 0 in your github action \
                     (see https://github.com/actions/checkout).
@@ -54,9 +63,9 @@ class CiHandler:
         # Bitbucket pipelines
         if environ.get("CI") and n_commits < 50:
             # Default is fetch-depth of 50 for bitbucket pipelines
-            logging.warning(
+            logger.warning(
                 """
-                    [rss-plugin] Running on bitbucket pipelines might lead to wrong \
+                    Running on bitbucket pipelines might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
                     Try setting "clone: depth" to "full" in your pipeline \
                     (see https://support.atlassian.com/bitbucket-cloud/docs/configure-bitbucket-pipelinesyml/
@@ -67,9 +76,9 @@ class CiHandler:
         # Azure Devops Pipeline
         # Does not limit fetch-depth by default
         if environ.get("Agent.Source.Git.ShallowFetchDepth", 10e99) < n_commits:
-            logging.warning(
+            logger.warning(
                 """
-                    [rss-plugin] Running on Azure pipelines \
+                    Running on Azure pipelines \
                     with limited fetch-depth might lead to wrong git revision dates \
                     due to a shallow git fetch depth. \
                     Remove any Shallow Fetch settings \

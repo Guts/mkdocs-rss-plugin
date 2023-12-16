@@ -5,7 +5,6 @@
 # ##################################
 
 # standard library
-import logging
 from copy import deepcopy
 from datetime import datetime
 from email.utils import formatdate
@@ -17,7 +16,7 @@ from typing import Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from mkdocs.config import config_options
 from mkdocs.exceptions import PluginError
-from mkdocs.plugins import BasePlugin, event_priority
+from mkdocs.plugins import BasePlugin, event_priority, get_plugin_logger
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
@@ -27,6 +26,7 @@ from mkdocs_rss_plugin.config import RssPluginConfig
 from mkdocs_rss_plugin.constants import (
     DEFAULT_TEMPLATE_FILENAME,
     DEFAULT_TEMPLATE_FOLDER,
+    MKDOCS_LOGGER_NAME,
     OUTPUT_FEED_CREATED,
     OUTPUT_FEED_UPDATED,
 )
@@ -39,7 +39,8 @@ from mkdocs_rss_plugin.util import Util
 # ############################################################################
 # ########## Globals #############
 # ################################
-logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
+
+logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 
 
 # ############################################################################
@@ -143,24 +144,24 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                     )
                 except ValueError as err:
                     raise PluginError(
-                        "[rss-plugin] Config error: `date_from_meta.default_time` value "
+                        "Config error: `date_from_meta.default_time` value "
                         f"'{self.meta_default_time}' format doesn't match the expected "
                         f"format %H:%M. Trace: {err}"
                     )
 
             if self.config.use_git:
                 logger.debug(
-                    "[rss-plugin] Dates will be retrieved FIRSTLY from page meta (yaml "
+                    "Dates will be retrieved FIRSTLY from page meta (yaml "
                     "frontmatter). The git log will be used as fallback."
                 )
             else:
                 logger.debug(
-                    "[rss-plugin] Dates will be retrieved ONLY from page meta (yaml "
+                    "Dates will be retrieved ONLY from page meta (yaml "
                     "frontmatter). The build date will be used as fallback, without any "
                     "call to Git."
                 )
         else:
-            logger.debug("[rss-plugin] Dates will be retrieved from git log.")
+            logger.debug("Dates will be retrieved from git log.")
 
         # create 2 final dicts
         self.feed_created = deepcopy(base_feed)
@@ -177,7 +178,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             )
         else:
             logger.error(
-                "[rss-plugin] The variable `site_url` is not set in the MkDocs "
+                "The variable `site_url` is not set in the MkDocs "
                 "configuration file whereas a URL is mandatory to publish. "
                 "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
             )

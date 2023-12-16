@@ -21,11 +21,12 @@ from urllib.parse import urlencode, urlparse, urlunparse
 import markdown
 from git import GitCommandError, GitCommandNotFound, InvalidGitRepositoryError, Repo
 from mkdocs.config.config_options import Config
+from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_datetime
 
 # package
-from mkdocs_rss_plugin.constants import REMOTE_REQUEST_HEADERS
+from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME, REMOTE_REQUEST_HEADERS
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
@@ -41,8 +42,7 @@ else:
 # ########## Globals #############
 # ################################
 
-logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
-
+logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 
 # ############################################################################
 # ########## Classes #############
@@ -71,14 +71,14 @@ class Util:
                 integration with Social Cards plugin from Material theme. Defaults to True.
         """
         if use_git:
-            logger.debug("[rss-plugin] Git use is disabled.")
+            logger.debug("Git use is enabled.")
             try:
                 git_repo = Repo(path, search_parent_directories=True)
                 self.repo = git_repo.git
                 self.git_is_valid = True
             except InvalidGitRepositoryError as err:
                 logger.warning(
-                    f"[rss-plugin] Path '{path}' is not a valid git directory. "
+                    f"Path '{path}' is not a valid git directory. "
                     "Only page.meta (YAML frontmatter will be used). "
                     "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
@@ -87,7 +87,7 @@ class Util:
                 use_git = False
             except Exception as err:
                 logger.warning(
-                    f"[rss-plugin] Unrecognized git issue. "
+                    f"Unrecognized git issue. "
                     "Only page.meta (YAML frontmatter will be used). "
                     "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
@@ -101,7 +101,7 @@ class Util:
         else:
             self.git_is_valid = False
             logger.debug(
-                "[rss-plugin] Git use is disabled. "
+                "Git use is disabled. "
                 "Only page.meta (YAML frontmatter will be used). "
             )
 
@@ -127,7 +127,7 @@ class Util:
         """
         if not base_url:
             logger.error(
-                "[rss-plugin] Base url not set, probably because 'site_url' is not set "
+                "Base url not set, probably because 'site_url' is not set "
                 "in Mkdocs configuration file. Using an empty string instead."
             )
             base_url = ""
@@ -184,13 +184,13 @@ class Util:
             )
             if isinstance(dt_created, str):
                 logger.info(
-                    f"[rss-plugin] Creation date of {in_page.file.abs_src_path} is an "
+                    f"Creation date of {in_page.file.abs_src_path} is an "
                     f"a character string: {dt_created} ({type(dt_created)})"
                 )
 
             elif dt_created is None:
                 logger.info(
-                    f"[rss-plugin] Creation date of {in_page.file.abs_src_path} has not "
+                    f"Creation date of {in_page.file.abs_src_path} has not "
                     "been recognized."
                 )
 
@@ -206,13 +206,13 @@ class Util:
 
             if isinstance(dt_updated, str):
                 logger.info(
-                    f"[rss-plugin] Update date of {in_page.file.abs_src_path} is an "
+                    f"Update date of {in_page.file.abs_src_path} is an "
                     f"a character string: {dt_updated} ({type(dt_updated)})"
                 )
 
             elif dt_updated is None:
                 logger.info(
-                    f"[rss-plugin] Update date of {in_page.file.abs_src_path} is an "
+                    f"Update date of {in_page.file.abs_src_path} is an "
                     f"unrecognized type: {dt_updated} ({type(dt_updated)})"
                 )
 
@@ -237,14 +237,14 @@ class Util:
                     )
             except GitCommandError as err:
                 logging.warning(
-                    f"[rss-plugin] Unable to read git logs of '{in_page.file.abs_src_path}'. "
+                    f"Unable to read git logs of '{in_page.file.abs_src_path}'. "
                     "Is git log readable? Falling back to build date. "
                     "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
             except GitCommandNotFound as err:
                 logging.error(
-                    "[rss-plugin] Unable to perform command 'git log'. Is git installed? "
+                    "Unable to perform command 'git log'. Is git installed? "
                     "Falling back to build date. "
                     "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
@@ -270,7 +270,7 @@ class Util:
             )
         elif dt_created:
             logger.info(
-                f"[rss-plugin] Updated date could not be retrieved for page: "
+                f"Updated date could not be retrieved for page: "
                 f"{in_page.file.abs_src_path}. Maybe it has never been committed yet?"
             )
             return (
@@ -279,7 +279,7 @@ class Util:
             )
         elif dt_updated:
             logger.info(
-                f"[rss-plugin] Creation date could not be retrieved for page: "
+                f"Creation date could not be retrieved for page: "
                 f"{in_page.file.abs_src_path}. Maybe it has never been committed yet?"
             )
             return (
@@ -288,7 +288,7 @@ class Util:
             )
         else:
             logging.warning(
-                f"[rss-plugin] Dates could not be retrieved for page: {in_page.file.abs_src_path}."
+                f"Dates could not be retrieved for page: {in_page.file.abs_src_path}."
             )
             return (
                 get_build_datetime(),
@@ -313,7 +313,7 @@ class Util:
                 return tuple(in_page.meta.get("author"))
             else:
                 logging.warning(
-                    "[rss-plugin] Type of author value in page.meta "
+                    "Type of author value in page.meta "
                     f"({in_page.file.abs_src_path}) is not valid. "
                     "It should be str, list or tuple, "
                     f"not: {type(in_page.meta.get('author'))}."
@@ -326,7 +326,7 @@ class Util:
                 return tuple(in_page.meta.get("authors"))
             else:
                 logging.warning(
-                    "[rss-plugin] Type of authors value in page.meta (%s) is not valid. "
+                    "Type of authors value in page.meta (%s) is not valid. "
                     "It should be str, list or tuple, not: %s."
                     % in_page.file.abs_src_path,
                     type(in_page.meta.get("authors")),
@@ -395,19 +395,17 @@ class Util:
                     time_to_add = datetime.min.time()
                 out_date = datetime.combine(date_metatag_value, time_to_add)
             else:
-                logger.debug(
-                    f"[rss-plugin] Incompatible date type: {type(date_metatag_value)}"
-                )
+                logger.debug(f"Incompatible date type: {type(date_metatag_value)}")
                 return out_date
         except ValueError as err:
             logger.error(
-                f"[rss-plugin] Incompatible date found: {date_metatag_value=} "
+                f"Incompatible date found: {date_metatag_value=} "
                 f"{type(date_metatag_value)}. Trace: {err}"
             )
             return out_date
         except Exception as err:
             logger.error(
-                f"[rss-plugin] Unable to retrieve creation date: {date_metatag_value=} "
+                f"Unable to retrieve creation date: {date_metatag_value=} "
                 f"{type(date_metatag_value)}. Trace: {err}"
             )
             return out_date
@@ -445,7 +443,7 @@ class Util:
         # If no description and chars_count set to 0, return empty string
         elif not description and chars_count == 0:
             logger.warning(
-                f"[rss-plugin] No description set for page {in_page.file.src_uri} "
+                f"No description set for page {in_page.file.src_uri} "
                 "and 'abstract_chars_count' set to 0. The feed won't be compliant, "
                 "because an item must have a description."
             )
@@ -495,13 +493,13 @@ class Util:
         if in_page.meta.get("image"):
             img_url = in_page.meta.get("image").strip()
             logger.debug(
-                f"[rss-plugin] Image found ({img_url}) in page.meta.image for page: "
+                f"Image found ({img_url}) in page.meta.image for page: "
                 f"{in_page.file.src_uri}"
             )
         elif in_page.meta.get("illustration"):
             img_url = in_page.meta.get("illustration").strip()
             logger.debug(
-                f"[rss-plugin] Image found ({img_url}) in page.meta.illustration for page: "
+                f"Image found ({img_url}) in page.meta.illustration for page: "
                 f"{in_page.file.src_uri}"
             )
         elif (
@@ -519,7 +517,7 @@ class Util:
                 mkdocs_page=in_page
             )
             logger.debug(
-                f"[rss-plugin] Image found ({img_url}) from social cards for page: "
+                f"Image found ({img_url}) from social cards for page: "
                 f"{in_page.file.src_uri}. Using local image to get mime and length: "
                 f"{img_local_path}"
             )
@@ -527,9 +525,7 @@ class Util:
             if img_local_path.is_file():
                 img_length = img_local_path.stat().st_size
             else:
-                logger.debug(
-                    f"[rss-plugin] Social card: {img_local_path} still not exists."
-                )
+                logger.debug(f"Social card: {img_local_path} still not exists.")
                 img_length = None
 
             return (
@@ -610,7 +606,7 @@ class Util:
             img_length = remote_img.getheader("content-length")
         except (HTTPError, URLError) as err:
             logging.warning(
-                f"[rss-plugin] Remote image could not been reached: {image_url}. "
+                f"Remote image could not been reached: {image_url}. "
                 f"Trying again with GET and disabling SSL verification. Attempt: {attempt}. "
                 f"Trace: {err}"
             )
@@ -623,7 +619,7 @@ class Util:
                 )
             else:
                 logging.error(
-                    f"[rss-plugin] Remote image is not reachable: {image_url} after "
+                    f"Remote image is not reachable: {image_url} after "
                     f"{attempt} attempts. Trace: {err}"
                 )
                 return None
@@ -671,7 +667,7 @@ class Util:
         if mkdocs_config.get("locale"):
             logger.warning(
                 DeprecationWarning(
-                    "[rss-plugin] Mkdocs does not support locale option at the "
+                    "Mkdocs does not support locale option at the "
                     "configuration root but under theme sub-configuration. It won't be "
                     "supported anymore by the plugin in the next version."
                 )
@@ -687,7 +683,7 @@ class Util:
                 # TODO: remove custom behavior when Material theme switches to locale
                 # see: https://github.com/squidfunk/mkdocs-material/discussions/6453
                 logger.debug(
-                    "[rss plugin] Language detected in Material theme "
+                    "Language detected in Material theme "
                     f"('{mkdocs_config.theme.name}') settings: "
                     f"{mkdocs_config.theme.get('language')}"
                 )
@@ -696,7 +692,7 @@ class Util:
             elif "locale" in mkdocs_config.theme:
                 locale = mkdocs_config.theme.locale
                 logger.debug(
-                    "[rss plugin] Locale detected in theme "
+                    "Locale detected in theme "
                     f"('{mkdocs_config.theme.name}') settings: {locale=}"
                 )
                 return (
@@ -706,7 +702,7 @@ class Util:
                 )
             else:
                 logger.debug(
-                    "[rss plugin] Nor locale or language detected in theme settings "
+                    "Nor locale or language detected in theme settings "
                     f"('{mkdocs_config.theme.name}')."
                 )
 
