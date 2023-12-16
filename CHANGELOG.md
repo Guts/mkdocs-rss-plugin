@@ -17,6 +17,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.10.0 - 2023-12-17
+
+### Features and enhancements 🎉
+
+* Feature: support material social cards plugin by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/217>
+* feature:  use plugin logger as recomended by Mkdocs (road to Mkdocs>=1.4) by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/221>
+* quality: add tests against social cards integration by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/222>
+
+### Tooling 🔧
+
+* ci: set PyPi environment by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/215>
+
+### Documentation 📖
+
+* docs: switch to Material theme and revamp sections by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/216>
+* docs: add missing git_use option by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/218>
+* Documentation: fix anchors in JSON schema by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/220>
+
 ## 1.9.0 - 2023-12-07
 
 ### Bugs fixes 🐛
