@@ -525,8 +525,13 @@ class Util:
             if img_local_path.is_file():
                 img_length = img_local_path.stat().st_size
             else:
-                logger.debug(f"Social card: {img_local_path} still not exists.")
-                img_length = None
+                logger.debug(
+                    f"Social card: {img_local_path} still not exists. Trying to "
+                    f"retrieve length from remote image: {img_url}"
+                    "Note that would work only if the social card image has been "
+                    "published before)."
+                )
+                img_length = self.get_remote_image_length(image_url=img_url)
 
             return (
                 img_url,
@@ -575,7 +580,7 @@ class Util:
         http_method: str = "HEAD",
         attempt: int = 0,
         ssl_context: ssl.SSLContext = None,
-    ) -> int:
+    ) -> Optional[int]:
         """Retrieve length for remote images (starting with 'http' \
             in meta.image or meta.illustration). \
             It tries to perform a HEAD request and get the length from the headers. \
@@ -591,7 +596,7 @@ class Util:
         :type ssl_context: ssl.SSLContext, optional
 
         :return: image length as str or None
-        :rtype: int
+        :rtype: Optional[int]
         """
         # prepare request
         req = request.Request(
