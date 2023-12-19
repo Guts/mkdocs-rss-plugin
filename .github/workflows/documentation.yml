@@ -59,6 +59,13 @@ jobs:
           python -m pip install --upgrade -r requirements/documentation.txt
 
       - name: Build static website
+        env:
+          MKDOCS_ENABLE_PLUGIN_GIT_COMMITTERS: true
+          MKDOCS_ENABLE_PLUGIN_GIT_DATES: true
+          MKDOCS_ENABLE_PLUGIN_MKDOCSTRINGS: true
+          MKDOCS_ENABLE_PLUGIN_PRIVACY: true
+          MKDOCS_ENABLE_PLUGIN_RSS: true
+          MKDOCS_ENABLE_PLUGIN_SOCIAL: true
         run: mkdocs build --verbose
 
       - name: Save build doc as artifact
