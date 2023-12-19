@@ -17,6 +17,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.11.0 - 2023-12-19
+
+### Features and enhancements 🎉
+
+* improvement: if social card not found, try to retrieve length from remote URL by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/225>
+
+### Tooling 🔧
+
+* ci: add a link between release and discussion by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/224>
+* docs: explicitly enable plugins with env vars by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/227>
+
+### Documentation 📖
+
+* docs: add API autodocumentation with mkdocstrings by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/226>
+
 ## 1.10.0 - 2023-12-17
 
 ### Features and enhancements 🎉
