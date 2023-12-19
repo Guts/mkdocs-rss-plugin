@@ -57,6 +57,7 @@ nav:
     - configuration.md
     - integrations.md
   - Contributing: contributing.md
+  - API: api.md
   - Changelog: changelog.md
 
 plugins:
@@ -79,6 +80,20 @@ plugins:
       minify_html: true
       htmlmin_opts:
         remove_comments: true
+  - mkdocstrings:
+      enabled: !ENV [MKDOCS_ENABLE_PLUGIN_MKDOCSTRINGS, true]
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            heading_level: 3
+            ignore_init_summary: false
+            show_source: false
+          merge_init_into_class: true
+          paths: [.]
+          show_root_heading: true
+
   - privacy:
       enabled: !ENV [MKDOCS_ENABLE_PLUGIN_PRIVACY, true]
       cache_dir:
