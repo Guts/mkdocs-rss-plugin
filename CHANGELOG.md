@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.11.1 - 2024-01-11
+
+### Features and enhancements 🎉
+
+* fix #229 allow date.created to get creation date by @copdips in <https://github.com/Guts/mkdocs-rss-plugin/pull/237>
+
+## New Contributors
+
+* @copdips made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/237>
+
 ## 1.11.0 - 2023-12-19
 
 ### Features and enhancements 🎉
