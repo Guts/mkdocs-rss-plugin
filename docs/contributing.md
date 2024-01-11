@@ -71,7 +71,7 @@ See the relevant configuration file: `.pre-commit-config.yaml`.
 
 Make sure your code *roughly* follows [PEP-8](https://www.python.org/dev/peps/pep-0008/) and keeps things consistent with the rest of the code:
 
-- docstrings: [sphinx-style](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html#the-sphinx-docstring-format) is used to write technical documentation.
+- docstrings: [google-style](https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html) is used to technically describe what code does or not.
 - formatting: [black](https://black.readthedocs.io/) is used to automatically format the code without debate.
 - sorted imports: [isort](https://pycqa.github.io/isort/) is used to sort imports
 - static analysis: [flake8](https://flake8.pycqa.org/en/latest/) is used to catch some dizziness and keep the source code healthy.
@@ -94,10 +94,22 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
     "files.associations": {
         "./requirements/*.txt": "pip-requirements"
     },
+    // Markdown
+    "markdown.updateLinksOnFileMove.enabled": "prompt",
+    "markdown.updateLinksOnFileMove.enableForDirectories": true,
+    "markdown.validate.enabled": true,
+    "markdown.validate.fileLinks.markdownFragmentLinks": "warning",
+    "markdown.validate.fragmentLinks.enabled": "warning",
+    "[markdown]": {
+        "editor.bracketPairColorization.enabled": true,
+        "editor.formatOnSave": true,
+        "editor.guides.bracketPairs": "active",
+        "files.trimTrailingWhitespace": false,
+    },
     // Python
     "[python]": {
         "editor.codeActionsOnSave": {
-            "source.organizeImports": true
+            "source.organizeImports": "explicit"
         },
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true,
@@ -107,6 +119,7 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
         ],
         "editor.wordWrapColumn": 88,
     },
+    // Extensions
     "flake8.args": [
         "--config=setup.cfg",
         "--verbose"
@@ -116,9 +129,15 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
         "black"
     ],
     "isort.check": true,
-    // extensions
     "autoDocstring.guessTypes": true,
     "autoDocstring.docstringFormat": "google",
     "autoDocstring.generateDocstringOnEnter": false,
+    "yaml.customTags": [
+        "!ENV scalar",
+        "!ENV sequence",
+        "tag:yaml.org,2002:python/name:materialx.emoji.to_svg",
+        "tag:yaml.org,2002:python/name:materialx.emoji.twemoji",
+        "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format"
+    ],
 }
 ```
