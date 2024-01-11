@@ -510,6 +510,35 @@ class TestBuildRss(BaseTest):
             self.assertEqual(cli_result.exit_code, 1)
             self.assertIsNotNone(cli_result.exception)
 
+    def test_date(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_dates_overridden_in_dot_key.yml"
+                ),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            feed_rss_created = feedparser.parse(
+                Path(tmpdirname) / "feed_rss_created.xml"
+            )
+            for page in feed_rss_created.entries:
+                if page.title == "Page with meta date in dot key":
+                    self.assertEqual(page.published, "Sat, 07 Oct 2023 10:20:00 +0000")
+                    break
+
+            feed_rss_updated = feedparser.parse(
+                Path(tmpdirname) / "feed_rss_updated.xml"
+            )
+            for page in feed_rss_updated.entries:
+                if page.title == "Page with meta date in dot key":
+                    self.assertEqual(page.published, "Sun, 08 Oct 2023 10:20:00 +0000")
+                    break
+
     def test_bad_date_format(self):
         # add a new page without tracking it
         md_str = """---\ndate: 13 April 2022\n---\n\n# This page is dynamically created for test purposes\n\nHi!\n

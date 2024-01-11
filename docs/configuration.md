@@ -309,8 +309,8 @@ Basically, the plugin aims to retrieve creation and update dates from git log. B
 
 So, it's possible to use the dates manually specified into the [page metadata] through the [YAML frontmatter](https://www.mkdocs.org/user-guide/writing-your-docs/#meta-data).
 
-- `as_creation`: meta tag name to use as creation date. Default to `False`.
-- `as_update`: meta tag name to use as update date. Default to `False`.
+- `as_creation`: meta tag name (or a dot-separated tag name) to use as creation date. Default to `False`.
+- `as_update`: meta tag name (or a dot-separated tag name) to use as update date. Default to `False`.
 - `datetime_format`: datetime format. Default to `"%Y-%m-%d %H:%M"`.
 - `default_timezone`: timezone to use by default to make aware datetimes. Default to `UTC`. Introduced in version 1.3.0 with [PR 142](https://github.com/Guts/mkdocs-rss-plugin/pull/142).
 - `default_time`: time to use if page contains only a date. Useful to avoid the 'midnight syndrome' or have to specify hour in every single page. Default to `None`. 24h-clock format is expected: `%H:%M`. Example: `"14:20"`. Introduced in version 1.4.0 with [PR 145](https://github.com/Guts/mkdocs-rss-plugin/pull/145).
@@ -319,30 +319,60 @@ So, it's possible to use the dates manually specified into the [page metadata] t
 
 For example, in your `best_article.md` created in 2019, you can write the front-matter like this:
 
-```markdown
----
-title: "This page title is a perfect clickbait!"
-authors:
-  - "Julien M."
-date: "2020-10-22 17:18"
----
+=== "tag name: `date`"
 
-# This plugin will change your MkDocs life
+    ```markdown hl_lines="5"
+    ---
+    title: "This page title is a perfect clickbait!"
+    authors:
+      - "Julien M."
+    date: "2020-10-22 17:18"
+    ---
 
-Lorem ipsum [...]
-```
+    # This plugin will change your MkDocs life
 
-So in your `mkdocs.yml` you will have:
+    Lorem ipsum [...]
+    ```
 
-```yaml
-plugins:
-  - rss:
-      date_from_meta:
-        as_creation: "date"
-        as_update: false
-        datetime_format: "%Y-%m-%d %H:%M"
-        default_timezone: Europe/Paris
-```
+    So in your `mkdocs.yml` you will have:
+
+    ```yaml hl_lines="4-5"
+    plugins:
+      - rss:
+          date_from_meta:
+            as_creation: "date"
+            as_update: false
+            datetime_format: "%Y-%m-%d %H:%M"
+            default_timezone: Europe/Paris
+    ```
+
+=== "dot-separated tag name: `date.created`"
+
+    ```markdown hl_lines="6"
+    ---
+    title: "This page title is a perfect clickbait!"
+    authors:
+      - "Julien M."
+    date:
+      created: "2020-10-22 17:18"
+    ---
+
+    # This plugin will change your MkDocs life
+
+    Lorem ipsum [...]
+    ```
+
+    So in your `mkdocs.yml` you will have:
+
+    ```yaml hl_lines="4-5"
+    plugins:
+      - rss:
+          date_from_meta:
+            as_creation: "date.created"
+            as_update: false
+            datetime_format: "%Y-%m-%d %H:%M"
+            default_timezone: Europe/Paris
+    ```
 
 At the end, into the RSS you will get:
 
@@ -395,7 +425,7 @@ Default: `.*`.
 
 ### `url_parameters`: additional URL parameters
 
-This option allows you to add parameters to the URLs of the RSS feed items. It works as a dictionary of keys/values that is passed to [Python *urllib.parse.urlencode*](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlencode).  
+This option allows you to add parameters to the URLs of the RSS feed items. It works as a dictionary of keys/values that is passed to [Python *urllib.parse.urlencode*](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlencode).
 One possible use case is the addition of [Urchin Tracking Module (UTM) parameters](https://en.wikipedia.org/wiki/UTM_parameters):
 
 ```yaml

@@ -12,7 +12,7 @@ from datetime import date, datetime
 from email.utils import format_datetime
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Iterable, Optional, Tuple
+from typing import Any, Iterable, Optional, Tuple, Union
 from urllib import request
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse, urlunparse
@@ -139,6 +139,28 @@ class Util:
             url_parts[4] = urlencode(args_dict)
         return urlunparse(url_parts)
 
+    def get_value_from_dot_key(self, data: dict, dot_key: Union[str, bool]) -> Any:
+        """
+        Retrieves a value from a dictionary using a dot notation key.
+
+        :param data: The dictionary from which to retrieve the value.
+        :type data: dict
+        :param dot_key: The key in dot notation to specify the path in the dictionary.
+        :type dot_key: Union[str, bool]
+
+        :return: The value retrieved from the dictionary, or None if the key
+        does not exist.
+        :rtype: Any
+        """
+        if not isinstance(dot_key, str):
+            return data.get(dot_key)
+        for key in dot_key.split("."):
+            if isinstance(data, dict) and key in data:
+                data = data[key]
+            else:
+                return None
+        return data
+
     def get_file_dates(
         self,
         in_page: Page,
@@ -174,10 +196,13 @@ class Util:
 
         # if enabled, try to retrieve dates from page metadata
         if not self.use_git or (
-            source_date_creation != "git" and in_page.meta.get(source_date_creation)
+            source_date_creation != "git"
+            and self.get_value_from_dot_key(in_page.meta, source_date_creation)
         ):
             dt_created = self.get_date_from_meta(
-                date_metatag_value=in_page.meta.get(source_date_creation),
+                date_metatag_value=self.get_value_from_dot_key(
+                    in_page.meta, source_date_creation
+                ),
                 meta_datetime_format=meta_datetime_format,
                 meta_datetime_timezone=meta_default_timezone,
                 meta_default_time=meta_default_time,
@@ -195,10 +220,13 @@ class Util:
                 )
 
         if not self.use_git or (
-            source_date_update != "git" and in_page.meta.get(source_date_update)
+            source_date_update != "git"
+            and self.get_value_from_dot_key(in_page.meta, source_date_update)
         ):
             dt_updated = self.get_date_from_meta(
-                date_metatag_value=in_page.meta.get(source_date_update),
+                date_metatag_value=self.get_value_from_dot_key(
+                    in_page.meta, source_date_update
+                ),
                 meta_datetime_format=meta_datetime_format,
                 meta_datetime_timezone=meta_default_timezone,
                 meta_default_time=meta_default_time,
