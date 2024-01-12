@@ -393,7 +393,15 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         # JSON FEED
         if self.config.json_feed_enabled:
             with out_json_created.open(mode="w", encoding="UTF8") as fp:
-                json.dump(self.util.feed_to_json(self.feed_created), fp)
+                json.dump(
+                    self.util.feed_to_json(self.feed_created),
+                    fp,
+                    indent=4 if self.config.pretty_print else None,
+                )
 
             with out_json_updated.open(mode="w", encoding="UTF8") as fp:
-                json.dump(self.util.feed_to_json(self.feed_updated, updated=True), fp)
+                json.dump(
+                    self.util.feed_to_json(self.feed_updated, updated=True),
+                    fp,
+                    indent=4 if self.config.pretty_print else None,
+                )
