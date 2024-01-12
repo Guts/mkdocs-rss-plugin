@@ -87,6 +87,14 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         if not self.config.enabled:
             return config
 
+        # Fail if any export option is enabled
+        if not any([self.config.json_feed_enabled, self.config.rss_feed_enabled]):
+            logger.error(
+                "At least one export option has to be enabled. Plugin is disabled."
+            )
+            self.config.enabled = False
+            return config
+
         # integrations - check if theme is Material and if social cards are enabled
         self.integration_material_social_cards = IntegrationMaterialSocialCards(
             mkdocs_config=config,
@@ -331,56 +339,59 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             )
         )
 
-        # write feeds according to the pretty print option
-        if pretty_print:
-            # load Jinja environment and template
-            env = Environment(
-                autoescape=select_autoescape(["html", "xml"]),
-                loader=FileSystemLoader(self.tpl_folder),
-            )
+        # RSS
+        if self.config.rss_feed_enabled:
+            # write feeds according to the pretty print option
+            if pretty_print:
+                # load Jinja environment and template
+                env = Environment(
+                    autoescape=select_autoescape(["html", "xml"]),
+                    loader=FileSystemLoader(self.tpl_folder),
+                )
 
-            template = env.get_template(self.tpl_file.name)
+                template = env.get_template(self.tpl_file.name)
 
-            # write feeds to files
-            with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
-                fifeed_created.write(template.render(feed=self.feed_created))
+                # write feeds to files
+                with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
+                    fifeed_created.write(template.render(feed=self.feed_created))
 
-            with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
-                fifeed_updated.write(template.render(feed=self.feed_updated))
+                with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
+                    fifeed_updated.write(template.render(feed=self.feed_updated))
 
-        else:
-            # load Jinja environment and template
-            env = Environment(
-                autoescape=select_autoescape(["html", "xml"]),
-                loader=FileSystemLoader(self.tpl_folder),
-                lstrip_blocks=True,
-                trim_blocks=True,
-            )
-            template = env.get_template(self.tpl_file.name)
-
-            # write feeds to files stripping out spaces and new lines
-            with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
-                prev_char = ""
-                for char in template.render(feed=self.feed_created):
-                    if char == "\n":
-                        continue
-                    if char == " " and prev_char == " ":
+            else:
+                # load Jinja environment and template
+                env = Environment(
+                    autoescape=select_autoescape(["html", "xml"]),
+                    loader=FileSystemLoader(self.tpl_folder),
+                    lstrip_blocks=True,
+                    trim_blocks=True,
+                )
+                template = env.get_template(self.tpl_file.name)
+                # write feeds to files stripping out spaces and new lines
+                with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
+                    prev_char = ""
+                    for char in template.render(feed=self.feed_created):
+                        if char == "\n":
+                            continue
+                        if char == " " and prev_char == " ":
+                            prev_char = char
+                            continue
                         prev_char = char
-                        continue
-                    prev_char = char
-                    fifeed_created.write(char)
+                        fifeed_created.write(char)
 
-            with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
-                for char in template.render(feed=self.feed_updated):
-                    if char == "\n":
+                with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
+                    for char in template.render(feed=self.feed_updated):
+                        if char == "\n":
+                            prev_char = char
+                            continue
+                        if char == " " and prev_char == " ":
+                            prev_char = char
+                            continue
                         prev_char = char
-                        continue
-                    if char == " " and prev_char == " ":
-                        prev_char = char
-                        continue
-                    prev_char = char
-                    fifeed_updated.write(char)
+                        fifeed_updated.write(char)
 
+        # JSON FEED
+        if self.config.json_feed_enabled:
             with out_json_created.open(mode="w", encoding="UTF8") as fp:
                 json.dump(self.util.feed_to_json(self.feed_created), fp)
 

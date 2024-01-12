@@ -143,12 +143,30 @@ plugins:
       enabled: !ENV [MKDOCS_ENABLE_RSS_PLUGIN, True]
 ```
 
-Which enables you to disable the plugin locally using:
+Which allows you to disable the plugin locally using:
 
 ```bash
 export MKDOCS_ENABLE_RSS_PLUGIN=false
 mkdocs serve
 ```
+
+----
+
+### `json_feed_enabled`: enabling/disabling export to JSON Feed { #json_feed_enabled }
+
+Set it to `false` if you want to only export to RSS.
+
+Default: `true`.
+
+----
+
+### `rss_feed_enabled`: enabling/disabling export to RSS { #rss_feed_enabled }
+
+Set it to `false` if you want to only export to JSON feed.
+
+Default: `true`.
+
+----
 
 ### `image`: set the channel image
 
@@ -176,6 +194,8 @@ Output:
 </image>
 ```
 
+----
+
 ### `comments_path`: item comments path
 
 `comments_path`: path to add to each item URL pointing.
@@ -194,11 +214,15 @@ For example, if you're using Material for Mkdocs with comment integration (Disqu
 </item>
 ```
 
+----
+
 ### `length`: number of items to include in feed
 
 `length`: number of pages to include as feed items (entries).
 
 Default: `20`
+
+----
 
 ### `feed_ttl`: feed's cache time
 
@@ -211,6 +235,8 @@ Output:
 ```xml
 <ttl>1440</ttl>
 ```
+
+----
 
 ### `abstract_chars_count`: item description length
 
