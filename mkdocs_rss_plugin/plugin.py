@@ -6,7 +6,6 @@
 
 # standard library
 import json
-import logging
 from copy import deepcopy
 from datetime import datetime
 from email.utils import formatdate
@@ -50,7 +49,6 @@ OUTPUT_JSON_CREATED = "feed_created.json"
 OUTPUT_JSON_UPDATED = "feed_updated.json"
 
 logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
-
 
 
 # ############################################################################
@@ -314,10 +312,10 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         pretty_print = self.config.pretty_print
 
         # output filepaths
-        out_feed_created = Path(config.site_dir.joinpath(OUTPUT_FEED_CREATED)
-        out_feed_updated = Path(config.site_dir.joinpath(OUTPUT_FEED_UPDATED)
-        out_json_created = Path(config.site_dir.joinpath(OUTPUT_JSON_CREATED)
-        out_json_updated = Path(config.site_dir.joinpath(OUTPUT_JSON_UPDATED)
+        out_feed_created = Path(config.site_dir).joinpath(OUTPUT_FEED_CREATED)
+        out_feed_updated = Path(config.site_dir).joinpath(OUTPUT_FEED_UPDATED)
+        out_json_created = Path(config.site_dir).joinpath(OUTPUT_JSON_CREATED)
+        out_json_updated = Path(config.site_dir).joinpath(OUTPUT_JSON_UPDATED)
 
         # created items
         self.feed_created.get("entries").extend(
