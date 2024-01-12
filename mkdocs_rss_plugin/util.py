@@ -12,7 +12,7 @@ from datetime import date, datetime
 from email.utils import format_datetime
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Iterable, Tuple
+from typing import Any, Iterable, Optional, Tuple, Union
 from urllib import request
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse, urlunparse
@@ -21,12 +21,16 @@ from urllib.parse import urlencode, urlparse, urlunparse
 import markdown
 from git import GitCommandError, GitCommandNotFound, InvalidGitRepositoryError, Repo
 from mkdocs.config.config_options import Config
+from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_datetime
 
 # package
-from mkdocs_rss_plugin import __about__
+from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME, REMOTE_REQUEST_HEADERS
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
+from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
+    IntegrationMaterialSocialCards,
+)
 
 # conditional imports
 if sys.version_info < (3, 9):
@@ -38,13 +42,7 @@ else:
 # ########## Globals #############
 # ################################
 
-REMOTE_REQUEST_HEADERS = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "User-Agent": f"{__about__.__title__}/{__about__.__version__}",
-}
-
-logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
-
+logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 
 # ############################################################################
 # ########## Classes #############
@@ -52,26 +50,66 @@ logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
 
 
 class Util:
-    def __init__(self, path: str = "."):
+    """Plugin logic."""
+
+    git_is_valid: bool = False
+
+    def __init__(
+        self,
+        path: str = ".",
+        use_git: bool = True,
+        integration_material_social_cards: Optional[
+            IntegrationMaterialSocialCards
+        ] = None,
+    ):
         """Class hosting the plugin logic.
 
-        :param str path: path tot the git repository to use. Defaults to: "." - optional
+        Args:
+            path (str, optional): path to the git repository to use. Defaults to ".".
+            use_git (bool, optional): flag to use git under the hood or not. Defaults to True.
+            integration_material_social_cards (bool, optional): option to enable
+                integration with Social Cards plugin from Material theme. Defaults to True.
         """
-        try:
-            git_repo = Repo(path, search_parent_directories=True)
-            self.repo = git_repo.git
-            self.git_is_valid = 1
-        except InvalidGitRepositoryError as err:
-            logging.warning(
-                f"[rss-plugin] Path '{path}' is not a valid git directory. Trace: {err}"
-            )
-            self.git_is_valid = 0
-        except Exception as err:
-            logging.warning(f"[rss-plugin] Git issue: {err}")
-            self.git_is_valid = 0
+        if use_git:
+            logger.debug("Git use is enabled.")
+            try:
+                git_repo = Repo(path, search_parent_directories=True)
+                self.repo = git_repo.git
+                self.git_is_valid = True
+            except InvalidGitRepositoryError as err:
+                logger.warning(
+                    f"Path '{path}' is not a valid git directory. "
+                    "Only page.meta (YAML frontmatter will be used). "
+                    "To disable this warning, set 'use_git: false' in plugin options. "
+                    f"Trace: {err}"
+                )
+                self.git_is_valid = False
+                use_git = False
+            except Exception as err:
+                logger.warning(
+                    f"Unrecognized git issue. "
+                    "Only page.meta (YAML frontmatter will be used). "
+                    "To disable this warning, set 'use_git: false' in plugin options. "
+                    f"Trace: {err}"
+                )
+                self.git_is_valid = False
+                use_git = False
 
-        # Checks if user is running builds on CI and raise appropriate warnings
-        CiHandler(git_repo.git).raise_ci_warnings()
+            # Checks if user is running builds on CI and raise appropriate warnings
+            if self.git_is_valid:
+                CiHandler(git_repo.git).raise_ci_warnings()
+        else:
+            self.git_is_valid = False
+            logger.debug(
+                "Git use is disabled. "
+                "Only page.meta (YAML frontmatter will be used). "
+            )
+
+        # save git enable/disable status
+        self.use_git = use_git
+
+        # save integrations
+        self.social_cards = integration_material_social_cards
 
     def build_url(self, base_url: str, path: str, args_dict: dict = None) -> str:
         """Build URL using base URL, cumulating existing and passed path, \
@@ -89,7 +127,7 @@ class Util:
         """
         if not base_url:
             logger.error(
-                "[rss-plugin] Base url not set, probably because 'site_url' is not set "
+                "Base url not set, probably because 'site_url' is not set "
                 "in Mkdocs configuration file. Using an empty string instead."
             )
             base_url = ""
@@ -100,6 +138,28 @@ class Util:
         if args_dict:
             url_parts[4] = urlencode(args_dict)
         return urlunparse(url_parts)
+
+    def get_value_from_dot_key(self, data: dict, dot_key: Union[str, bool]) -> Any:
+        """
+        Retrieves a value from a dictionary using a dot notation key.
+
+        :param data: The dictionary from which to retrieve the value.
+        :type data: dict
+        :param dot_key: The key in dot notation to specify the path in the dictionary.
+        :type dot_key: Union[str, bool]
+
+        :return: The value retrieved from the dictionary, or None if the key
+        does not exist.
+        :rtype: Any
+        """
+        if not isinstance(dot_key, str):
+            return data.get(dot_key)
+        for key in dot_key.split("."):
+            if isinstance(data, dict) and key in data:
+                data = data[key]
+            else:
+                return None
+        return data
 
     def get_file_dates(
         self,
@@ -135,27 +195,54 @@ class Util:
         dt_created = dt_updated = None
 
         # if enabled, try to retrieve dates from page metadata
-        if source_date_creation != "git" and in_page.meta.get(source_date_creation):
+        if not self.use_git or (
+            source_date_creation != "git"
+            and self.get_value_from_dot_key(in_page.meta, source_date_creation)
+        ):
             dt_created = self.get_date_from_meta(
-                date_metatag_value=in_page.meta.get(source_date_creation),
+                date_metatag_value=self.get_value_from_dot_key(
+                    in_page.meta, source_date_creation
+                ),
                 meta_datetime_format=meta_datetime_format,
                 meta_datetime_timezone=meta_default_timezone,
                 meta_default_time=meta_default_time,
             )
             if isinstance(dt_created, str):
-                logger.error(f"Creation date is a string: {dt_created}")
-                dt_created = None
+                logger.info(
+                    f"Creation date of {in_page.file.abs_src_path} is an "
+                    f"a character string: {dt_created} ({type(dt_created)})"
+                )
 
-        if source_date_update != "git" and in_page.meta.get(source_date_update):
+            elif dt_created is None:
+                logger.info(
+                    f"Creation date of {in_page.file.abs_src_path} has not "
+                    "been recognized."
+                )
+
+        if not self.use_git or (
+            source_date_update != "git"
+            and self.get_value_from_dot_key(in_page.meta, source_date_update)
+        ):
             dt_updated = self.get_date_from_meta(
-                date_metatag_value=in_page.meta.get(source_date_update),
+                date_metatag_value=self.get_value_from_dot_key(
+                    in_page.meta, source_date_update
+                ),
                 meta_datetime_format=meta_datetime_format,
                 meta_datetime_timezone=meta_default_timezone,
                 meta_default_time=meta_default_time,
             )
+
             if isinstance(dt_updated, str):
-                logger.error(f"Update date is a string: {dt_updated}")
-                dt_updated = None
+                logger.info(
+                    f"Update date of {in_page.file.abs_src_path} is an "
+                    f"a character string: {dt_updated} ({type(dt_updated)})"
+                )
+
+            elif dt_updated is None:
+                logger.info(
+                    f"Update date of {in_page.file.abs_src_path} is an "
+                    f"unrecognized type: {dt_updated} ({type(dt_updated)})"
+                )
 
         # explore git log
         if self.git_is_valid:
@@ -178,14 +265,16 @@ class Util:
                     )
             except GitCommandError as err:
                 logging.warning(
-                    f"[rss-plugin] Unable to read git logs of '{in_page.file.abs_src_path}'. "
+                    f"Unable to read git logs of '{in_page.file.abs_src_path}'. "
                     "Is git log readable? Falling back to build date. "
+                    "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
             except GitCommandNotFound as err:
                 logging.error(
-                    "[rss-plugin] Unable to perform command 'git log'. Is git installed? "
-                    " Falling back to build date. "
+                    "Unable to perform command 'git log'. Is git installed? "
+                    "Falling back to build date. "
+                    "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
                 self.git_is_valid = 0
@@ -209,7 +298,7 @@ class Util:
             )
         elif dt_created:
             logger.info(
-                f"[rss-plugin] Updated date could not be retrieved for page: "
+                f"Updated date could not be retrieved for page: "
                 f"{in_page.file.abs_src_path}. Maybe it has never been committed yet?"
             )
             return (
@@ -218,7 +307,7 @@ class Util:
             )
         elif dt_updated:
             logger.info(
-                f"[rss-plugin] Creation date could not be retrieved for page: "
+                f"Creation date could not be retrieved for page: "
                 f"{in_page.file.abs_src_path}. Maybe it has never been committed yet?"
             )
             return (
@@ -227,7 +316,7 @@ class Util:
             )
         else:
             logging.warning(
-                f"[rss-plugin] Dates could not be retrieved for page: {in_page.file.abs_src_path}."
+                f"Dates could not be retrieved for page: {in_page.file.abs_src_path}."
             )
             return (
                 get_build_datetime(),
@@ -252,7 +341,7 @@ class Util:
                 return tuple(in_page.meta.get("author"))
             else:
                 logging.warning(
-                    "[rss-plugin] Type of author value in page.meta "
+                    "Type of author value in page.meta "
                     f"({in_page.file.abs_src_path}) is not valid. "
                     "It should be str, list or tuple, "
                     f"not: {type(in_page.meta.get('author'))}."
@@ -265,7 +354,7 @@ class Util:
                 return tuple(in_page.meta.get("authors"))
             else:
                 logging.warning(
-                    "[rss-plugin] Type of authors value in page.meta (%s) is not valid. "
+                    "Type of authors value in page.meta (%s) is not valid. "
                     "It should be str, list or tuple, not: %s."
                     % in_page.file.abs_src_path,
                     type(in_page.meta.get("authors")),
@@ -334,11 +423,20 @@ class Util:
                     time_to_add = datetime.min.time()
                 out_date = datetime.combine(date_metatag_value, time_to_add)
             else:
-                return "[rss-plugin] Incompatible date type."
+                logger.debug(f"Incompatible date type: {type(date_metatag_value)}")
+                return out_date
         except ValueError as err:
-            return f"[rss-plugin] Incompatible date found. Trace: {err}"
+            logger.error(
+                f"Incompatible date found: {date_metatag_value=} "
+                f"{type(date_metatag_value)}. Trace: {err}"
+            )
+            return out_date
         except Exception as err:
-            return f"[rss-plugin] Unable to retrieve creation date. Trace: {err}"
+            logger.error(
+                f"Unable to retrieve creation date: {date_metatag_value=} "
+                f"{type(date_metatag_value)}. Trace: {err}"
+            )
+            return out_date
 
         if not out_date.tzinfo:
             out_date = set_datetime_zoneinfo(out_date, meta_datetime_timezone)
@@ -373,7 +471,7 @@ class Util:
         # If no description and chars_count set to 0, return empty string
         elif not description and chars_count == 0:
             logger.warning(
-                f"[rss-plugin] No description set for page {in_page.file.src_uri} "
+                f"No description set for page {in_page.file.src_uri} "
                 "and 'abstract_chars_count' set to 0. The feed won't be compliant, "
                 "because an item must have a description."
             )
@@ -408,21 +506,67 @@ class Util:
         else:
             return description if description else ""
 
-    def get_image(self, in_page: Page, base_url: str) -> tuple:
-        """Get image from page meta and returns properties.
+    def get_image(self, in_page: Page, base_url: str) -> Optional[Tuple[str, str, int]]:
+        """Get page's image from page meta or social cards and returns properties.
 
-        :param in_page: page to parse
-        :type in_page: Page
-        :param base_url: website URL to resolve absolute URLs for images referenced with local path.
-        :type base_url: str
+        Args:
+            in_page (Page): page to parse
+            base_url (str): website URL to resolve absolute URLs for images referenced
+                with local path.
 
-        :return: (image url, mime type, image length)
-        :rtype: tuple
+        Returns:
+            Optional[Tuple[str, str, int]]: (image url, mime type, image length) or None if
+                there is no image set
         """
         if in_page.meta.get("image"):
             img_url = in_page.meta.get("image").strip()
+            logger.debug(
+                f"Image found ({img_url}) in page.meta.image for page: "
+                f"{in_page.file.src_uri}"
+            )
         elif in_page.meta.get("illustration"):
             img_url = in_page.meta.get("illustration").strip()
+            logger.debug(
+                f"Image found ({img_url}) in page.meta.illustration for page: "
+                f"{in_page.file.src_uri}"
+            )
+        elif (
+            self.social_cards.IS_ENABLED
+            and self.social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED
+            and self.social_cards.is_social_plugin_enabled_page(
+                mkdocs_page=in_page,
+                fallback_value=self.social_cards,
+            )
+        ):
+            img_local_path = self.social_cards.get_social_card_build_path_for_page(
+                mkdocs_page=in_page
+            )
+            img_url = self.social_cards.get_social_card_url_for_page(
+                mkdocs_page=in_page
+            )
+            logger.debug(
+                f"Image found ({img_url}) from social cards for page: "
+                f"{in_page.file.src_uri}. Using local image to get mime and length: "
+                f"{img_local_path}"
+            )
+
+            if img_local_path.is_file():
+                img_length = img_local_path.stat().st_size
+            else:
+                logger.debug(
+                    f"Social card: {img_local_path} still not exists. Trying to "
+                    f"retrieve length from remote image: {img_url}"
+                    "Note that would work only if the social card image has been "
+                    "published before)."
+                )
+                img_length = self.get_remote_image_length(image_url=img_url)
+
+            return (
+                img_url,
+                guess_type(url=img_local_path, strict=False)[0],
+                img_length,
+            )
+
         else:
             return None
 
@@ -442,19 +586,18 @@ class Util:
         return (img_url, mime_type, img_length)
 
     def get_local_image_length(self, page_path: str, path_to_append: str) -> int:
-        """Build URL using base URL, cumulating existing and passed path, \
-        then adding URL arguments.
+        """Calculates local image size in octets.
 
-        :param page_path: base URL with existing path to use
-        :type base_url: str
-        :param path: URL path to cumulate with existing
-        :type path: str
+        Args:
+            page_path (str): source path to the Mkdocs page
+            path_to_append (str): path to append
 
-        :return: complete and valid path
-        :rtype: int
+        Returns:
+            int: size in octets
         """
         image_path = Path(page_path).parent / Path(path_to_append)
         if not image_path.is_file():
+            logger.debug(f"{image_path} not found")
             return None
 
         return image_path.stat().st_size
@@ -465,7 +608,7 @@ class Util:
         http_method: str = "HEAD",
         attempt: int = 0,
         ssl_context: ssl.SSLContext = None,
-    ) -> int:
+    ) -> Optional[int]:
         """Retrieve length for remote images (starting with 'http' \
             in meta.image or meta.illustration). \
             It tries to perform a HEAD request and get the length from the headers. \
@@ -481,7 +624,7 @@ class Util:
         :type ssl_context: ssl.SSLContext, optional
 
         :return: image length as str or None
-        :rtype: int
+        :rtype: Optional[int]
         """
         # prepare request
         req = request.Request(
@@ -496,7 +639,7 @@ class Util:
             img_length = remote_img.getheader("content-length")
         except (HTTPError, URLError) as err:
             logging.warning(
-                f"[rss-plugin] Remote image could not been reached: {image_url}. "
+                f"Remote image could not been reached: {image_url}. "
                 f"Trying again with GET and disabling SSL verification. Attempt: {attempt}. "
                 f"Trace: {err}"
             )
@@ -509,7 +652,7 @@ class Util:
                 )
             else:
                 logging.error(
-                    f"[rss-plugin] Remote image is not reachable: {image_url} after "
+                    f"Remote image is not reachable: {image_url} after "
                     f"{attempt} attempts. Trace: {err}"
                 )
                 return None
@@ -529,7 +672,7 @@ class Util:
         """
         # this method exists because the following line returns an empty string instead of \
         # None (because the key alwayus exists)
-        defined_site_url = mkdocs_config.get("site_url", None)
+        defined_site_url = mkdocs_config.site_url
 
         # cases
         if defined_site_url is None or not len(defined_site_url):
@@ -543,8 +686,7 @@ class Util:
 
         return site_url
 
-    @staticmethod
-    def guess_locale(mkdocs_config: Config) -> str or None:
+    def guess_locale(self, mkdocs_config: Config) -> str or None:
         """Extract language code from MkDocs or Theme configuration.
 
         :param mkdocs_config: configuration object
@@ -556,16 +698,48 @@ class Util:
         # MkDocs locale settings - might be added in future mkdocs versions
         # see: https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/24
         if mkdocs_config.get("locale"):
+            logger.warning(
+                DeprecationWarning(
+                    "Mkdocs does not support locale option at the "
+                    "configuration root but under theme sub-configuration. It won't be "
+                    "supported anymore by the plugin in the next version."
+                )
+            )
             return mkdocs_config.get("locale")
 
-        # Some themes implement a locale or a language setting
-        if "theme" in mkdocs_config and "locale" in mkdocs_config.get("theme"):
-            locale = mkdocs_config.get("theme")._vars.get("locale")
-            return f"{locale.language}-{locale.territory}"
-        elif "theme" in mkdocs_config and "language" in mkdocs_config.get("theme"):
-            return mkdocs_config.get("theme")._vars.get("language")
-        else:
-            return None
+        # Some themes implement a locale or a language settings
+        if "theme" in mkdocs_config:
+            if (
+                self.social_cards.IS_THEME_MATERIAL
+                and "language" in mkdocs_config.theme
+            ):
+                # TODO: remove custom behavior when Material theme switches to locale
+                # see: https://github.com/squidfunk/mkdocs-material/discussions/6453
+                logger.debug(
+                    "Language detected in Material theme "
+                    f"('{mkdocs_config.theme.name}') settings: "
+                    f"{mkdocs_config.theme.get('language')}"
+                )
+                return mkdocs_config.theme.get("language")
+
+            elif "locale" in mkdocs_config.theme:
+                locale = mkdocs_config.theme.locale
+                logger.debug(
+                    "Locale detected in theme "
+                    f"('{mkdocs_config.theme.name}') settings: {locale=}"
+                )
+                return (
+                    f"{locale.language}-{locale.territory}"
+                    if locale.territory
+                    else f"{locale.language}"
+                )
+            else:
+                logger.debug(
+                    "Nor locale or language detected in theme settings "
+                    f"('{mkdocs_config.theme.name}')."
+                )
+
+        return None
 
     @staticmethod
     def filter_pages(pages: list, attribute: str, length: int) -> list:

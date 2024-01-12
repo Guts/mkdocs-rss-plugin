@@ -5,7 +5,8 @@
 # ##################################
 
 # standard library
-import pathlib
+from pathlib import Path
+from typing import List, Union
 
 # 3rd party
 from setuptools import find_packages, setup
@@ -17,30 +18,40 @@ from mkdocs_rss_plugin import __about__
 # ########## Globals #############
 # ################################
 
-HERE = pathlib.Path(__file__).parent
+HERE = Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
-with open(HERE / "requirements/base.txt") as f:
-    requirements = [
-        line
-        for line in f.read().splitlines()
-        if not line.startswith(("#", "-")) and len(line)
-    ]
-
-with open(HERE / "requirements/development.txt") as f:
-    requirements_dev = [
-        line
-        for line in f.read().splitlines()
-        if not line.startswith(("#", "-")) and len(line)
-    ]
+# ############################################################################
+# ########### Functions ############
+# ##################################
 
 
-with open(HERE / "requirements/documentation.txt") as f:
-    requirements_docs = [
-        line
-        for line in f.read().splitlines()
-        if not line.startswith(("#", "-")) and len(line)
-    ]
+def load_requirements(requirements_files: Union[Path, List[Path]]) -> list:
+    """Helper to load requirements list from a path or a list of paths.
+
+    Args:
+        requirements_files (Union[Path, List[Path]]): path or list to paths of
+            requirements file(s)
+
+    Returns:
+        list: list of requirements loaded from file(s)
+    """
+    out_requirements = []
+
+    if isinstance(requirements_files, Path):
+        requirements_files = [
+            requirements_files,
+        ]
+
+    for requirements_file in requirements_files:
+        with requirements_file.open(encoding="UTF-8") as f:
+            out_requirements += [
+                line
+                for line in f.read().splitlines()
+                if not line.startswith(("#", "-")) and len(line)
+            ]
+
+    return out_requirements
 
 
 # ############################################################################
@@ -70,10 +81,12 @@ setup(
     # dependencies
     python_requires=">=3.8, <4",
     extras_require={
-        "dev": requirements_dev,
-        "doc": requirements_docs,
+        # tooling
+        "dev": load_requirements(HERE / "requirements/development.txt"),
+        "doc": load_requirements(HERE / "requirements/documentation.txt"),
+        "test": load_requirements(HERE / "requirements/testing.txt"),
     },
-    install_requires=requirements,
+    install_requires=load_requirements(HERE / "requirements/base.txt"),
     # metadata
     keywords="mkdocs rss git plugin",
     classifiers=[
@@ -84,6 +97,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: Implementation :: CPython",
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",

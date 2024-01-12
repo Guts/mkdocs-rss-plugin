@@ -17,6 +17,76 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.11.1 - 2024-01-11
+
+### Features and enhancements 🎉
+
+* fix #229 allow date.created to get creation date by @copdips in <https://github.com/Guts/mkdocs-rss-plugin/pull/237>
+
+## New Contributors
+
+* @copdips made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/237>
+
+## 1.11.0 - 2023-12-19
+
+### Features and enhancements 🎉
+
+* improvement: if social card not found, try to retrieve length from remote URL by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/225>
+
+### Tooling 🔧
+
+* ci: add a link between release and discussion by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/224>
+* docs: explicitly enable plugins with env vars by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/227>
+
+### Documentation 📖
+
+* docs: add API autodocumentation with mkdocstrings by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/226>
+
+## 1.10.0 - 2023-12-17
+
+### Features and enhancements 🎉
+
+* Feature: support material social cards plugin by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/217>
+* feature:  use plugin logger as recomended by Mkdocs (road to Mkdocs>=1.4) by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/221>
+* quality: add tests against social cards integration by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/222>
+
+### Tooling 🔧
+
+* ci: set PyPi environment by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/215>
+
+### Documentation 📖
+
+* docs: switch to Material theme and revamp sections by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/216>
+* docs: add missing git_use option by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/218>
+* Documentation: fix anchors in JSON schema by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/220>
+
+## 1.9.0 - 2023-12-07
+
+### Bugs fixes 🐛
+
+* fix: deprecation of Theme._vars by using config attributes by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/212> thanks to the excellent work of @alexvoss on <https://github.com/Guts/mkdocs-rss-plugin/issues/205> and <https://github.com/Guts/mkdocs-rss-plugin/pull/206>
+
+### Features and enhancements 🎉
+
+* Road to Mkdocs >= 1.4: plugin's configuration by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/195>
+* Road to Mkdocs 1.4: use  config attributes by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/211>
+* Project: split dev and test dependencies by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/213>
+* refacto: move global variables to constants module and rename customtypes into models by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/210>
+
+### Tooling 🔧
+
+* packaging: add Python 3.12 as supported version by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/214>
+
+## 1.8.0 - 2023-07-24
+
+### Bugs fixes 🐛
+
+* Fix tests config by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/196>
+
+### Features and enhancements 🎉
+
+* Add option to enable/disable git use. by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/187>
+
 ## 1.7.0 - 2023-05-28
 
 ### Bugs fixes 🐛

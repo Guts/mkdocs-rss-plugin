@@ -17,7 +17,10 @@
 import unittest
 from pathlib import Path
 
+# 3rd party
 from mkdocs.config.base import Config
+
+from mkdocs_rss_plugin.config import RssPluginConfig
 
 # plugin target
 from mkdocs_rss_plugin.plugin import GitRssPlugin
@@ -65,14 +68,18 @@ class TestConfig(BaseTest):
             "feed_ttl": 1440,
             "image": None,
             "length": 20,
-            "pretty_print": False,
             "match_path": ".*",
+            "pretty_print": False,
             "url_parameters": None,
+            "use_git": True,
+            "use_material_social_cards": True,
         }
 
         # load
         plugin = GitRssPlugin()
         errors, warnings = plugin.load_config({})
+        self.assertIsInstance(plugin.config, RssPluginConfig)
+        self.assertIsInstance(plugin.config, Config)
         self.assertEqual(plugin.config, expected)
         self.assertEqual(errors, [])
         self.assertEqual(warnings, [])
@@ -89,9 +96,11 @@ class TestConfig(BaseTest):
             "feed_ttl": 1440,
             "image": self.feed_image,
             "length": 20,
-            "pretty_print": False,
             "match_path": ".*",
+            "pretty_print": False,
             "url_parameters": None,
+            "use_git": True,
+            "use_material_social_cards": True,
         }
 
         # custom config
@@ -100,13 +109,17 @@ class TestConfig(BaseTest):
         # load
         plugin = GitRssPlugin()
         errors, warnings = plugin.load_config(custom_cfg)
+        self.assertIsInstance(plugin.config, RssPluginConfig)
+        self.assertIsInstance(plugin.config, Config)
         self.assertEqual(plugin.config, expected)
         self.assertEqual(errors, [])
         self.assertEqual(warnings, [])
 
     def test_plugin_config_through_mkdocs(self):
-        plg_cfg = self.get_plugin_config_from_mkdocs(Path("mkdocs.yml"), "rss")
-        self.assertIsInstance(plg_cfg, Config)
+        for config_filepath in self.config_files:
+            plg_cfg = self.get_plugin_config_from_mkdocs(config_filepath, "rss")
+            print(config_filepath)
+            self.assertIsInstance(plg_cfg, Config)
 
 
 # ##############################################################################

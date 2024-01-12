@@ -1,17 +1,16 @@
 ---
 title: Configuration
 authors:
-  - "Julien Moura"
+  - dev@ingeoveritas.com (Julien Moura)
 date: 2020-12-31 14:20
 description: Configuration steps and settings for MkDocs RSS plugin
-image: "https://svgsilh.com/png-512/97849.png"
+icon: material/book-cog
+image: https://svgsilh.com/png-512/97849.png
 tags:
   - settings
   - options
   - plugin
 ---
-
-# Configuration
 
 To produce a valid RSS feed, the plugin uses:
 
@@ -50,7 +49,7 @@ Basically, each page is an item element in the RSS feed.
 | :------ | :------------: | :------------------------ |
 | [`page.canonical_url`](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py#L97-L105) | **required** and *optional* | mandatory item element [`link`](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp) and also used as [`guid`](https://www.w3schools.com/xml/rss_tag_guid.asp) |
 | [`page.meta.title`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) | **required** | [`title`](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp) |
-| [`page.meta.description`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) if present, else extract headlines from the content. See below the [item_description_length option](/configuration/#item-description-length). | **required** | [`description`](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp) |
+| [`page.meta.description`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) if present, else extract headlines from the content. See below the [item_description_length option](#item-description-length). | **required** | [`description`](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp) |
 | creation or last update datetime according git log. Can be overridden by dates in page.meta. If not, then it uses [MkDocs build date](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/utils/__init__.py#L111-L118) | **recommended** | [`pubDate`](https://www.w3schools.com/xml/rss_tag_pubdate_item.asp) |
 | [`page.meta.image`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) | *optional* | item element [`enclosure`](https://www.w3schools.com/xml/rss_tag_enclosure.asp). Some HTTP requests can be performed to retrieve remote images length. |
 | [`page.meta.authors`](https://www.mkdocs.org/user-guide/writing-your-docs/#yaml-style-meta-data) or `page.meta.author`. Accepted value types: `str` `list`, `tuple`. <br />To comply with the standard, the page writer is responsible to fill this field following this syntax: `john@doe.com (John Doe)` ([read this SO](https://stackoverflow.com/a/6079731/2556577)). | *optional* | [`author`](https://www.w3schools.com/XML/rss_tag_author.asp) |
@@ -132,9 +131,9 @@ Output:
 
 ## Plugin options
 
-For a sample see [homepage](../#usage).
+For a sample see [homepage](./index.md#quickstart).
 
-### Disabling the plugin
+### `enabled`: enabling/disabling the plugin
 
 You can use the `enabled` option to optionally disable this plugin. A possible use case is local development where you might want faster build times. It's recommended to use this option with an environment variable together with a default fallback (introduced in `mkdocs` v1.2.1, see [docs](https://www.mkdocs.org/user-guide/configuration/#environment-variables)). Example:
 
@@ -151,7 +150,7 @@ export MKDOCS_ENABLE_RSS_PLUGIN=false
 mkdocs serve
 ```
 
-### Channel image
+### `image`: set the channel image
 
 `image`: URL to image to use as feed illustration.
 
@@ -177,7 +176,7 @@ Output:
 </image>
 ```
 
-### Item comments path
+### `comments_path`: item comments path
 
 `comments_path`: path to add to each item URL pointing.
 
@@ -195,13 +194,13 @@ For example, if you're using Material for Mkdocs with comment integration (Disqu
 </item>
 ```
 
-### Feed length
+### `length`: number of items to include in feed
 
 `length`: number of pages to include as feed items (entries).
 
 Default: `20`
 
-### Feed TTL
+### `feed_ttl`: feed's cache time
 
 `feed_ttl`: number of minutes to be cached. Inserted as channel `ttl` element. See: [W3C RSS 2.0 documentation](https://www.w3schools.com/xml/rss_tag_ttl.asp).
 
@@ -213,7 +212,7 @@ Output:
 <ttl>1440</ttl>
 ```
 
-### Item description length
+### `abstract_chars_count`: item description length
 
 To fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
@@ -228,7 +227,7 @@ Default: `150`
 
 ----
 
-#### Abstract delimiter
+#### `abstract_delimiter`: abstract delimiter
 
 Used to fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
@@ -242,7 +241,7 @@ Default: `<!-- more -->`
 
 ----
 
-### Item categories
+### `categories`: item categories
 
 `categories`: list of page metadata values to use as [RSS item categories](https://www.w3schools.com/xml/rss_tag_category_item.asp).
 
@@ -304,14 +303,14 @@ Output:
 
 ----
 
-### Dates overriding
+### `date_from_meta`: override dates from git log with page.meta
 
 Basically, the plugin aims to retrieve creation and update dates from git log. But sometimes, it does not match the content workflow: markdown generated from sources, .
 
 So, it's possible to use the dates manually specified into the [page metadata] through the [YAML frontmatter](https://www.mkdocs.org/user-guide/writing-your-docs/#meta-data).
 
-- `as_creation`: meta tag name to use as creation date. Default to `False`.
-- `as_update`: meta tag name to use as update date. Default to `False`.
+- `as_creation`: meta tag name (or a dot-separated tag name) to use as creation date. Default to `False`.
+- `as_update`: meta tag name (or a dot-separated tag name) to use as update date. Default to `False`.
 - `datetime_format`: datetime format. Default to `"%Y-%m-%d %H:%M"`.
 - `default_timezone`: timezone to use by default to make aware datetimes. Default to `UTC`. Introduced in version 1.3.0 with [PR 142](https://github.com/Guts/mkdocs-rss-plugin/pull/142).
 - `default_time`: time to use if page contains only a date. Useful to avoid the 'midnight syndrome' or have to specify hour in every single page. Default to `None`. 24h-clock format is expected: `%H:%M`. Example: `"14:20"`. Introduced in version 1.4.0 with [PR 145](https://github.com/Guts/mkdocs-rss-plugin/pull/145).
@@ -320,30 +319,60 @@ So, it's possible to use the dates manually specified into the [page metadata] t
 
 For example, in your `best_article.md` created in 2019, you can write the front-matter like this:
 
-```markdown
----
-title: "This page title is a perfect clickbait!"
-authors:
-  - "Julien M."
-date: "2020-10-22 17:18"
----
+=== "tag name: `date`"
 
-# This plugin will change your MkDocs life
+    ```markdown hl_lines="5"
+    ---
+    title: "This page title is a perfect clickbait!"
+    authors:
+      - "Julien M."
+    date: "2020-10-22 17:18"
+    ---
 
-Lorem ipsum [...]
-```
+    # This plugin will change your MkDocs life
 
-So in your `mkdocs.yml` you will have:
+    Lorem ipsum [...]
+    ```
 
-```yaml
-plugins:
-  - rss:
-      date_from_meta:
-        as_creation: "date"
-        as_update: false
-        datetime_format: "%Y-%m-%d %H:%M"
-        default_timezone: Europe/Paris
-```
+    So in your `mkdocs.yml` you will have:
+
+    ```yaml hl_lines="4-5"
+    plugins:
+      - rss:
+          date_from_meta:
+            as_creation: "date"
+            as_update: false
+            datetime_format: "%Y-%m-%d %H:%M"
+            default_timezone: Europe/Paris
+    ```
+
+=== "dot-separated tag name: `date.created`"
+
+    ```markdown hl_lines="6"
+    ---
+    title: "This page title is a perfect clickbait!"
+    authors:
+      - "Julien M."
+    date:
+      created: "2020-10-22 17:18"
+    ---
+
+    # This plugin will change your MkDocs life
+
+    Lorem ipsum [...]
+    ```
+
+    So in your `mkdocs.yml` you will have:
+
+    ```yaml hl_lines="4-5"
+    plugins:
+      - rss:
+          date_from_meta:
+            as_creation: "date.created"
+            as_update: false
+            datetime_format: "%Y-%m-%d %H:%M"
+            default_timezone: Europe/Paris
+    ```
 
 At the end, into the RSS you will get:
 
@@ -362,7 +391,7 @@ At the end, into the RSS you will get:
         - for Python >= 3.9, it uses the standard library and ships [tzdata](https://pypi.org/project/tzdata/) only on Windows which do not provide such data
         - for Python < 3.9, [pytz](https://pypi.org/project/pytz/) is shipped.
 
-### Prettified output
+### `pretty_print`: prettified XML
 
 By default, the output file is minified, using Jinja2 strip options and manual work. It's possible to disable it and prettify the output using `pretty_print: true`.
 
@@ -374,7 +403,7 @@ plugins:
 
 Default: `False`.
 
-### Filter pages
+### `match_path`: filter pages to include in feed
 
 This adds a `match_path` option which should be a regex pattern matching the path to your files within the `docs_dir`. For example if you had a blog under `docs/blog` where `docs_dir` is `docs` you might use:
 
@@ -394,9 +423,9 @@ plugins:
 
 Default: `.*`.
 
-### URL parameters
+### `url_parameters`: additional URL parameters
 
-This option allows you to add parameters to the URLs of the RSS feed items. It works as a dictionary of keys/values that is passed to [Python *urllib.parse.urlencode*](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlencode).  
+This option allows you to add parameters to the URLs of the RSS feed items. It works as a dictionary of keys/values that is passed to [Python *urllib.parse.urlencode*](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlencode).
 One possible use case is the addition of [Urchin Tracking Module (UTM) parameters](https://en.wikipedia.org/wiki/UTM_parameters):
 
 ```yaml
@@ -426,23 +455,21 @@ Will result in:
 
 Default: `None`.
 
-----
+### `use_git`: enable/disable git log
 
-## Integration
+If `false`, the plugin does not try use the git log nor does not check if this is a valid git repository and use informations exclusively from `page.meta` (YAML frontmatter).
 
-### Reference RSS feeds in HTML meta-tags
+Useful if you build your documentation in an environment where you can't easily install git.
 
-To facilitate the discovery of RSS feeds, it's recommended to add relevant meta-tags into the pages `<head>`, through template customization in `main.html` :
+Default: `true`.
 
-```html
-{% extends "base.html" %}
+### `use_material_social_cards`: enable/disable integration with Material Social Cards plugin
 
-{% block extrahead %}
-  <!-- RSS Feed -->
-  <link rel="alternate" type="application/rss+xml" title="RSS feed of created content" href="{{ config.site_url }}feed_rss_created.xml">
-  <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="{{ config.site_url }}feed_rss_updated.xml">
-{% endblock %}
-```
+If `false`, the integration with Social Cards is disabled.
+
+Default: `true`.
+
+> See [the related section in integrations page](./integrations.md#social-cards-plugin-from-material-theme).
 
 <!-- Hyperlinks reference -->
 [page metadata]: https://python-markdown.github.io/extensions/meta_data/

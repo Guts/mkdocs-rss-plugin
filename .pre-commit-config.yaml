@@ -4,7 +4,7 @@ exclude: "node_modules|migrations|.venv|.direnv|tests/dev/|tests/fixtures/"
 fail_fast: false
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-added-large-files
         args: ["--maxkb=500"]
@@ -14,6 +14,7 @@ repos:
       - id: check-json
       - id: check-toml
       - id: check-yaml
+        args: [--unsafe]
       - id: detect-private-key
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
@@ -23,41 +24,40 @@ repos:
         args: [--markdown-linebreak-ext=md]
 
   - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.10.0 # Use the ref you want to point at
+    rev: v1.10.0
     hooks:
       - id: python-use-type-annotations
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.4.0
+    rev: v3.15.0
     hooks:
       - id: pyupgrade
         args:
           - "--py38-plus"
 
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.270"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: "v0.1.9"
     hooks:
       - id: ruff
-        args: ["--fix-only"]
+        args: ["--fix-only", "--target-version=py38"]
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 5.13.2
     hooks:
       - id: isort
         args: ["--profile", "black", "--filter-files"]
 
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.12.1
     hooks:
       - id: black
+        args: ["--target-version=py38"]
 
   - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
         language: python
-        files: ^mkdocs_rss_plugin/.*\.py$
-        types: [python]
         args: ["--config=setup.cfg", "--select=E9,F63,F7,F82"]
 
 ci:

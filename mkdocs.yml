@@ -1,57 +1,178 @@
 # Project information
 site_name: MkDocs RSS Plugin
 site_description: Documentation about the MkDocs RSS Plugin
-site_author: dev@ingeoveritas.com (Julien M.)
+site_author: dev@ingeoveritas.com (Julien M. )
 site_url: https://guts.github.io/mkdocs-rss-plugin/
-copyright: "Guts - In Geo Veritas"
+copyright: "Guts - In Geo Veritas (MIT)"
 
 # Repository
-repo_name: "guts/mkdocs-rss-plugin"
-repo_url: "https://github.com/guts/mkdocs-rss-plugin/"
-edit_uri: "blob/main/docs/"
+repo_name: guts/mkdocs-rss-plugin
+repo_url: https://github.com/guts/mkdocs-rss-plugin/
+edit_uri: blob/main/docs/
 
+# Custom folder structure
 docs_dir: "docs/"
 use_directory_urls: true
 
+extra:
+  social:
+    - icon: "fontawesome/brands/mastodon"
+      link: https://mapstodon.space/@geojulien
+      name: "Follow me on Mastodon"
+    - icon: "fontawesome/solid/piggy-bank"
+      link: /team/sponsoring/
+      name: "Sponsor development"
+
+# Extensions to enhance markdown
+markdown_extensions:
+  - admonition
+  - attr_list
+  - meta
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: "."
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - toc:
+      permalink: "#"
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+
+nav:
+  - Home: index.md
+  - Settings:
+    - configuration.md
+    - integrations.md
+  - Contributing: contributing.md
+  - API: api.md
+  - Changelog: changelog.md
+
 plugins:
+  - git-committers:
+      enabled: !ENV [MKDOCS_ENABLE_PLUGIN_GIT_COMMITTERS, true]
+      repository: guts/mkdocs-rss-plugin
+      branch: main
+      docs_path: docs/
+      cache_dir:
+        !ENV [
+          MKDOCS_PLUGIN_GIT_COMMITTERS_CACHE_DIR,
+          .cache/plugins/git-committers/,
+        ]
+  - git-revision-date-localized:
+      enabled: !ENV [MKDOCS_ENABLE_PLUGIN_GIT_DATES, true]
+      enable_creation_date: true
+      fallback_to_build_date: true
+      locale: en
   - minify:
       minify_html: true
+      htmlmin_opts:
+        remove_comments: true
+  - mkdocstrings:
+      enabled: !ENV [MKDOCS_ENABLE_PLUGIN_MKDOCSTRINGS, true]
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            heading_level: 3
+            ignore_init_summary: false
+            show_source: false
+          merge_init_into_class: true
+          paths: [.]
+          show_root_heading: true
+
+  - privacy:
+      enabled: !ENV [MKDOCS_ENABLE_PLUGIN_PRIVACY, true]
+      cache_dir:
+        !ENV [MKDOCS_PLUGIN_PRIVACY_EXTERNAL_CACHE_DIR, .cache/plugins/privacy]
   - rss:
+      abstract_chars_count: 160
+      abstract_delimiter: <!-- more -->
       date_from_meta:
         as_creation: "date"
         as_update: false
         datetime_format: "%Y-%m-%d %H:%M"
         default_timezone: "Europe/Paris"
         default_time: "22:00"
-      abstract_chars_count: 160
-      abstract_delimiter: <!-- more -->
+      enabled: !ENV [MKDOCS_ENABLE_PLUGIN_RSS, true]
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
       match_path: ".*"
-      pretty_print: false
+      pretty_print: true
       url_parameters:
         utm_source: "documentation"
         utm_medium: "RSS"
         utm_campaign: "feed-syndication"
-  - search
+      use_git: true
+      use_material_social_cards: true
+  - search:
+      lang: en
+  - social:
+      enabled: !ENV [MKDOCS_ENABLE_PLUGIN_SOCIAL, true]
+      cache_dir: !ENV [MKDOCS_PLUGIN_SOCIAL_CACHE_DIR, .cache/plugins/social]
+      cards: true
+  - termynal:
+      prompt_literal_start:
+        - "$"
+        - ">"
 
 theme:
-  name: united
+  name: material
+  favicon: assets/logo_rss_plugin_mkdocs.svg
+  features:
+    - content.action.edit
+    - content.action.view
+    - content.code.copy
+    - content.tabs.link
+    - content.tooltips
+    - navigation.footer
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    - toc.integrate
+  font:
+    code: Ubuntu Mono
+    text: Ubuntu
+  icon:
+    edit: material/pencil
+    logo: simple/rss
+    view: material/eye
+    tag:
+      default: fontawesome/solid/tag
   language: en
+  logo: assets/logo_rss_plugin_mkdocs.png
+  palette:
+    accent: amber
+    primary: deep orange
+    scheme: default
 
-# Extensions to enhance markdown
-markdown_extensions:
-  - admonition
-  - attr_list
-  - codehilite
-  - meta
-  - pymdownx.emoji
-  - pymdownx.snippets:
-      base_path: "."
-      check_paths: true
-  - toc:
-      permalink: "#"
+validation:
+  links:
+    absolute_links: warn
+    not_found: warn
+    unrecognized_links: warn
+  nav:
+    absolute_links: warn
+    not_found: warn
+    omitted_files: warn
 
-nav:
-  - "Home": "index.md"
-  - "Settings": "configuration.md"
-  - "Changelog": "changelog.md"
+watch:
+  - CONTRIBUTING.md
+  - README.md

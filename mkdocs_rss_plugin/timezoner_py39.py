@@ -11,16 +11,21 @@
 # ##################################
 
 # standard library
-import logging
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
+
+# 3rd party
+from mkdocs.plugins import get_plugin_logger
+
+# package
+from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
 
 # ############################################################################
 # ########## Globals #############
 # ################################
 
 
-logger = logging.getLogger("mkdocs.mkdocs_rss_plugin")
+logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 
 
 # ############################################################################

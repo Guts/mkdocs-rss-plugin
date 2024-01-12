@@ -72,7 +72,7 @@ class TestRssUtil(unittest.TestCase):
     def test_local_image_ok(self):
         """Test local image length calculation."""
         img_length = self.plg_utils.get_local_image_length(
-            page_path="docs/index.md", path_to_append="rss_icon.svg"
+            page_path="docs/index.md", path_to_append="assets/rss_icon.svg"
         )
         self.assertIsInstance(img_length, int)
 
@@ -94,6 +94,41 @@ class TestRssUtil(unittest.TestCase):
             image_url="https://guts.github.io/mkdocs-rss-plugin/inexisting.svg"
         )
         self.assertIsNone(img_length)
+
+    def test_get_value_from_dot_key(self):
+        param_list = [
+            {
+                "meta": {"date": "2021-09-01"},
+                "value_location": "date",
+                "value": "2021-09-01",
+            },
+            {
+                "meta": {"date": {"created": "2021-09-01"}},
+                "value_location": "date.created",
+                "value": "2021-09-01",
+            },
+            {
+                "meta": {"date": "2021-09-01"},
+                "value_location": "date.created",
+                "value": None,
+            },
+            {
+                "meta": {True: "bool_as_key"},
+                "value_location": True,
+                "value": "bool_as_key",
+            },
+            {
+                "meta": {"date": "2021-09-01"},
+                "value_location": True,
+                "value": None,
+            },
+        ]
+        for param in param_list:
+            with self.subTest(param=param):
+                result = self.plg_utils.get_value_from_dot_key(
+                    param["meta"], param["value_location"]
+                )
+                self.assertEqual(result, param["value"])
 
 
 # ##############################################################################
