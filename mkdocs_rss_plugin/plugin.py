@@ -5,6 +5,7 @@
 # ##################################
 
 # standard library
+import json
 from copy import deepcopy
 from datetime import datetime
 from email.utils import formatdate
@@ -27,8 +28,10 @@ from mkdocs_rss_plugin.constants import (
     DEFAULT_TEMPLATE_FILENAME,
     DEFAULT_TEMPLATE_FOLDER,
     MKDOCS_LOGGER_NAME,
-    OUTPUT_FEED_CREATED,
-    OUTPUT_FEED_UPDATED,
+    OUTPUT_JSON_FEED_CREATED,
+    OUTPUT_JSON_FEED_UPDATED,
+    OUTPUT_RSS_FEED_CREATED,
+    OUTPUT_RSS_FEED_UPDATED,
 )
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
@@ -39,6 +42,7 @@ from mkdocs_rss_plugin.util import Util
 # ############################################################################
 # ########## Globals #############
 # ################################
+
 
 logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 
@@ -81,6 +85,14 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
 
         # Skip if disabled
         if not self.config.enabled:
+            return config
+
+        # Fail if any export option is enabled
+        if not any([self.config.json_feed_enabled, self.config.rss_feed_enabled]):
+            logger.error(
+                "At least one export option has to be enabled. Plugin is disabled."
+            )
+            self.config.enabled = False
             return config
 
         # integrations - check if theme is Material and if social cards are enabled
@@ -171,10 +183,16 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         if base_feed.get("html_url"):
             # concatenate both URLs
             self.feed_created["rss_url"] = (
-                base_feed.get("html_url") + OUTPUT_FEED_CREATED
+                base_feed.get("html_url") + OUTPUT_RSS_FEED_CREATED
             )
             self.feed_updated["rss_url"] = (
-                base_feed.get("html_url") + OUTPUT_FEED_UPDATED
+                base_feed.get("html_url") + OUTPUT_RSS_FEED_UPDATED
+            )
+            self.feed_created["json_url"] = (
+                base_feed.get("html_url") + OUTPUT_JSON_FEED_CREATED
+            )
+            self.feed_updated["json_url"] = (
+                base_feed.get("html_url") + OUTPUT_JSON_FEED_UPDATED
             )
         else:
             logger.error(
@@ -298,8 +316,10 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         pretty_print = self.config.pretty_print
 
         # output filepaths
-        out_feed_created = Path(config.site_dir).joinpath(OUTPUT_FEED_CREATED)
-        out_feed_updated = Path(config.site_dir).joinpath(OUTPUT_FEED_UPDATED)
+        out_feed_created = Path(config.site_dir).joinpath(OUTPUT_RSS_FEED_CREATED)
+        out_feed_updated = Path(config.site_dir).joinpath(OUTPUT_RSS_FEED_UPDATED)
+        out_json_created = Path(config.site_dir).joinpath(OUTPUT_JSON_FEED_CREATED)
+        out_json_updated = Path(config.site_dir).joinpath(OUTPUT_JSON_FEED_UPDATED)
 
         # created items
         self.feed_created.get("entries").extend(
@@ -319,52 +339,69 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             )
         )
 
-        # write feeds according to the pretty print option
-        if pretty_print:
-            # load Jinja environment and template
-            env = Environment(
-                autoescape=select_autoescape(["html", "xml"]),
-                loader=FileSystemLoader(self.tpl_folder),
-            )
+        # RSS
+        if self.config.rss_feed_enabled:
+            # write feeds according to the pretty print option
+            if pretty_print:
+                # load Jinja environment and template
+                env = Environment(
+                    autoescape=select_autoescape(["html", "xml"]),
+                    loader=FileSystemLoader(self.tpl_folder),
+                )
 
-            template = env.get_template(self.tpl_file.name)
+                template = env.get_template(self.tpl_file.name)
 
-            # write feeds to files
-            with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
-                fifeed_created.write(template.render(feed=self.feed_created))
+                # write feeds to files
+                with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
+                    fifeed_created.write(template.render(feed=self.feed_created))
 
-            with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
-                fifeed_updated.write(template.render(feed=self.feed_updated))
+                with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
+                    fifeed_updated.write(template.render(feed=self.feed_updated))
 
-        else:
-            # load Jinja environment and template
-            env = Environment(
-                autoescape=select_autoescape(["html", "xml"]),
-                loader=FileSystemLoader(self.tpl_folder),
-                lstrip_blocks=True,
-                trim_blocks=True,
-            )
-            template = env.get_template(self.tpl_file.name)
-
-            # write feeds to files stripping out spaces and new lines
-            with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
-                prev_char = ""
-                for char in template.render(feed=self.feed_created):
-                    if char == "\n":
-                        continue
-                    if char == " " and prev_char == " ":
+            else:
+                # load Jinja environment and template
+                env = Environment(
+                    autoescape=select_autoescape(["html", "xml"]),
+                    loader=FileSystemLoader(self.tpl_folder),
+                    lstrip_blocks=True,
+                    trim_blocks=True,
+                )
+                template = env.get_template(self.tpl_file.name)
+                # write feeds to files stripping out spaces and new lines
+                with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
+                    prev_char = ""
+                    for char in template.render(feed=self.feed_created):
+                        if char == "\n":
+                            continue
+                        if char == " " and prev_char == " ":
+                            prev_char = char
+                            continue
                         prev_char = char
-                        continue
-                    prev_char = char
-                    fifeed_created.write(char)
+                        fifeed_created.write(char)
 
-            with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
-                for char in template.render(feed=self.feed_updated):
-                    if char == "\n":
+                with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
+                    for char in template.render(feed=self.feed_updated):
+                        if char == "\n":
+                            prev_char = char
+                            continue
+                        if char == " " and prev_char == " ":
+                            prev_char = char
+                            continue
                         prev_char = char
-                        continue
-                    if char == " " and prev_char == " ":
-                        prev_char = char
-                        continue
-                    prev_char = char
-                    fifeed_updated.write(char)
+                        fifeed_updated.write(char)
+
+        # JSON FEED
+        if self.config.json_feed_enabled:
+            with out_json_created.open(mode="w", encoding="UTF8") as fp:
+                json.dump(
+                    self.util.feed_to_json(self.feed_created),
+                    fp,
+                    indent=4 if self.config.pretty_print else None,
+                )
+
+            with out_json_updated.open(mode="w", encoding="UTF8") as fp:
+                json.dump(
+                    self.util.feed_to_json(self.feed_updated, updated=True),
+                    fp,
+                    indent=4 if self.config.pretty_print else None,
+                )

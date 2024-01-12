@@ -104,6 +104,12 @@
               "type": "string",
               "default": null
             },
+            "json_feed_enabled": {
+              "title": "Enable/Disable export to JSON Feed.",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#json_feed_enabled-enablingdisabling-export-to-json-feed",
+              "type": "boolean",
+              "default": true
+            },
             "length": {
               "title": "Number of pages to include as feed items (entries).",
               "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#length-number-of-items-to-include-in-feed",
@@ -121,6 +127,12 @@
               "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#pretty_print-prettified-xml",
               "type": "boolean",
               "default": false
+            },
+            "rss_feed_enabled": {
+              "title": "Enable/Disable export to RSS.",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#enabled-enablingdisabling-the-plugin",
+              "type": "boolean",
+              "default": true
             },
             "url_parameters": {
               "title": "URL parameters to include in the item URL.",

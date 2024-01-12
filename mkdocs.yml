@@ -109,8 +109,10 @@ plugins:
         default_time: "22:00"
       enabled: !ENV [MKDOCS_ENABLE_PLUGIN_RSS, true]
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+      json_feed_enabled: true
       match_path: ".*"
       pretty_print: true
+      rss_feed_enabled: true
       url_parameters:
         utm_source: "documentation"
         utm_medium: "RSS"

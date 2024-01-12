@@ -20,9 +20,8 @@ from pathlib import Path
 # 3rd party
 from mkdocs.config.base import Config
 
-from mkdocs_rss_plugin.config import RssPluginConfig
-
 # plugin target
+from mkdocs_rss_plugin.config import RssPluginConfig
 from mkdocs_rss_plugin.plugin import GitRssPlugin
 
 # test suite
@@ -67,9 +66,11 @@ class TestConfig(BaseTest):
             "enabled": True,
             "feed_ttl": 1440,
             "image": None,
+            "json_feed_enabled": True,
             "length": 20,
             "match_path": ".*",
             "pretty_print": False,
+            "rss_feed_enabled": True,
             "url_parameters": None,
             "use_git": True,
             "use_material_social_cards": True,
@@ -95,9 +96,11 @@ class TestConfig(BaseTest):
             "enabled": True,
             "feed_ttl": 1440,
             "image": self.feed_image,
+            "json_feed_enabled": True,
             "length": 20,
             "match_path": ".*",
             "pretty_print": False,
+            "rss_feed_enabled": True,
             "url_parameters": None,
             "use_git": True,
             "use_material_social_cards": True,
