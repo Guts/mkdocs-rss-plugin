@@ -28,8 +28,10 @@ from mkdocs_rss_plugin.constants import (
     DEFAULT_TEMPLATE_FILENAME,
     DEFAULT_TEMPLATE_FOLDER,
     MKDOCS_LOGGER_NAME,
-    OUTPUT_FEED_CREATED,
-    OUTPUT_FEED_UPDATED,
+    OUTPUT_JSON_FEED_CREATED,
+    OUTPUT_JSON_FEED_UPDATED,
+    OUTPUT_RSS_FEED_CREATED,
+    OUTPUT_RSS_FEED_UPDATED,
 )
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
@@ -41,12 +43,6 @@ from mkdocs_rss_plugin.util import Util
 # ########## Globals #############
 # ################################
 
-DEFAULT_TEMPLATE_FOLDER = Path(__file__).parent / "templates"
-DEFAULT_TEMPLATE_FILENAME = DEFAULT_TEMPLATE_FOLDER / "rss.xml.jinja2"
-OUTPUT_FEED_CREATED = "feed_rss_created.xml"
-OUTPUT_FEED_UPDATED = "feed_rss_updated.xml"
-OUTPUT_JSON_CREATED = "feed_created.json"
-OUTPUT_JSON_UPDATED = "feed_updated.json"
 
 logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 
@@ -179,16 +175,16 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         if base_feed.get("html_url"):
             # concatenate both URLs
             self.feed_created["rss_url"] = (
-                base_feed.get("html_url") + OUTPUT_FEED_CREATED
+                base_feed.get("html_url") + OUTPUT_RSS_FEED_CREATED
             )
             self.feed_updated["rss_url"] = (
-                base_feed.get("html_url") + OUTPUT_FEED_UPDATED
+                base_feed.get("html_url") + OUTPUT_RSS_FEED_UPDATED
             )
             self.feed_created["json_url"] = (
-                base_feed.get("html_url") + OUTPUT_JSON_CREATED
+                base_feed.get("html_url") + OUTPUT_JSON_FEED_CREATED
             )
             self.feed_updated["json_url"] = (
-                base_feed.get("html_url") + OUTPUT_JSON_UPDATED
+                base_feed.get("html_url") + OUTPUT_JSON_FEED_UPDATED
             )
         else:
             logger.error(
@@ -312,10 +308,10 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         pretty_print = self.config.pretty_print
 
         # output filepaths
-        out_feed_created = Path(config.site_dir).joinpath(OUTPUT_FEED_CREATED)
-        out_feed_updated = Path(config.site_dir).joinpath(OUTPUT_FEED_UPDATED)
-        out_json_created = Path(config.site_dir).joinpath(OUTPUT_JSON_CREATED)
-        out_json_updated = Path(config.site_dir).joinpath(OUTPUT_JSON_UPDATED)
+        out_feed_created = Path(config.site_dir).joinpath(OUTPUT_RSS_FEED_CREATED)
+        out_feed_updated = Path(config.site_dir).joinpath(OUTPUT_RSS_FEED_UPDATED)
+        out_json_created = Path(config.site_dir).joinpath(OUTPUT_JSON_FEED_CREATED)
+        out_json_updated = Path(config.site_dir).joinpath(OUTPUT_JSON_FEED_UPDATED)
 
         # created items
         self.feed_created.get("entries").extend(
