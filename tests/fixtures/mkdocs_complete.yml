@@ -26,13 +26,17 @@ plugins:
       enabled: true
       feed_ttl: 1440
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+      json_feed_enabled: true
       length: 20
-      pretty_print: false
       match_path: ".*"
+      pretty_print: false
+      rss_feed_enabled: true
       url_parameters:
         utm_source: "documentation"
         utm_medium: "RSS"
         utm_campaign: "feed-syndication"
+      use_git: true
+      use_material_social_cards: true
 theme:
   name: readthedocs
   locale: fr
