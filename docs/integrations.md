@@ -60,7 +60,7 @@ You need to customize the theme's template. Typically, in `main.html`:
 
 {% block extrahead %}
   <!-- JSON Feed -->
-  <link rel="alternate" title="RSS feed of created content" type="application/feed+json" href="{{ config.site_url }}feed_rss_created.xml" />
-  <link rel="alternate" title="RSS feed of updated content" type="application/feed+json" href="{{ config.site_url }}feed_rss_updated.xml" />
+  <link rel="alternate" title="JSON feed of created content" type="application/feed+json" href="{{ config.site_url }}feed_rss_created.xml" />
+  <link rel="alternate" title="JSON feed of updated content" type="application/feed+json" href="{{ config.site_url }}feed_rss_updated.xml" />
 {% endblock %}
 ```
