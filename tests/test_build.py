@@ -14,6 +14,7 @@
 # ##################################
 
 # Standard library
+import json
 import tempfile
 import unittest
 
@@ -24,6 +25,7 @@ from traceback import format_exception
 
 # 3rd party
 import feedparser
+import jsonfeed
 
 # project
 from mkdocs_rss_plugin.constants import (
@@ -556,6 +558,35 @@ class TestBuildRss(BaseTest):
 
             # some feed characteristics
             self.assertEqual(feed_parsed.version, "rss20")
+
+    def test_json_feed_validation(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_complete.yml"),
+                output_path=tmpdirname,
+            )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            with Path(tmpdirname).joinpath(OUTPUT_JSON_FEED_CREATED).open(
+                "r", encoding="UTF-8"
+            ) as in_json:
+                json_feed_created_data = json.load(in_json)
+            jsonfeed.Feed.parse(json_feed_created_data)
+
+            # updated items
+            with Path(tmpdirname).joinpath(OUTPUT_JSON_FEED_UPDATED).open(
+                "r", encoding="UTF-8"
+            ) as in_json:
+                json_feed_updated_data = json.load(in_json)
+            jsonfeed.Feed.parse(json_feed_updated_data)
 
     def test_config_no_site_url(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
