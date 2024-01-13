@@ -4,9 +4,10 @@ authors:
   - dev@ingeoveritas.com (Julien Moura)
   - vinktim@gmail.com (Tim Vink)
 date: 2020-07-06
-description: "MkDocs RSS plugin: generate RSS feeds for your static website using git log ad YAML frontmatter (markdown pages'metadata header)."
+description: "MkDocs RSS plugin: generate RSS and JSON feeds for your static website using git log ad YAML frontmatter (markdown pages'metadata header)."
 image: "assets/rss_icon.svg"
 tags:
+  - JSON Feed
   - Mkdocs
   - plugin
   - RSS
@@ -49,6 +50,8 @@ plugins:
   - rss
 ```
 
+----
+
 ## Example
 
 As examples, here come the feeds generated for this documentation:
@@ -61,13 +64,17 @@ Or it could be displayed as a Feedly follow button:
 [![Feedly button](https://s3.feedly.com/img/follows/feedly-follow-rectangle-flat-big_2x.png "Follow us on Feedly"){: width=130 height= 50 loading=lazy }](https://feedly.com/i/subscription/feed%2Fhttps%3A%2F%2Fguts.github.io%2Fmkdocs-rss-plugin%2Ffeed_rss_created.xml)
 {: align=middle }
 
+For JSON Feed, you can use the icon:
+
+[JSON Feed icon](https://jsonfeed.org/graphics/icon.png)
+
 ## Credits
 
 ![RSS logo](assets/rss_icon.svg "RSS icon - Wikimedia"){: align=right }
 
 - Plugin logic is inspired from [Tim Vink git-based plugins](https://github.com/timvink?tab=repositories&q=mkdocs-git&type=&language=) and main parts of Git stuff are nearly copied/pasted.
 - Using magic mainly from:
-    - [GitPython](https://gitpython.readthedocs.io/)
-    - [Jinja2](https://jinja.palletsprojects.com/)
+  - [GitPython](https://gitpython.readthedocs.io/)
+  - [Jinja2](https://jinja.palletsprojects.com/)
 - Documentation colors are a tribute to the classic RSS color scheme: orange and white.
 - Logo generated with DALL·E.
