@@ -17,13 +17,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.12.0 - 2024-01-13
+
+### Features and enhancements 🎉
+
+* Implement JSON Feed output by @notpushkin and @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/177>
+
+### Documentation 📖
+
+* docs: add how to make JSON Feeds discoverable by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/240>
+
+### Other Changes
+
+* tests: check JSON feed validity by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/239>
+
+### New Contributors
+
+* @notpushkin made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/177>
+
 ## 1.11.1 - 2024-01-11
 
 ### Features and enhancements 🎉
 
 * fix #229 allow date.created to get creation date by @copdips in <https://github.com/Guts/mkdocs-rss-plugin/pull/237>
 
-## New Contributors
+### New Contributors
 
 * @copdips made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/237>
 
