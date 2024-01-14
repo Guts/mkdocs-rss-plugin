@@ -74,7 +74,7 @@ For JSON Feed, you can use the icon:
 
 - Plugin logic is inspired from [Tim Vink git-based plugins](https://github.com/timvink?tab=repositories&q=mkdocs-git&type=&language=) and main parts of Git stuff are nearly copied/pasted.
 - Using magic mainly from:
-  - [GitPython](https://gitpython.readthedocs.io/)
-  - [Jinja2](https://jinja.palletsprojects.com/)
+    - [GitPython](https://gitpython.readthedocs.io/)
+    - [Jinja2](https://jinja.palletsprojects.com/)
 - Documentation colors are a tribute to the classic RSS color scheme: orange and white.
 - Logo generated with DALL·E.
