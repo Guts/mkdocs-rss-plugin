@@ -799,9 +799,9 @@ class Util:
             "feed_url": feed.get("json_url"),
             "description": feed.get("description"),
             "icon": feed.get("logo_url"),
-            "authors": [{"name": feed.get("author")}]
-            if feed.get("author") is not None
-            else [],
+            "authors": (
+                [{"name": feed.get("author")}] if feed.get("author") is not None else []
+            ),
             "language": str(feed.get("language")),
             "items": [
                 {
