@@ -61,7 +61,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         self.src_date_created = self.src_date_updated = "git"
         self.meta_datetime_format: Optional[str] = None
         self.meta_default_timezone: str = "UTC"
-        self.meta_default_time: Optional[datetime.time] = None
+        self.meta_default_time: Optional[str] = None
         # pages storage
         self.pages_to_filter: list = []
         # prepare output feeds
@@ -160,8 +160,6 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                         f"'{self.meta_default_time}' format doesn't match the expected "
                         f"format %H:%M. Trace: {err}"
                     )
-            else:
-                self.meta_default_time = datetime.min
 
             if self.config.use_git:
                 logger.debug(
