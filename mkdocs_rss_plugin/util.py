@@ -168,7 +168,7 @@ class Util:
         source_date_update: str = "git",
         meta_datetime_format: str = "%Y-%m-%d %H:%M",
         meta_default_timezone: str = "UTC",
-        meta_default_time: datetime = None,
+        meta_default_time: Optional[datetime] = None,
     ) -> Tuple[datetime, datetime]:
         """Extract creation and update dates from page metadata (yaml frontmatter) or
         git log for given file.
@@ -193,6 +193,8 @@ class Util:
         """
         # empty vars
         dt_created = dt_updated = None
+        if meta_default_time is None:
+            meta_default_time = self.meta_default_time = datetime.min
 
         # if enabled, try to retrieve dates from page metadata
         if not self.use_git or (
@@ -416,14 +418,20 @@ class Util:
         try:
             if isinstance(date_metatag_value, str):
                 out_date = datetime.strptime(date_metatag_value, meta_datetime_format)
-            elif isinstance(date_metatag_value, (date, datetime)):
-                if isinstance(meta_default_time, datetime):
-                    time_to_add = meta_default_time.time()
-                else:
-                    time_to_add = datetime.min.time()
-                out_date = datetime.combine(date_metatag_value, time_to_add)
+            # datetime being a subclass of date, the following elif order matters
+            # see: https://stackoverflow.com/a/68743663/2556577
+            elif isinstance(date_metatag_value, datetime):
+                # if datetime, use it directly
+                out_date = date_metatag_value
+            elif isinstance(date_metatag_value, date):
+                out_date = datetime.combine(
+                    date=date_metatag_value, time=meta_default_time.time()
+                )
             else:
-                logger.debug(f"Incompatible date type: {type(date_metatag_value)}")
+                logger.info(
+                    f"Incompatible date type: {type(date_metatag_value)}. It must be: "
+                    "date, datetime or str (complying with defined strftime format)."
+                )
                 return out_date
         except ValueError as err:
             logger.error(
