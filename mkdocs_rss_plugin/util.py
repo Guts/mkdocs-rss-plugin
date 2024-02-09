@@ -290,7 +290,7 @@ class Util:
         else:
             pass
 
-        # return results
+        # results
         if all([dt_created, dt_updated]):
             return (
                 dt_created,
@@ -323,7 +323,7 @@ class Util:
                 get_build_datetime(),
             )
 
-    def get_authors_from_meta(self, in_page: Page) -> Tuple[str] or None:
+    def get_authors_from_meta(self, in_page: Page) -> Optional[Tuple[str]]:
         """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
         str and iterable as values types.
 
@@ -660,7 +660,7 @@ class Util:
         return int(img_length)
 
     @staticmethod
-    def get_site_url(mkdocs_config: Config) -> str or None:
+    def get_site_url(mkdocs_config: Config) -> Optional[str]:
         """Extract site URL from MkDocs configuration and enforce the behavior to ensure \
         returning a str with length > 0 or None. If exists, it adds an ending slash.
 
@@ -686,7 +686,7 @@ class Util:
 
         return site_url
 
-    def guess_locale(self, mkdocs_config: Config) -> str or None:
+    def guess_locale(self, mkdocs_config: Config) -> Optional[str]:
         """Extract language code from MkDocs or Theme configuration.
 
         :param mkdocs_config: configuration object
