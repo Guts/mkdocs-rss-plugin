@@ -472,18 +472,16 @@ class Util:
         if chars_count < 0:
             chars_count = None
 
-        # If the abstract chars is not unlimited and the description exists,
-        # return the description.
-        if description and chars_count is not None:
+        # If the full page is wanted (unlimited chars count)
+        if chars_count is None and (in_page.content or in_page.markdown):
+            if in_page.content:
+                return in_page.content
+            else:
+                return markdown.markdown(in_page.markdown, output_format="html5")
+        # If the description is explicitly given
+        elif description:
             return description
-        # If no description and chars_count set to 0, return empty string
-        elif not description and chars_count == 0:
-            logger.warning(
-                f"No description set for page {in_page.file.src_uri} "
-                "and 'abstract_chars_count' set to 0. The feed won't be compliant, "
-                "because an item must have a description."
-            )
-            return ""
+        # If the description is cut by the delimiter
         elif (
             abstract_delimiter
             and (
@@ -495,24 +493,23 @@ class Util:
                 in_page.markdown[:excerpt_separator_position],
                 output_format="html5",
             )
-        # If chars count is unlimited, use the html content
-        elif in_page.content and chars_count == -1:
-            if chars_count is None or len(in_page.content) < chars_count:
-                return in_page.content[:chars_count]
-        # Use markdown
-        elif in_page.markdown:
-            if chars_count is None or len(in_page.markdown) < chars_count:
-                return markdown.markdown(
-                    in_page.markdown[:chars_count], output_format="html5"
-                )
+        # Use first chars_count from the markdown
+        elif chars_count > 0 and in_page.markdown:
+            if len(in_page.markdown) <= chars_count:
+                return markdown.markdown(in_page.markdown, output_format="html5")
             else:
                 return markdown.markdown(
                     f"{in_page.markdown[: chars_count - 3]}...",
                     output_format="html5",
                 )
-        # Unlimited chars_count but no content is found, then return the description.
+        # No explicit description and no content is found
         else:
-            return description if description else ""
+            logger.warning(
+                f"No description set for page {in_page.file.src_uri} "
+                "and 'abstract_chars_count' set to 0. The feed won't be compliant, "
+                "because an item must have a description."
+            )
+            return ""
 
     def get_image(self, in_page: Page, base_url: str) -> Optional[Tuple[str, str, int]]:
         """Get page's image from page meta or social cards and returns properties.
