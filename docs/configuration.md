@@ -246,7 +246,8 @@ Used, in combination with `abstract_delimiter`, to determine each [item descript
 - Otherwise, the plugin first tries to retrieve the value of the keyword `description` from the [page metadata].
 - If that fails and `abstract_delimiter` is found in the page, the article content up to (but not including) the delimiter is used.
 - If the above has failed, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted roughly into HTML.
-- Be careful: if set to `0` and there is no description, the feed's compliance is broken (an item must have a description).
+
+Be careful: if set to `0` and there is no description, the feed's compliance is broken (an item must have a description).
 
 `abstract_chars_count`: number of characters to use as item description.
 
@@ -256,9 +257,9 @@ Default: `150`
 
 ### `abstract_delimiter`: abstract delimiter
 
-Please see `abstract_chars_count` for how this setting is used.
+Please see `abstract_chars_count` for how this setting is used. A value of `""` (the empty string) disables this step.
 
-`abstract_delimiter`: string to mark .
+`abstract_delimiter`: string to mark where the description ends.
 
 Default: `<!-- more -->`
 
