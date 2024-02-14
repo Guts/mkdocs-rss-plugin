@@ -460,7 +460,7 @@ class Util:
         :param Page in_page: page to look at
         :param int chars_count: if page.meta.description is not set, number of chars \
         of the content to use. Defaults to: 160 - optional
-        :param str abstract_delimiter: description delimeter, defaults to None
+        :param str abstract_delimiter: description delimiter, defaults to None
 
         :return: page description to use
         :rtype: str
