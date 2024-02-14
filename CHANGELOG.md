@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.12.1 - 2024-02-14
+
+### Bugs fixes 🐛
+
+* fix: stripped time from meta date as  datetime by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/248>
+
+### Documentation 📖
+
+* docs: fix indentation of nested lists by @YDX-2147483647 in <https://github.com/Guts/mkdocs-rss-plugin/pull/242>
+
 ## 1.12.0 - 2024-01-13
 
 ### Features and enhancements 🎉
