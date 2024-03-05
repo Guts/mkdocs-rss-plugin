@@ -30,7 +30,7 @@ To produce a valid RSS feed, the plugin uses:
 | [`site_author`](https://www.mkdocs.org/user-guide/configuration/#site_author) | **recommended** | [`managingEditor`](https://www.w3schools.com/xml/rss_tag_managingeditor.asp) |
 | ---- | ---- | ---- |
 | [`copyright`](https://www.mkdocs.org/user-guide/configuration/#copyright) | *optional* | [`copyright`](https://www.w3schools.com/xml/rss_tag_copyright.asp) |
-| [`locale` or `theme/locale` or `theme/language`](https://github.com/squidfunk/mkdocs-material/issues/1350#issuecomment-559095892) | *optional* | [`language`](https://www.w3schools.com/xml/rss_tag_language.asp) |
+| [`theme/locale` (or `theme/language` for Material theme)](https://github.com/squidfunk/mkdocs-material/issues/1350#issuecomment-559095892) | *optional* | [`language`](https://www.w3schools.com/xml/rss_tag_language.asp) |
 
 ### Automatic elements
 
