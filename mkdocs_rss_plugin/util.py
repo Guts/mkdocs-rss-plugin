@@ -257,14 +257,14 @@ class Util:
                         date="short",
                         format="%at",
                         diff_filter="AR",
-                    )
+                    ).split("\n")[-1]
                 if not dt_updated:
                     dt_updated = self.repo.log(
                         in_page.file.abs_src_path,
                         n=1,
                         date="short",
                         format="%at",
-                    )
+                    ).split("\n")[-1]
             except GitCommandError as err:
                 logging.warning(
                     f"Unable to read git logs of '{in_page.file.abs_src_path}'. "
