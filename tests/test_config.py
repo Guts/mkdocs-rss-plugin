@@ -17,9 +17,11 @@
 import unittest
 from pathlib import Path
 
+# 3rd party
 from mkdocs.config.base import Config
 
 # plugin target
+from mkdocs_rss_plugin.config import RssPluginConfig
 from mkdocs_rss_plugin.plugin import GitRssPlugin
 
 # test suite
@@ -64,16 +66,21 @@ class TestConfig(BaseTest):
             "enabled": True,
             "feed_ttl": 1440,
             "image": None,
+            "json_feed_enabled": True,
             "length": 20,
-            "pretty_print": False,
             "match_path": ".*",
+            "pretty_print": False,
+            "rss_feed_enabled": True,
             "url_parameters": None,
             "use_git": True,
+            "use_material_social_cards": True,
         }
 
         # load
         plugin = GitRssPlugin()
         errors, warnings = plugin.load_config({})
+        self.assertIsInstance(plugin.config, RssPluginConfig)
+        self.assertIsInstance(plugin.config, Config)
         self.assertEqual(plugin.config, expected)
         self.assertEqual(errors, [])
         self.assertEqual(warnings, [])
@@ -89,11 +96,14 @@ class TestConfig(BaseTest):
             "enabled": True,
             "feed_ttl": 1440,
             "image": self.feed_image,
+            "json_feed_enabled": True,
             "length": 20,
-            "pretty_print": False,
             "match_path": ".*",
+            "pretty_print": False,
+            "rss_feed_enabled": True,
             "url_parameters": None,
             "use_git": True,
+            "use_material_social_cards": True,
         }
 
         # custom config
@@ -102,6 +112,8 @@ class TestConfig(BaseTest):
         # load
         plugin = GitRssPlugin()
         errors, warnings = plugin.load_config(custom_cfg)
+        self.assertIsInstance(plugin.config, RssPluginConfig)
+        self.assertIsInstance(plugin.config, Config)
         self.assertEqual(plugin.config, expected)
         self.assertEqual(errors, [])
         self.assertEqual(warnings, [])

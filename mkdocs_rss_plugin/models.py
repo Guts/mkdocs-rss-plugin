@@ -4,7 +4,7 @@
 # ########## Libraries #############
 # ##################################
 
-# standard library
+# standard
 from datetime import datetime
 from pathlib import Path
 from typing import NamedTuple
