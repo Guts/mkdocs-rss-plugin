@@ -6,6 +6,7 @@
 
 # standard library
 import logging
+import re
 import ssl
 import sys
 from datetime import date, datetime
@@ -15,7 +16,7 @@ from pathlib import Path
 from typing import Any, Iterable, Optional, Tuple, Union
 from urllib import request
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode, urlparse, urlunparse
+from urllib.parse import urlencode, urljoin, urlparse, urlunparse
 
 # 3rd party
 import markdown
@@ -47,6 +48,22 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 # ############################################################################
 # ########## Classes #############
 # ################################
+
+HREF_MATCH_PATTERN = re.compile('href="(.*?)"')
+SRC_MATCH_PATTERN = re.compile('src="(.*?)"')
+
+
+def relative_links_resolve_to_page(page_html, page_url):
+    href_links_to_replace = re.findall(HREF_MATCH_PATTERN, page_html)
+    src_links_to_replace = re.findall(SRC_MATCH_PATTERN, page_html)
+    links_to_replace = set(href_links_to_replace + src_links_to_replace)
+    links_with_replacements = [
+        (link, urljoin(page_url, link)) for link in links_to_replace
+    ]
+    replaced_html = page_html
+    for original, replacement in links_with_replacements:
+        replaced_html = replaced_html.replace(original, replacement)
+    return replaced_html
 
 
 class Util:
@@ -452,12 +469,17 @@ class Util:
         return out_date
 
     def get_description_or_abstract(
-        self, in_page: Page, chars_count: int = 160, abstract_delimiter: str = None
+        self,
+        in_page: Page,
+        html: str,
+        chars_count: int = 160,
+        abstract_delimiter: str = None,
     ) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
-        {chars_count} first characters from page content (in markdown).
+        {chars_count} first characters from page content (in html).
 
         :param Page in_page: page to look at
+        :param str html: rendered page html
         :param int chars_count: if page.meta.description is not set, number of chars \
         of the content to use. Defaults to: 160 - optional
         :param str abstract_delimiter: description delimiter, defaults to None
@@ -486,14 +508,10 @@ class Util:
             return ""
         elif (
             abstract_delimiter
-            and (
-                excerpt_separator_position := in_page.markdown.find(abstract_delimiter)
-            )
-            > -1
+            and (excerpt_separator_position := html.find(abstract_delimiter)) > -1
         ):
-            return markdown.markdown(
-                in_page.markdown[:excerpt_separator_position],
-                output_format="html5",
+            return relative_links_resolve_to_page(
+                html[:excerpt_separator_position], in_page.canonical_url
             )
         # If chars count is unlimited, use the html content
         elif in_page.content and chars_count == -1:
