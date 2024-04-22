@@ -1,8 +1,59 @@
+bug:
+  - head-branch:
+      - ^fix
+      - fix
+      - ^hotfix
+      - hotfix
+
 ci-cd:
-  - .github/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
 
 dependencies:
-  - any: ['requirements.txt', 'requirements/*.txt']
+  - changed-files:
+      - any-glob-to-any-file:
+          - requirements/*.txt
+          - requirements.txt
 
 documentation:
-  - docs/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - "*.md"
+          - docs/**
+          - requirements/documentation.txt
+  - head-branch:
+      - ^docs
+      - documentation
+
+enhancement:
+  - head-branch:
+      - ^feature
+      - feature
+      - ^improve
+      - improve
+
+packaging:
+  - changed-files:
+      - any-glob-to-any-file:
+          - MANIFEST.in
+          - setup.py
+  - head-branch:
+      - ^packaging
+      - packaging
+
+quality:
+  - changed-files:
+      - any-glob-to-any-file:
+          - tests/**/*
+
+tooling:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".*"
+          - codecov.yml
+          - setup.cfg
+          - .vscode/**/*
+  - head-branch:
+      - ^tooling
+      - tooling
