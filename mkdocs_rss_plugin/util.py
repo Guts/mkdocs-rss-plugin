@@ -455,7 +455,8 @@ class Util:
         self, in_page: Page, chars_count: int = 160, abstract_delimiter: str = None
     ) -> str:
         """Returns description from page meta. If it doesn't exist, use the \
-        {chars_count} first characters from page content (in markdown).
+        page content up to {abstract_delimiter} or the {chars_count} first \
+        characters from page content (in markdown).
 
         :param Page in_page: page to look at
         :param int chars_count: if page.meta.description is not set, number of chars \
@@ -468,12 +469,8 @@ class Util:
 
         description = in_page.meta.get("description")
 
-        # Set chars_count to None if it is set to be unlimited, for slicing.
-        if chars_count < 0:
-            chars_count = None
-
         # If the full page is wanted (unlimited chars count)
-        if chars_count is None and (in_page.content or in_page.markdown):
+        if chars_count == -1 and (in_page.content or in_page.markdown):
             if in_page.content:
                 return in_page.content
             else:
@@ -481,7 +478,7 @@ class Util:
         # If the description is explicitly given
         elif description:
             return description
-        # If the description is cut by the delimiter
+        # If the abstract is cut by the delimiter
         elif (
             abstract_delimiter
             and (
@@ -502,7 +499,7 @@ class Util:
                     f"{in_page.markdown[: chars_count - 3]}...",
                     output_format="html5",
                 )
-        # No explicit description and no content is found
+        # No explicit description and no (or empty) abstract found
         else:
             logger.warning(
                 f"No description set for page {in_page.file.src_uri} "
