@@ -502,8 +502,8 @@ class Util:
         # No explicit description and no (or empty) abstract found
         else:
             logger.warning(
-                f"No description set for page {in_page.file.src_uri} "
-                "and 'abstract_chars_count' set to 0. The feed won't be compliant, "
+                f"No description generated from metadata or content of the page {in_page.file.src_uri}, "
+                "therefore the feed won't be compliant, "
                 "because an item must have a description."
             )
             return ""
