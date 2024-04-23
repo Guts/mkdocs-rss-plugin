@@ -240,12 +240,14 @@ Output:
 
 ### `abstract_chars_count`: item description length
 
-To fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
+Used, in combination with `abstract_delimiter`, to determine each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
 - If this value is set to `-1`, then the articles' full HTML content will be filled into the description element.
-- be careful: if set to `0` and there is no description, the feed's compliance is broken (an item must have a description)
 - Otherwise, the plugin first tries to retrieve the value of the keyword `description` from the [page metadata].
-- If the value is non-negative and no `description` meta is found, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted roughly into HTML.
+- If that fails and `abstract_delimiter` is found in the page, the article content up to (but not including) the delimiter is used.
+- If the above has failed, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted roughly into HTML.
+
+Be careful: if set to `0` and there is no description, the feed's compliance is broken (an item must have a description).
 
 `abstract_chars_count`: number of characters to use as item description.
 
@@ -253,15 +255,11 @@ Default: `150`
 
 ----
 
-#### `abstract_delimiter`: abstract delimiter
+### `abstract_delimiter`: abstract delimiter
 
-Used to fill each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
+Please see `abstract_chars_count` for how this setting is used. A value of `""` (the empty string) disables this step.
 
-- If this value is set to `-1`, then the full HTML content will be filled into the description element.
-- Otherwise, the plugin first tries to retrieve the value of the key `description` from the page metadata.
-- If the value is non-negative and no `description` meta is found, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted rougthly into HTML (i.e. without extension, etc.).
-
-`abstract_delimiter`: string to mark .
+`abstract_delimiter`: string to mark where the description ends.
 
 Default: `<!-- more -->`
 

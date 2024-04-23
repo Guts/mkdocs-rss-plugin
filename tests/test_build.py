@@ -403,9 +403,55 @@ class TestBuildRss(BaseTest):
                     "Page without meta with short text",
                     "Blog sample",
                 ):
-                    self.assertGreaterEqual(
-                        len(feed_item.description), 150, feed_item.title
-                    )
+                    self.assertGreater(len(feed_item.description), 150, feed_item.title)
+
+    def test_simple_build_item_delimiter(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_minimal.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED)
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            for feed_item in feed_parsed.entries:
+                if feed_item.title in ("Page without meta with early delimiter",):
+                    self.assertLess(len(feed_item.description), 50, feed_item.title)
+
+    def test_simple_build_item_delimiter_empty(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_item_delimiter_empty.yml"
+                ),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED)
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            for feed_item in feed_parsed.entries:
+                if feed_item.title in ("Page without meta with early delimiter",):
+                    self.assertGreater(len(feed_item.description), 150, feed_item.title)
 
     def test_simple_build_locale_with_territory(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
