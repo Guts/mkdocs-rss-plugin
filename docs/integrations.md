@@ -47,20 +47,60 @@ You need to customize the theme's template. Typically, in `main.html`:
 
 To facilitate the discovery of JSON feeds, it's [recommended](https://www.jsonfeed.org/version/1.1/#discovery-a-name-discovery-a) to add relevant meta-tags in `<head>` section in HTML pages.
 
-<!-- ### Automatically set with Material theme
-
-If you're using the Material theme, everything is automagically set up (see [the related documentation page](https://squidfunk.github.io/mkdocs-material/setup/setting-up-a-blog/#rss)) :partying_face:. -->
-
 ### Manually { #feed-discovery-manual-json }
 
-You need to customize the theme's template. Typically, in `main.html`:
+You need to customize the theme's template. Firstly, you need to declare the folder where you store your template overrides:
 
-```html
+```yaml title="mkdocs.yml"
+[...]
+theme:
+  name: material
+  custom_dir: docs/theme/overrides
+[...]
+```
+
+Then add a `main.html` inside:
+
+```jinja title="docs/theme/overrides/main.html"
 {% extends "base.html" %}
 
 {% block extrahead %}
-  <!-- JSON Feed -->
-  <link rel="alternate" title="JSON feed of created content" type="application/feed+json" href="{{ config.site_url }}feed_rss_created.xml" />
-  <link rel="alternate" title="JSON feed of updated content" type="application/feed+json" href="{{ config.site_url }}feed_rss_updated.xml" />
+{# JSON Feed #}
+{% if "rss" in config.plugins %}
+<link
+  rel="alternate"
+  type="application/feed+json"
+  title="JSON feed" href="{{ 'feed_json_created.json' | url }}"
+  />
+<link
+  rel="alternate"
+  type="application/feed+json"
+  title="JSON feed of updated content"
+  href="{{ 'feed_json_updated.json' | url }}" />
+{% endif %}
 {% endblock %}
+```
+
+If your `main.html` is getting too large, or if you like to modularize anything with more than 3 lines, you can also put this configuration in a separated `partials` file:
+
+```jinja title="content/theme/partials/json_feed.html.jinja2"
+{# JSON Feed #}
+{% if "rss" in config.plugins %}
+<link
+  rel="alternate"
+  type="application/feed+json"
+  title="JSON feed" href="{{ 'feed_json_created.json' | url }}"
+  />
+<link
+  rel="alternate"
+  type="application/feed+json"
+  title="JSON feed of updated content"
+  href="{{ 'feed_json_updated.json' | url }}" />
+{% endif %}
+```
+
+And include it in `main.html`:
+
+```jinja title="docs/theme/overrides/main.html"
+{% include "partials/json_feed.html.jinja2" %}
 ```
