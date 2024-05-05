@@ -64,9 +64,14 @@ def relative_links_resolve_to_page(page_html, page_url):
         replaced_html = replaced_html.replace(original, replacement)
     return replaced_html
 
-GLIGHTBOX_ANCHOR_PATTERN = re.compile('<a class=\"glightbox\".+?>(.*?)</a>')
-def remove_glightbox(page_html):
-    return re.sub(GLIGHTBOX_ANCHOR_PATTERN, r'\1' , page_html)
+WRAPPER_PATTERNS = [re.compile(p) for p in [
+    '<a class=\"glightbox\".+?>(.*?)</a>',
+    '<div class=\"grid cards\".+?>(.*?)</div>'
+]]
+def remove_wrappers(page_html):
+    for wrapper_pattern in WRAPPER_PATTERNS:
+        page_html = re.sub(wrapper_pattern, r'\1' , page_html)
+    return page_html
 
 class Util:
     """Plugin logic."""
@@ -507,9 +512,10 @@ class Util:
             and (excerpt_separator_position := html.find(abstract_delimiter)) > -1
         ):
             replaced_links = relative_links_resolve_to_page(
-                html[:excerpt_separator_position], in_page.canonical_url
+                html, in_page.canonical_url
             )
-            return remove_glightbox(replaced_links)
+            removed_wrappers = remove_wrappers(replaced_links)
+            return removed_wrappers[:removed_wrappers.find(abstract_delimiter)]
         
         # Use first chars_count from the markdown
         elif chars_count > 0 and in_page.markdown:
