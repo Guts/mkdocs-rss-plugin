@@ -134,6 +134,7 @@ plugins:
 
 theme:
   name: material
+  custom_dir: docs/theme/overrides
   favicon: assets/logo_rss_plugin_mkdocs.svg
   features:
     - content.action.edit

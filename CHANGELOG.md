@@ -17,6 +17,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.12.2 - 2024-04-30
+
+### Bugs fixes 🐛
+
+* Fix: abstract limit by @tiosgz and @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/268>
+
+### Tooling 🔧
+
+* ci: fix missing Codecov token by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/269>
+
+### Documentation 📖
+
+* Update docs on locale configuration by @YDX-2147483647 in <https://github.com/Guts/mkdocs-rss-plugin/pull/256>
+
 ## 1.12.1 - 2024-02-14
 
 ### Bugs fixes 🐛
