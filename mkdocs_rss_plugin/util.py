@@ -65,14 +65,21 @@ def relative_links_resolve_to_page(page_html, page_url):
         replaced_html = replaced_html.replace(original, replacement)
     return replaced_html
 
-WRAPPER_PATTERNS = [re.compile(p) for p in [
-    '<a class=\"glightbox\".+?>(.*?)</a>',
-    '<div class=\"grid cards\".+?>(.*?)</div>'
-]]
+
+WRAPPER_PATTERNS = [
+    re.compile(p)
+    for p in [
+        '<a class="glightbox".+?>(.*?)</a>',
+        '<div class="grid cards".+?>(.*?)</div>',
+    ]
+]
+
+
 def remove_wrappers(page_html):
     for wrapper_pattern in WRAPPER_PATTERNS:
-        page_html = re.sub(wrapper_pattern, r'\1' , page_html)
+        page_html = re.sub(wrapper_pattern, r"\1", page_html)
     return page_html
+
 
 class Util:
     """Plugin logic."""
@@ -512,12 +519,10 @@ class Util:
             abstract_delimiter
             and (excerpt_separator_position := html.find(abstract_delimiter)) > -1
         ):
-            replaced_links = relative_links_resolve_to_page(
-                html, in_page.canonical_url
-            )
+            replaced_links = relative_links_resolve_to_page(html, in_page.canonical_url)
             removed_wrappers = remove_wrappers(replaced_links)
-            return removed_wrappers[:removed_wrappers.find(abstract_delimiter)]
-        
+            return removed_wrappers[: removed_wrappers.find(abstract_delimiter)]
+
         # Use first chars_count from the markdown
         elif chars_count > 0 and in_page.markdown:
             if len(in_page.markdown) <= chars_count:
