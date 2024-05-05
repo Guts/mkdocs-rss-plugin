@@ -52,6 +52,7 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 HREF_MATCH_PATTERN = re.compile('href="(.*?)"')
 SRC_MATCH_PATTERN = re.compile('src="(.*?)"')
 
+
 def relative_links_resolve_to_page(page_html, page_url):
     href_links_to_replace = re.findall(HREF_MATCH_PATTERN, page_html)
     src_links_to_replace = re.findall(SRC_MATCH_PATTERN, page_html)
@@ -64,9 +65,13 @@ def relative_links_resolve_to_page(page_html, page_url):
         replaced_html = replaced_html.replace(original, replacement)
     return replaced_html
 
-GLIGHTBOX_ANCHOR_PATTERN = re.compile('<a class=\"glightbox\".+?>(.*?)</a>')
+
+GLIGHTBOX_ANCHOR_PATTERN = re.compile('<a class="glightbox".+?>(.*?)</a>')
+
+
 def remove_glightbox(page_html):
-    return re.sub(GLIGHTBOX_ANCHOR_PATTERN, r'\1' , page_html)
+    return re.sub(GLIGHTBOX_ANCHOR_PATTERN, r"\1", page_html)
+
 
 class Util:
     """Plugin logic."""
@@ -510,7 +515,7 @@ class Util:
                 html[:excerpt_separator_position], in_page.canonical_url
             )
             return remove_glightbox(replaced_links)
-        
+
         # Use first chars_count from the markdown
         elif chars_count > 0 and in_page.markdown:
             if len(in_page.markdown) <= chars_count:
