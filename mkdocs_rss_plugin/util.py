@@ -52,6 +52,7 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 HREF_MATCH_PATTERN = re.compile('href="(.*?)"')
 SRC_MATCH_PATTERN = re.compile('src="(.*?)"')
 
+
 def relative_links_resolve_to_page(page_html, page_url):
     href_links_to_replace = re.findall(HREF_MATCH_PATTERN, page_html)
     src_links_to_replace = re.findall(SRC_MATCH_PATTERN, page_html)
