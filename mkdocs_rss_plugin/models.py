@@ -7,7 +7,7 @@
 # standard
 from datetime import datetime
 from pathlib import Path
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 
 # ############################################################################
@@ -16,14 +16,14 @@ from typing import NamedTuple
 class PageInformation(NamedTuple):
     """Data type to set and get page information in order to produce the RSS feed."""
 
-    abs_path: Path = None
-    categories: list = None
-    authors: tuple = None
-    created: datetime = None
-    description: str = None
-    guid: str = None
-    image: str = None
-    title: str = None
-    updated: datetime = None
-    url_comments: str = None
-    url_full: str = None
+    abs_path: Optional[Path] = None
+    categories: Optional[list] = None
+    authors: Optional[tuple] = None
+    created: Optional[datetime] = None
+    description: Optional[str] = None
+    guid: Optional[str] = None
+    image: Optional[str] = None
+    title: Optional[str] = None
+    updated: Optional[datetime] = None
+    url_comments: Optional[str] = None
+    url_full: Optional[str] = None

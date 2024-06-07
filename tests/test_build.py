@@ -15,11 +15,9 @@
 
 # Standard library
 import json
+import logging
 import tempfile
 import unittest
-
-# logging
-from logging import DEBUG, getLogger
 from pathlib import Path
 from traceback import format_exception
 
@@ -27,19 +25,17 @@ from traceback import format_exception
 import feedparser
 import jsonfeed
 
-# project
-from mkdocs_rss_plugin.constants import (
-    OUTPUT_JSON_FEED_CREATED,
-    OUTPUT_JSON_FEED_UPDATED,
-    OUTPUT_RSS_FEED_CREATED,
-    OUTPUT_RSS_FEED_UPDATED,
-)
-
 # test suite
 from tests.base import BaseTest
 
-logger = getLogger(__name__)
-logger.setLevel(DEBUG)
+# -- Globals --
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+OUTPUT_RSS_FEED_CREATED = "feed_rss_created.xml"
+OUTPUT_RSS_FEED_UPDATED = "feed_rss_updated.xml"
+OUTPUT_JSON_FEED_CREATED = "feed_json_created.json"
+OUTPUT_JSON_FEED_UPDATED = "feed_json_updated.json"
 
 # #############################################################################
 # ########## Classes ###############
@@ -530,6 +526,43 @@ class TestBuildRss(BaseTest):
             # updated items
             feed_parsed = feedparser.parse(Path(tmpdirname) / OUTPUT_RSS_FEED_UPDATED)
             self.assertEqual(feed_parsed.feed.get("language"), "fr")
+
+    def test_simple_build_custom_output_basename(self):
+        config = self.get_plugin_config_from_mkdocs(
+            mkdocs_yml_filepath=Path(
+                "tests/fixtures/mkdocs_custom_output_basename.yml"
+            ),
+            plugin_name="rss",
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_custom_output_basename.yml"
+                ),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(
+                Path(tmpdirname) / config.output_basename.rss_created
+            )
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            # updated items
+            feed_parsed = feedparser.parse(
+                Path(tmpdirname) / config.output_basename.rss_updated
+            )
+            self.assertEqual(feed_parsed.bozo, 0)
 
     def test_simple_build_pretty_print_enabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
