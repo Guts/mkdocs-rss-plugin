@@ -530,7 +530,7 @@ class TestBuildRss(BaseTest):
     def test_simple_build_custom_output_basename(self):
         config = self.get_plugin_config_from_mkdocs(
             mkdocs_yml_filepath=Path(
-                "tests/fixtures/mkdocs_custom_output_basename.yml"
+                "tests/fixtures/mkdocs_custom_feeds_filenames.yml"
             ),
             plugin_name="rss",
         )
@@ -554,13 +554,13 @@ class TestBuildRss(BaseTest):
 
             # created items
             feed_parsed = feedparser.parse(
-                Path(tmpdirname) / config.output_basename.rss_created
+                Path(tmpdirname) / config.feeds_filenames.rss_created
             )
             self.assertEqual(feed_parsed.bozo, 0)
 
             # updated items
             feed_parsed = feedparser.parse(
-                Path(tmpdirname) / config.output_basename.rss_updated
+                Path(tmpdirname) / config.feeds_filenames.rss_updated
             )
             self.assertEqual(feed_parsed.bozo, 0)
 

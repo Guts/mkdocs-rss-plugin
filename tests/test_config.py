@@ -69,7 +69,7 @@ class TestConfig(BaseTest):
             "json_feed_enabled": True,
             "length": 20,
             "match_path": ".*",
-            "output_basename": {
+            "feeds_filenames": {
                 "json_created": "feed_json_created.json",
                 "json_updated": "feed_json_updated.json",
                 "rss_created": "feed_rss_created.xml",
@@ -105,7 +105,7 @@ class TestConfig(BaseTest):
             "json_feed_enabled": True,
             "length": 20,
             "match_path": ".*",
-            "output_basename": {
+            "feeds_filenames": {
                 "json_created": "feed_json_created.json",
                 "json_updated": "feed_json_updated.json",
                 "rss_created": "feed_rss_created.xml",
