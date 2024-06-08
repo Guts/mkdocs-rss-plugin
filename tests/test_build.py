@@ -539,7 +539,7 @@ class TestBuildRss(BaseTest):
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
                 mkdocs_yml_filepath=Path(
-                    "tests/fixtures/mkdocs_custom_output_basename.yml"
+                    "tests/fixtures/mkdocs_custom_feeds_filenames.yml"
                 ),
                 output_path=tmpdirname,
                 strict=True,

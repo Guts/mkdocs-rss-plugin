@@ -180,16 +180,16 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         if base_feed.get("html_url"):
             # concatenate both URLs
             self.feed_created["rss_url"] = (
-                base_feed.get("html_url") + self.config.output_basename.rss_created
+                base_feed.get("html_url") + self.config.feeds_filenames.rss_created
             )
             self.feed_updated["rss_url"] = (
-                base_feed.get("html_url") + self.config.output_basename.rss_updated
+                base_feed.get("html_url") + self.config.feeds_filenames.rss_updated
             )
             self.feed_created["json_url"] = (
-                base_feed.get("html_url") + self.config.output_basename.json_created
+                base_feed.get("html_url") + self.config.feeds_filenames.json_created
             )
             self.feed_updated["json_url"] = (
-                base_feed.get("html_url") + self.config.output_basename.json_updated
+                base_feed.get("html_url") + self.config.feeds_filenames.json_updated
             )
         else:
             logger.error(
@@ -314,16 +314,16 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
 
         # output filepaths
         out_feed_created = Path(config.site_dir).joinpath(
-            self.config.output_basename.rss_created
+            self.config.feeds_filenames.rss_created
         )
         out_feed_updated = Path(config.site_dir).joinpath(
-            self.config.output_basename.rss_updated
+            self.config.feeds_filenames.rss_updated
         )
         out_json_created = Path(config.site_dir).joinpath(
-            self.config.output_basename.json_created
+            self.config.feeds_filenames.json_created
         )
         out_json_updated = Path(config.site_dir).joinpath(
-            self.config.output_basename.json_updated
+            self.config.feeds_filenames.json_updated
         )
 
         # created items

@@ -4,7 +4,7 @@ site_url: https://guts.github.io/mkdocs-rss-plugin
 
 plugins:
   - rss:
-      output_basename:
+      feed_filenames:
         json_created: json
         json_updated: json-updated
         rss_created: rss

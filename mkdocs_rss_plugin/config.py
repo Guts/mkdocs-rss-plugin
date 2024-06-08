@@ -14,7 +14,7 @@ from mkdocs.config.base import Config
 # ##################################
 
 
-class _OutputBasenameConfig(Config):
+class _FeedsFilenamesConfig(Config):
     json_created = config_options.Type(str, default="feed_json_created.json")
     json_updated = config_options.Type(str, default="feed_json_updated.json")
     rss_created = config_options.Type(str, default="feed_rss_created.xml")
@@ -37,7 +37,7 @@ class RssPluginConfig(Config):
     json_feed_enabled = config_options.Type(bool, default=True)
     length = config_options.Type(int, default=20)
     match_path = config_options.Type(str, default=".*")
-    output_basename = config_options.SubConfig(_OutputBasenameConfig)
+    feeds_filenames = config_options.SubConfig(_FeedsFilenamesConfig)
     pretty_print = config_options.Type(bool, default=False)
     rss_feed_enabled = config_options.Type(bool, default=True)
     url_parameters = config_options.Optional(config_options.Type(dict))
