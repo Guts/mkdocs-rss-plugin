@@ -1,0 +1,16 @@
+site_name: Test Mkdocs with multiple RSS plugin instances
+site_description: Multiple RSS plugin in a single mkdocs
+site_url: https://guts.github.io/mkdocs-rss-plugin
+
+plugins:
+  - rss
+  - rss:
+      feeds_filenames:
+        json_created: blog.json
+        json_updated: blog-updated.json
+        rss_created: blog.xml
+        rss_updated: blog-updated.xml
+      match_path: "blog/.*"
+
+theme:
+  name: material

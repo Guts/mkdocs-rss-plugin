@@ -1,6 +1,7 @@
 ---
 date: 2023-02-12
-authors: [guts]
+authors:
+  - guts
 categories:
   - Blog
 ---
