@@ -51,6 +51,9 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 class GitRssPlugin(BasePlugin[RssPluginConfig]):
     """Main class for MkDocs plugin."""
 
+    # allow to set the plugin multiple times in the same mkdocs config
+    supports_multiple_instances = True
+
     def __init__(self):
         """Instanciation."""
         # dates source

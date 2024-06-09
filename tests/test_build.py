@@ -564,6 +564,51 @@ class TestBuildRss(BaseTest):
             )
             self.assertEqual(feed_parsed.bozo, 0)
 
+    def test_simple_build_multiple_instances(self):
+        config = self.get_plugin_config_from_mkdocs(
+            mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_multiple_instances.yml"),
+            plugin_name="rss",
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_multiple_instances.yml"
+                ),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(
+                Path(tmpdirname) / config.feeds_filenames.rss_created
+            )
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            # updated items
+            feed_parsed = feedparser.parse(
+                Path(tmpdirname) / config.feeds_filenames.rss_updated
+            )
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            # created items - blog
+            feed_parsed = feedparser.parse(Path(tmpdirname).joinpath("blog.xml"))
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            # updated items - blog
+            feed_parsed = feedparser.parse(
+                Path(tmpdirname).joinpath("blog-updated.xml")
+            )
+            self.assertEqual(feed_parsed.bozo, 0)
+
     def test_simple_build_pretty_print_enabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
