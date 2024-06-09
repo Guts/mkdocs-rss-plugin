@@ -28,10 +28,6 @@ from mkdocs_rss_plugin.constants import (
     DEFAULT_TEMPLATE_FILENAME,
     DEFAULT_TEMPLATE_FOLDER,
     MKDOCS_LOGGER_NAME,
-    OUTPUT_JSON_FEED_CREATED,
-    OUTPUT_JSON_FEED_UPDATED,
-    OUTPUT_RSS_FEED_CREATED,
-    OUTPUT_RSS_FEED_UPDATED,
 )
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
@@ -82,7 +78,6 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         :return: plugin configuration object
         :rtype: dict
         """
-
         # Skip if disabled
         if not self.config.enabled:
             return config
@@ -121,8 +116,8 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             "description": config.site_description,
             "entries": [],
             "generator": f"{__title__} - v{__version__}",
-            "html_url": self.util.get_site_url(config),
-            "language": self.util.guess_locale(config),
+            "html_url": self.util.get_site_url(mkdocs_config=config),
+            "language": self.util.guess_locale(mkdocs_config=config),
             "pubDate": formatdate(get_build_timestamp()),
             "repo_url": config.repo_url,
             "title": config.site_name,
@@ -185,16 +180,16 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         if base_feed.get("html_url"):
             # concatenate both URLs
             self.feed_created["rss_url"] = (
-                base_feed.get("html_url") + OUTPUT_RSS_FEED_CREATED
+                base_feed.get("html_url") + self.config.feeds_filenames.rss_created
             )
             self.feed_updated["rss_url"] = (
-                base_feed.get("html_url") + OUTPUT_RSS_FEED_UPDATED
+                base_feed.get("html_url") + self.config.feeds_filenames.rss_updated
             )
             self.feed_created["json_url"] = (
-                base_feed.get("html_url") + OUTPUT_JSON_FEED_CREATED
+                base_feed.get("html_url") + self.config.feeds_filenames.json_created
             )
             self.feed_updated["json_url"] = (
-                base_feed.get("html_url") + OUTPUT_JSON_FEED_UPDATED
+                base_feed.get("html_url") + self.config.feeds_filenames.json_updated
             )
         else:
             logger.error(
@@ -210,7 +205,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     @event_priority(priority=-75)
     def on_page_content(
         self, html: str, page: Page, config: config_options.Config, files
-    ) -> str:
+    ) -> Optional[str]:
         """The page_content event is called after the Markdown text is rendered
         to HTML (but before being passed to a template) and can be used to alter
         the HTML body of the page.
@@ -300,7 +295,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             )
         )
 
-    def on_post_build(self, config: config_options.Config) -> dict:
+    def on_post_build(self, config: config_options.Config) -> Optional[dict]:
         """The post_build event does not alter any variables. \
         Use this event to call post-build scripts. \
         See: <https://www.mkdocs.org/user-guide/plugins/#on_post_build>
@@ -319,10 +314,18 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         pretty_print = self.config.pretty_print
 
         # output filepaths
-        out_feed_created = Path(config.site_dir).joinpath(OUTPUT_RSS_FEED_CREATED)
-        out_feed_updated = Path(config.site_dir).joinpath(OUTPUT_RSS_FEED_UPDATED)
-        out_json_created = Path(config.site_dir).joinpath(OUTPUT_JSON_FEED_CREATED)
-        out_json_updated = Path(config.site_dir).joinpath(OUTPUT_JSON_FEED_UPDATED)
+        out_feed_created = Path(config.site_dir).joinpath(
+            self.config.feeds_filenames.rss_created
+        )
+        out_feed_updated = Path(config.site_dir).joinpath(
+            self.config.feeds_filenames.rss_updated
+        )
+        out_json_created = Path(config.site_dir).joinpath(
+            self.config.feeds_filenames.json_created
+        )
+        out_json_updated = Path(config.site_dir).joinpath(
+            self.config.feeds_filenames.json_updated
+        )
 
         # created items
         self.feed_created.get("entries").extend(

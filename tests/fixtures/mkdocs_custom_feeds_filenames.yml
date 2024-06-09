@@ -1,0 +1,14 @@
+site_name: Test RSS Plugin with custom RSS and JSON feeds output
+site_description: Test RSS Plugin with customized output_basename
+site_url: https://guts.github.io/mkdocs-rss-plugin
+
+plugins:
+  - rss:
+      feeds_filenames:
+        json_created: json
+        json_updated: json-updated
+        rss_created: rss
+        rss_updated: rss-updated
+
+theme:
+  name: mkdocs
