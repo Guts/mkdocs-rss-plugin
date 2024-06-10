@@ -3,6 +3,6 @@
 
 
 GitPython>=3.1,<3.2
-mkdocs>=1.4,<2
+mkdocs>=1.5,<2
 pytz==2022.* ; python_version < "3.9"
 tzdata==2024.* ; python_version >= "3.9" and sys_platform == "win32"
