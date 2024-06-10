@@ -200,7 +200,9 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 "configuration file whereas a URL is mandatory to publish. "
                 "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
             )
-            self.feed_created["rss_url"] = self.feed_updated["rss_url"] = None
+            self.feed_created["rss_url"] = self.feed_updated["json_url"] = (
+                self.feed_updated["rss_url"]
+            ) = self.feed_updated["json_url"] = None
 
         # ending event
         return config
