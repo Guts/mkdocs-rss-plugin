@@ -10,7 +10,8 @@ from copy import deepcopy
 from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
-from re import compile
+from re import compile as re_compile
+from typing import Optional
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -131,7 +132,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             base_feed["logo_url"] = self.config.image
 
         # pattern to match pages included in output
-        self.match_path_pattern = compile(self.config.match_path)
+        self.match_path_pattern = re_compile(self.config.match_path)
 
         # date handling
         if self.config.date_from_meta is not None:
