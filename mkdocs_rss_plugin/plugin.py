@@ -11,7 +11,6 @@ from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from re import compile as re_compile
-from typing import Optional
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -218,7 +217,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     @event_priority(priority=-75)
     def on_page_content(
         self, html: str, page: Page, config: MkDocsConfig, files: Files
-    ) -> Optional[str]:
+    ) -> str | None:
         """The page_content event is called after the Markdown text is rendered to HTML
             (but before being passed to a template) and can be used to alter the HTML
             body of the page.
