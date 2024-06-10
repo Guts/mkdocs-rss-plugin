@@ -15,6 +15,7 @@
 
 # Standard library
 import unittest
+from datetime import datetime
 from pathlib import Path
 
 # 3rd party
@@ -62,7 +63,13 @@ class TestConfig(BaseTest):
             "abstract_delimiter": "<!-- more -->",
             "categories": None,
             "comments_path": None,
-            "date_from_meta": None,
+            "date_from_meta": {
+                "as_creation": "git",
+                "as_update": "git",
+                "datetime_format": "%Y-%m-%d %H:%M",
+                "default_time": datetime.min.strftime("%H:%M"),
+                "default_timezone": "UTC",
+            },
             "enabled": True,
             "feed_ttl": 1440,
             "image": None,
@@ -98,7 +105,13 @@ class TestConfig(BaseTest):
             "abstract_delimiter": "<!-- more -->",
             "categories": None,
             "comments_path": None,
-            "date_from_meta": None,
+            "date_from_meta": {
+                "as_creation": "git",
+                "as_update": "git",
+                "datetime_format": "%Y-%m-%d %H:%M",
+                "default_time": datetime.min.strftime("%H:%M"),
+                "default_timezone": "UTC",
+            },
             "enabled": True,
             "feed_ttl": 1440,
             "image": self.feed_image,
