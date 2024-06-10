@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema",
-  "title": "RSS feeds (i.e. a channel of items) using git log and page metadata.",
+  "title": "RSS and JSON feeds (i.e. a channel of items) using git log and page metadata.",
+  "description": "Support multiple instances in a single Mkdocs website.",
   "oneOf": [
     {
       "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/",
@@ -22,9 +23,15 @@
               "default": 160,
               "minimum": -1
             },
+            "abstract_delimiter": {
+              "title": "String to mark where the description ends. Also called excerpt.",
+              "default": "<!-- more -->",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#abstract_delimiter",
+              "type": "string"
+            },
             "categories": {
               "title": "List of page metadata keys to use as item categories.",
-              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#categories-item-categories",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#categories",
               "type": "array",
               "default": null,
               "items": {
@@ -35,7 +42,7 @@
             },
             "comments_path": {
               "title": "Part of URL to the items' comment div.",
-              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#comments_path-item-comments-path",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#comments_path",
               "type": "string",
               "default": null,
               "format": "uri-reference"
@@ -97,6 +104,29 @@
               "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#feed_ttl-feeds-cache-time",
               "type": "integer",
               "default": 1440
+            },
+            "feeds_filenames": {
+              "title": "Customize output RSS and JSON feeds names.",
+              "markdownDescription": "https://guts.github.io/mkdocs-rss-plugin/configuration/#feeds_filenames",
+              "type": "object",
+              "properties": {
+                "json_created": {
+                  "default": "feed_json_created.json",
+                  "type": "string"
+                },
+                "json_updated": {
+                  "default": "feed_json_updated.json",
+                  "type": "string"
+                },
+                "rss_created": {
+                  "default": "feed_rss_created.xml",
+                  "type": "string"
+                },
+                "rss_updated": {
+                  "default": "feed_rss_updated.xml",
+                  "type": "string"
+                }
+              }
             },
             "image": {
               "title": "Feed channel illustration",
