@@ -11,7 +11,6 @@ from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from re import compile
-from typing import Optional
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -58,9 +57,9 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         """Instanciation."""
         # dates source
         self.src_date_created = self.src_date_updated = "git"
-        self.meta_datetime_format: Optional[str] = None
+        self.meta_datetime_format: str | None = None
         self.meta_default_timezone: str = "UTC"
-        self.meta_default_time: Optional[datetime.time] = None
+        self.meta_default_time: datetime.time | None = None
         # pages storage
         self.pages_to_filter: list = []
         # prepare output feeds
@@ -208,7 +207,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     @event_priority(priority=-75)
     def on_page_content(
         self, html: str, page: Page, config: config_options.Config, files
-    ) -> Optional[str]:
+    ) -> str | None:
         """The page_content event is called after the Markdown text is rendered
         to HTML (but before being passed to a template) and can be used to alter
         the HTML body of the page.
@@ -297,7 +296,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             )
         )
 
-    def on_post_build(self, config: config_options.Config) -> Optional[dict]:
+    def on_post_build(self, config: config_options.Config) -> dict | None:
         """The post_build event does not alter any variables. \
         Use this event to call post-build scripts. \
         See: <https://www.mkdocs.org/user-guide/plugins/#on_post_build>
