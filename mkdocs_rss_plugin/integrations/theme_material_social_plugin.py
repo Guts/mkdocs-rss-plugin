@@ -6,7 +6,6 @@
 
 # standard library
 from pathlib import Path
-from typing import Optional
 
 # 3rd party
 from mkdocs.config.config_options import Config
@@ -174,7 +173,7 @@ class IntegrationMaterialSocialCards:
         return social_plugin_cfg.config.cards_dir
 
     def get_social_card_build_path_for_page(
-        self, mkdocs_page: Page, mkdocs_site_dir: Optional[str] = None
+        self, mkdocs_page: Page, mkdocs_site_dir: str | None = None
     ) -> Path:
         """Get social card URL for a specific page in documentation.
 
@@ -197,7 +196,7 @@ class IntegrationMaterialSocialCards:
     def get_social_card_url_for_page(
         self,
         mkdocs_page: Page,
-        mkdocs_site_url: Optional[str] = None,
+        mkdocs_site_url: str | None = None,
     ) -> str:
         """Get social card URL for a specific page in documentation.
 
