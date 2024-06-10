@@ -15,7 +15,7 @@ Here's how the RSS plugin prioritizes the image to be used in the feed:
 
 If you don't want this integration, you can disable it with the option: `use_material_social_cards=false`.
 
-> See [related section in settings](./configuration.md#use_material_social_cards-enabledisable-integration-with-material-social-cards-plugin).
+> See [related section in settings](./configuration.md#use_material_social_cards).
 
 ----
 
