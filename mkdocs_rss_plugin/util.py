@@ -554,9 +554,9 @@ class Util:
             else:
                 logger.debug(
                     f"Social card: {img_local_path} still not exists. Trying to "
-                    f"retrieve length from remote image: {img_url}"
+                    f"retrieve length from remote image: {img_url}. "
                     "Note that would work only if the social card image has been "
-                    "published before)."
+                    "already published before the build."
                 )
                 img_length = self.get_remote_image_length(image_url=img_url)
 
