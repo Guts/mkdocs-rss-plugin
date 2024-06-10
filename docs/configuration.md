@@ -133,7 +133,7 @@ Output:
 
 For a sample see [homepage](./index.md#quickstart).
 
-### `enabled`: enabling/disabling the plugin
+### :material-toggle-switch: `enabled`: enabling/disabling the plugin { #enabled }
 
 You can use the `enabled` option to optionally disable this plugin. A possible use case is local development where you might want faster build times. It's recommended to use this option with an environment variable together with a default fallback (introduced in `mkdocs` v1.2.1, see [docs](https://www.mkdocs.org/user-guide/configuration/#environment-variables)). Example:
 
@@ -152,7 +152,7 @@ mkdocs serve
 
 ----
 
-### `json_feed_enabled`: enabling/disabling export to JSON Feed { #json_feed_enabled }
+### :simple-json: `json_feed_enabled`: enabling/disabling export to JSON Feed { #json_feed_enabled }
 
 Set it to `false` if you want to only export to RSS.
 
@@ -160,7 +160,7 @@ Default: `true`.
 
 ----
 
-### `rss_feed_enabled`: enabling/disabling export to RSS { #rss_feed_enabled }
+### :material-rss: `rss_feed_enabled`: enabling/disabling export to RSS { #rss_feed_enabled }
 
 Set it to `false` if you want to only export to JSON feed.
 
@@ -168,77 +168,7 @@ Default: `true`.
 
 ----
 
-### `image`: set the channel image
-
-`image`: URL to image to use as feed illustration.
-
-Default: `None`.
-
-#### Example
-
-```yaml
-plugins:
-  - rss:
-      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
-```
-
-Output:
-
-```xml
-<image>
-  <url>
-    https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
-  </url>
-  <title>MkDocs RSS Plugin</title>
-  <link>https://guts.github.io/mkdocs-rss-plugin/</link>
-</image>
-```
-
-----
-
-### `comments_path`: item comments path
-
-`comments_path`: path to add to each item URL pointing.
-
-Default: `None`.
-
-For example, if you're using Material for Mkdocs with comment integration (Disqus or Isso), the comment block is under the div id `__comments`, so you can set: `comments_path: "#__comments"` and the output will be:
-
-```xml
-<item>
-  <title>This page title is a perfect clickbait!</title>
-  <link>https://website.com/articles/best_article/</link>
-  <comments>https://website.com/articles/best_article/#__comments</comments>
-  [...]
-
-</item>
-```
-
-----
-
-### `length`: number of items to include in feed
-
-`length`: number of pages to include as feed items (entries).
-
-Default: `20`
-
-----
-
-### `feed_ttl`: feed's cache time
-
-`feed_ttl`: number of minutes to be cached. Inserted as channel `ttl` element. See: [W3C RSS 2.0 documentation](https://www.w3schools.com/xml/rss_tag_ttl.asp).
-
-Default: `1440` (= 1 day)
-
-Output:
-
-```xml
-<ttl>1440</ttl>
-```
-
-----
-
-### `abstract_chars_count`: item description length
+### :material-more: `abstract_chars_count`: item description length { #abstract_chars_count }
 
 Used, in combination with `abstract_delimiter`, to determine each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
@@ -255,7 +185,7 @@ Default: `150`
 
 ----
 
-### `abstract_delimiter`: abstract delimiter
+### :material-pen-minus: `abstract_delimiter`: abstract delimiter { #abstract_delimiter }
 
 Please see `abstract_chars_count` for how this setting is used. A value of `""` (the empty string) disables this step.
 
@@ -265,13 +195,13 @@ Default: `<!-- more -->`
 
 ----
 
-### `categories`: item categories
+### :material-tag-multiple: `categories`: item categories { #categories }
 
 `categories`: list of page metadata values to use as [RSS item categories](https://www.w3schools.com/xml/rss_tag_category_item.asp).
 
 Default: `None`.
 
-#### Example
+#### Example { #categories_example }
 
 In configuration:
 
@@ -327,7 +257,27 @@ Output:
 
 ----
 
-### `date_from_meta`: override dates from git log with page.meta
+### :material-comment-bookmark-outline: `comments_path`: item comments path { #comments_path }
+
+`comments_path`: path to add to each item URL pointing.
+
+Default: `None`.
+
+For example, if you're using Material for Mkdocs with comment integration (Disqus or Isso), the comment block is under the div id `__comments`, so you can set: `comments_path: "#__comments"` and the output will be:
+
+```xml
+<item>
+  <title>This page title is a perfect clickbait!</title>
+  <link>https://website.com/articles/best_article/</link>
+  <comments>https://website.com/articles/best_article/#__comments</comments>
+  [...]
+
+</item>
+```
+
+----
+
+### :material-calendar-start: `date_from_meta`: override dates from git log with page.meta { #date_from_meta }
 
 Basically, the plugin aims to retrieve creation and update dates from git log. But sometimes, it does not match the content workflow: markdown generated from sources, .
 
@@ -339,7 +289,7 @@ So, it's possible to use the dates manually specified into the [page metadata] t
 - `default_timezone`: timezone to use by default to make aware datetimes. Default to `UTC`. Introduced in version 1.3.0 with [PR 142](https://github.com/Guts/mkdocs-rss-plugin/pull/142).
 - `default_time`: time to use if page contains only a date. Useful to avoid the 'midnight syndrome' or have to specify hour in every single page. Default to `None`. 24h-clock format is expected: `%H:%M`. Example: `"14:20"`. Introduced in version 1.4.0 with [PR 145](https://github.com/Guts/mkdocs-rss-plugin/pull/145).
 
-#### Example
+#### Example { #date_from_meta_example }
 
 For example, in your `best_article.md` created in 2019, you can write the front-matter like this:
 
@@ -417,7 +367,7 @@ At the end, into the RSS you will get:
 
 ----
 
-### `feeds_filenames`: customize the output feed URL { #feeds_filenames }
+### :material-alphabet-latin: `feeds_filenames`: customize the output feed URL { #feeds_filenames }
 
 > Since version 1.13.0.
 
@@ -442,19 +392,57 @@ Default:
 
 ----
 
-### `pretty_print`: prettified XML
+### :material-clock-end: `feed_ttl`: feed's cache time { #feed_ttl }
 
-By default, the output file is minified, using Jinja2 strip options and manual work. It's possible to disable it and prettify the output using `pretty_print: true`.
+`feed_ttl`: number of minutes to be cached. Inserted as channel `ttl` element. See: [W3C RSS 2.0 documentation](https://www.w3schools.com/xml/rss_tag_ttl.asp).
+
+Default: `1440` (= 1 day)
+
+Output:
+
+```xml
+<ttl>1440</ttl>
+```
+
+----
+
+### :material-image-outline: `image`: set the channel image { #image }
+
+`image`: URL to image to use as feed illustration.
+
+Default: `None`.
+
+#### Example
 
 ```yaml
 plugins:
   - rss:
-      pretty_print: true
+      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
 ```
 
-Default: `False`.
+Output:
 
-### `match_path`: filter pages to include in feed
+```xml
+<image>
+  <url>
+    https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+  </url>
+  <title>MkDocs RSS Plugin</title>
+  <link>https://guts.github.io/mkdocs-rss-plugin/</link>
+</image>
+```
+
+----
+
+### :material-counter:  `length`: number of items to include in feed { #length }
+
+`length`: number of pages to include as feed items (entries).
+
+Default: `20`
+
+----
+
+### :material-regex: `match_path`: filter pages to include in feed { #match_path }
 
 This adds a `match_path` option which should be a regex pattern matching the path to your files within the `docs_dir`. For example if you had a blog under `docs/blog` where `docs_dir` is `docs` you might use:
 
@@ -474,7 +462,23 @@ plugins:
 
 Default: `.*`.
 
-### `url_parameters`: additional URL parameters
+----
+
+### :material-format-indent-increase: `pretty_print`: prettified XML { #pretty_print }
+
+By default, the output file is minified, using Jinja2 strip options and manual work. It's possible to disable it and prettify the output using `pretty_print: true`.
+
+```yaml
+plugins:
+  - rss:
+      pretty_print: true
+```
+
+Default: `False`.
+
+----
+
+### :material-track-light: `url_parameters`: additional URL parameters { #url_parameters }
 
 This option allows you to add parameters to the URLs of the RSS feed items. It works as a dictionary of keys/values that is passed to [Python *urllib.parse.urlencode*](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlencode).
 One possible use case is the addition of [Urchin Tracking Module (UTM) parameters](https://en.wikipedia.org/wiki/UTM_parameters):
@@ -506,7 +510,9 @@ Will result in:
 
 Default: `None`.
 
-### `use_git`: enable/disable git log
+----
+
+### :material-git: `use_git`: enable/disable git log { #use_git }
 
 If `false`, the plugin does not try use the git log nor does not check if this is a valid git repository and use informations exclusively from `page.meta` (YAML frontmatter).
 
@@ -514,7 +520,9 @@ Useful if you build your documentation in an environment where you can't easily 
 
 Default: `true`.
 
-### `use_material_social_cards`: enable/disable integration with Material Social Cards plugin
+----
+
+### :material-cards: `use_material_social_cards`: enable/disable integration with Material Social Cards plugin { #use_material_social_cards }
 
 If `false`, the integration with Social Cards is disabled.
 
