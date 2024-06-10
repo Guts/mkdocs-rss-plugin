@@ -1,27 +1,29 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
-exclude: "node_modules|migrations|.venv|.direnv|tests/dev/|tests/fixtures/"
+exclude: ".venv|.direnv|tests/dev/|tests/fixtures/"
 fail_fast: false
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
       - id: check-added-large-files
-        args: ["--maxkb=500"]
+        args:
+          - --maxkb=500
       - id: check-ast
       - id: check-builtin-literals
       - id: check-case-conflict
       - id: check-json
       - id: check-toml
       - id: check-yaml
-        args: [--unsafe]
+        args:
+          - --unsafe
       - id: detect-private-key
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
       - id: fix-encoding-pragma
-        args: [--remove]
+        args:
+          - --remove
       - id: trailing-whitespace
-        args: [--markdown-linebreak-ext=md]
+        args:
+          - --markdown-linebreak-ext=md
 
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
@@ -33,32 +35,40 @@ repos:
     hooks:
       - id: pyupgrade
         args:
-          - "--py38-plus"
+          - "--py310-plus"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.4.7"
     hooks:
       - id: ruff
-        args: ["--fix-only", "--target-version=py38"]
+        args:
+          - --fix-only
+          - --target-version=py310
 
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
-        args: ["--profile", "black", "--filter-files"]
+        args:
+          - --profile
+          - black
+          - --filter-files
 
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
       - id: black
-        args: ["--target-version=py38"]
+        args:
+          - --target-version=py310
 
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:
       - id: flake8
         language: python
-        args: ["--config=setup.cfg", "--select=E9,F63,F7,F82"]
+        args:
+          - --config=setup.cfg
+          - --select=E9,F63,F7,F82
 
 ci:
   autofix_prs: true
