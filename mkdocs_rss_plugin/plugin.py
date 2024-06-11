@@ -160,7 +160,9 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
 
         # check if default time complies with expected format
         try:
-            if not isinstance(self.config.date_from_meta.default_time, (datetime, time)):
+            if not isinstance(
+                self.config.date_from_meta.default_time, (datetime, time)
+            ):
                 self.config.date_from_meta.default_time = datetime.strptime(
                     self.config.date_from_meta.default_time, "%H:%M"
                 )
