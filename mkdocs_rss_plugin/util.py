@@ -31,9 +31,7 @@ from mkdocs_rss_plugin.git_manager.ci import CiHandler
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
-
-# conditional imports
-from mkdocs_rss_plugin.timezoner_py39 import set_datetime_zoneinfo
+from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
 
 # ############################################################################
 # ########## Globals #############
