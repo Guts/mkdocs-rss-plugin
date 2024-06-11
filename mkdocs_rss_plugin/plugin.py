@@ -7,7 +7,7 @@
 # standard library
 import json
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, time
 from email.utils import formatdate
 from pathlib import Path
 from re import compile as re_compile
@@ -160,9 +160,10 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
 
         # check if default time complies with expected format
         try:
-            self.config.date_from_meta.default_time = datetime.strptime(
-                self.config.date_from_meta.default_time, "%H:%M"
-            )
+            if not isinstance(self.config.date_from_meta.default_time, (datetime, time)):
+                self.config.date_from_meta.default_time = datetime.strptime(
+                    self.config.date_from_meta.default_time, "%H:%M"
+                )
         except ValueError as err:
             raise PluginError(
                 "Config error: `date_from_meta.default_time` value "
