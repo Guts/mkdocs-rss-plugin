@@ -6,15 +6,12 @@
 
 # standard library
 import logging
-import ssl
 from collections.abc import Iterable
 from datetime import date, datetime
 from email.utils import format_datetime
 from mimetypes import guess_type
 from pathlib import Path
 from typing import Any
-from urllib import request
-from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
@@ -24,6 +21,8 @@ from mkdocs.config.config_options import Config
 from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_datetime
+from requests import Session
+from requests.exceptions import HTTPError
 
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME, REMOTE_REQUEST_HEADERS
@@ -106,7 +105,11 @@ class Util:
         # save integrations
         self.social_cards = integration_material_social_cards
 
-    def build_url(self, base_url: str, path: str, args_dict: dict = None) -> str:
+        # http/s session
+        self.req_session = Session()
+        self.req_session.headers.update(REMOTE_REQUEST_HEADERS)
+
+    def build_url(self, base_url: str, path: str, args_dict: dict | None = None) -> str:
         """Build URL using base URL, cumulating existing and passed path, \
         then adding URL arguments.
 
@@ -604,51 +607,44 @@ class Util:
         image_url: str,
         http_method: str = "HEAD",
         attempt: int = 0,
-        ssl_context: ssl.SSLContext = None,
+        ssl_verify: bool = True,
     ) -> int | None:
-        """Retrieve length for remote images (starting with 'http' \
-            in meta.image or meta.illustration). \
-            It tries to perform a HEAD request and get the length from the headers. \
-            If it fails, it tries again with a GET and disabling SSL verification.
+        """Retrieve length for remote images (starting with 'http').
 
-        :param image_url: remote image URL
-        :type image_url: str
-        :param http_method: HTTP method used to perform request, defaults to "HEAD"
-        :type http_method: str, optional
-        :param attempt: request tries counter, defaults to 0
-        :type attempt: int, optional
-        :param ssl_context: SSL context, defaults to None
-        :type ssl_context: ssl.SSLContext, optional
+        Firstly, it tries to perform a HEAD request and get the length from the headers. \
+        If it fails, it tries again with a GET and disabling SSL verification.
 
-        :return: image length as str or None
-        :rtype: Optional[int]
+        Args:
+            image_url (str): image URL
+            http_method (str, optional): HTTP method to use for the request.
+                Defaults to "HEAD".
+            attempt (int, optional): request tries counter. Defaults to 0.
+            ssl_verify (bool, optional): option to perform SSL verification or not.
+                Defaults to True.
+
+        Returns:
+            int | None: image length as int or None
         """
-        # prepare request
-        req = request.Request(
-            image_url,
-            method=http_method,
-            headers=REMOTE_REQUEST_HEADERS,
-        )
         # first, try HEAD request to avoid downloading the image
         try:
             attempt += 1
-            remote_img = request.urlopen(url=req, context=ssl_context)
-            img_length = remote_img.getheader("content-length")
-        except (HTTPError, URLError) as err:
-            logging.warning(
+            req_response = self.req_session.request(
+                method=http_method, url=image_url, verify=ssl_verify
+            )
+            req_response.raise_for_status()
+            img_length = req_response.headers.get("content-length")
+        except HTTPError as err:
+            logger.debug(
                 f"Remote image could not been reached: {image_url}. "
                 f"Trying again with GET and disabling SSL verification. Attempt: {attempt}. "
                 f"Trace: {err}"
             )
             if attempt < 2:
                 return self.get_remote_image_length(
-                    image_url,
-                    http_method="GET",
-                    attempt=attempt,
-                    ssl_context=ssl._create_unverified_context(),
+                    image_url, http_method="GET", attempt=attempt, ssl_verify=False
                 )
             else:
-                logging.error(
+                logger.info(
                     f"Remote image is not reachable: {image_url} after "
                     f"{attempt} attempts. Trace: {err}"
                 )
