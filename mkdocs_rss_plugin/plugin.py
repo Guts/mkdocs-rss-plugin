@@ -10,14 +10,15 @@ from copy import deepcopy
 from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
-from re import compile
-from typing import Optional
+from re import compile as re_compile
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from mkdocs.config import config_options
+from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.exceptions import PluginError
 from mkdocs.plugins import BasePlugin, event_priority, get_plugin_logger
+from mkdocs.structure.files import Files
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
@@ -51,32 +52,33 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 class GitRssPlugin(BasePlugin[RssPluginConfig]):
     """Main class for MkDocs plugin."""
 
+    # allow to set the plugin multiple times in the same mkdocs config
+    supports_multiple_instances = True
+
     def __init__(self):
         """Instanciation."""
-        # dates source
-        self.src_date_created = self.src_date_updated = "git"
-        self.meta_datetime_format: Optional[str] = None
-        self.meta_default_timezone: str = "UTC"
-        self.meta_default_time: Optional[datetime.time] = None
         # pages storage
         self.pages_to_filter: list = []
         # prepare output feeds
         self.feed_created: dict = {}
         self.feed_updated: dict = {}
 
-    def on_config(self, config: config_options.Config) -> dict:
+    def on_config(self, config: MkDocsConfig) -> MkDocsConfig:
         """The config event is the first event called on build and
         is run immediately after the user configuration is loaded and validated.
         Any alterations to the config should be made here.
-        https://www.mkdocs.org/user-guide/plugins/#on_config
 
-        :param config: global configuration object
-        :type config: config_options.Config
+        See: https://www.mkdocs.org/user-guide/plugins/#on_config
 
-        :raises FileExistsError: if the template for the RSS feed is not found
+        Args:
+            config (config_options.Config): global configuration object
 
-        :return: plugin configuration object
-        :rtype: dict
+        Raises:
+            FileExistsError: if the template for the RSS feed is not found
+            PluginError: if the 'date_from_meta.default_time' format does not comply
+
+        Returns:
+            MkDocsConfig: global configuration object
         """
         # Skip if disabled
         if not self.config.enabled:
@@ -129,48 +131,56 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             base_feed["logo_url"] = self.config.image
 
         # pattern to match pages included in output
-        self.match_path_pattern = compile(self.config.match_path)
+        self.match_path_pattern = re_compile(self.config.match_path)
 
         # date handling
-        if self.config.date_from_meta is not None:
-            self.src_date_created = self.config.date_from_meta.get("as_creation", False)
-            self.src_date_updated = self.config.date_from_meta.get("as_update", False)
-            self.meta_datetime_format = self.config.date_from_meta.get(
-                "datetime_format", "%Y-%m-%d %H:%M"
-            )
-            self.meta_default_timezone = self.config.date_from_meta.get(
-                "default_timezone", "UTC"
-            )
-            self.meta_default_time = self.config.date_from_meta.get(
-                "default_time", None
-            )
-            if self.meta_default_time:
-                try:
-                    self.meta_default_time = datetime.strptime(
-                        self.meta_default_time, "%H:%M"
-                    )
-                except ValueError as err:
-                    raise PluginError(
-                        "Config error: `date_from_meta.default_time` value "
-                        f"'{self.meta_default_time}' format doesn't match the expected "
-                        f"format %H:%M. Trace: {err}"
-                    )
-            else:
-                self.meta_default_time = datetime.min
-
-            if self.config.use_git:
-                logger.debug(
-                    "Dates will be retrieved FIRSTLY from page meta (yaml "
-                    "frontmatter). The git log will be used as fallback."
-                )
-            else:
-                logger.debug(
-                    "Dates will be retrieved ONLY from page meta (yaml "
-                    "frontmatter). The build date will be used as fallback, without any "
-                    "call to Git."
-                )
-        else:
+        if (
+            self.config.date_from_meta.as_creation == "git"
+            and self.config.date_from_meta.as_update == "git"
+        ):
             logger.debug("Dates will be retrieved from git log.")
+        elif any(
+            [
+                isinstance(self.config.date_from_meta.as_creation, bool),
+                isinstance(self.config.date_from_meta.as_update, bool),
+            ]
+        ):
+            deprecation_msg = (
+                "Since version 1.13, using a boolean for "
+                "'date_from_meta.as_creation' and 'date_from_meta.as_update' is "
+                "deprecated. Please update your "
+                "`rss` plugin settings in your Mkdocs configuration "
+                f"({config.config_file_path}) by using a str or removing the value if "
+                "you were using `False`., "
+            )
+            logger.warning(DeprecationWarning(deprecation_msg))
+            self.config.date_from_meta.as_creation = (
+                self.config.date_from_meta.as_update
+            ) = "git"
+
+        # check if default time complies with expected format
+        try:
+            self.config.date_from_meta.default_time = datetime.strptime(
+                self.config.date_from_meta.default_time, "%H:%M"
+            )
+        except ValueError as err:
+            raise PluginError(
+                "Config error: `date_from_meta.default_time` value "
+                f"'{self.config.date_from_meta.default_time}' format doesn't match the "
+                f"expected format %H:%M. Trace: {err}"
+            )
+
+        if self.config.use_git:
+            logger.debug(
+                "Dates will be retrieved FIRSTLY from page meta (yaml "
+                "frontmatter). The git log will be used as fallback."
+            )
+        else:
+            logger.debug(
+                "Dates will be retrieved ONLY from page meta (yaml "
+                "frontmatter). The build date will be used as fallback, without any "
+                "call to Git."
+            )
 
         # create 2 final dicts
         self.feed_created = deepcopy(base_feed)
@@ -197,34 +207,32 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 "configuration file whereas a URL is mandatory to publish. "
                 "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
             )
-            self.feed_created["rss_url"] = self.feed_updated["rss_url"] = None
+            self.feed_created["rss_url"] = self.feed_updated["json_url"] = (
+                self.feed_updated["rss_url"]
+            ) = self.feed_updated["json_url"] = None
 
         # ending event
         return config
 
     @event_priority(priority=-75)
     def on_page_content(
-        self, html: str, page: Page, config: config_options.Config, files
-    ) -> Optional[str]:
-        """The page_content event is called after the Markdown text is rendered
-        to HTML (but before being passed to a template) and can be used to alter
-        the HTML body of the page.
+        self, html: str, page: Page, config: MkDocsConfig, files: Files
+    ) -> str | None:
+        """The page_content event is called after the Markdown text is rendered to HTML
+            (but before being passed to a template) and can be used to alter the HTML
+            body of the page.
 
-        https://www.mkdocs.org/user-guide/plugins/#on_page_content
+        See: https://www.mkdocs.org/user-guide/plugins/#on_page_content
 
-        :param html: HTML rendered from Markdown source as string
-        :type html: str
-        :param page: mkdocs.nav.Page instance
-        :type page: Page
-        :param config: global configuration object
-        :type config: config_options.Config
-        :param files: global navigation object
-        :type files: [type]
+        Args:
+            html (str): HTML rendered from Markdown source as string
+            page (Page): `mkdocs.structure.pages.Page` instance
+            config (MkDocsConfig): global configuration object
+            files (Files): global files collection
 
-        :return: HTML rendered from Markdown source as string
-        :rtype: str
+        Returns:
+            Optional[str]: HTML rendered from Markdown source as string
         """
-
         # Skip if disabled
         if not self.config.enabled:
             return
@@ -241,11 +249,11 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         # retrieve dates from git log
         page_dates = self.util.get_file_dates(
             in_page=page,
-            source_date_creation=self.src_date_created,
-            source_date_update=self.src_date_updated,
-            meta_datetime_format=self.meta_datetime_format,
-            meta_default_timezone=self.meta_default_timezone,
-            meta_default_time=self.meta_default_time,
+            source_date_creation=self.config.date_from_meta.as_creation,
+            source_date_update=self.config.date_from_meta.as_update,
+            meta_datetime_format=self.config.date_from_meta.datetime_format,
+            meta_default_timezone=self.config.date_from_meta.default_timezone,
+            meta_default_time=self.config.date_from_meta.default_time,
         )
 
         # handle custom URL parameters
@@ -295,7 +303,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             )
         )
 
-    def on_post_build(self, config: config_options.Config) -> Optional[dict]:
+    def on_post_build(self, config: config_options.Config) -> dict | None:
         """The post_build event does not alter any variables. \
         Use this event to call post-build scripts. \
         See: <https://www.mkdocs.org/user-guide/plugins/#on_post_build>

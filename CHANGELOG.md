@@ -17,6 +17,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.13.0 - 2024-06-10
+
+### Bugs fixes 🐛
+
+### Features and enhancements 🎉
+
+* feature: allow customize output filenames by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/278>
+* feature: allow multiple instances by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/280>
+* chore: set minimal python version to 3.10 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/286>
+* chore(deps): set minimum Mkdocs version to 1.4 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/283>
+* Refacto: modernize config date from meta by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/285>
+
+### Tooling 🔧
+
+* ci: use trusted publisher and remove token by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/271>
+* tooling: add SonarCloud config by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/279>
+
+### Documentation 📖
+
+* Documentation: improve guide how to make JSON feed discoverable by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/272>
+* Docs: order settings aZ and minor improvements by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/281>
+* docs: complete JSON schema with latest features by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/282>
+* docs: fix internal links by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/284>
+
+----
+
 ## 1.12.2 - 2024-04-30
 
 ### Bugs fixes 🐛

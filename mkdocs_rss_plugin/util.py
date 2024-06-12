@@ -8,12 +8,12 @@
 import logging
 import re
 import ssl
-import sys
+from collections.abc import Iterable
 from datetime import date, datetime
 from email.utils import format_datetime
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Any, Iterable, Optional, Tuple, Union
+from typing import Any
 from urllib import request
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urljoin, urlparse, urlunparse
@@ -32,12 +32,7 @@ from mkdocs_rss_plugin.git_manager.ci import CiHandler
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
-
-# conditional imports
-if sys.version_info < (3, 9):
-    from mkdocs_rss_plugin.timezoner_pre39 import set_datetime_zoneinfo
-else:
-    from mkdocs_rss_plugin.timezoner_py39 import set_datetime_zoneinfo
+from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
 
 # ############################################################################
 # ########## Globals #############
@@ -90,9 +85,9 @@ class Util:
         self,
         path: str = ".",
         use_git: bool = True,
-        integration_material_social_cards: Optional[
+        integration_material_social_cards: None | (
             IntegrationMaterialSocialCards
-        ] = None,
+        ) = None,
     ):
         """Class hosting the plugin logic.
 
@@ -171,7 +166,7 @@ class Util:
             url_parts[4] = urlencode(args_dict)
         return urlunparse(url_parts)
 
-    def get_value_from_dot_key(self, data: dict, dot_key: Union[str, bool]) -> Any:
+    def get_value_from_dot_key(self, data: dict, dot_key: str | bool) -> Any:
         """
         Retrieves a value from a dictionary using a dot notation key.
 
@@ -200,8 +195,8 @@ class Util:
         source_date_update: str = "git",
         meta_datetime_format: str = "%Y-%m-%d %H:%M",
         meta_default_timezone: str = "UTC",
-        meta_default_time: Optional[datetime] = None,
-    ) -> Tuple[datetime, datetime]:
+        meta_default_time: datetime | None = None,
+    ) -> tuple[datetime, datetime]:
         """Extract creation and update dates from page metadata (yaml frontmatter) or
         git log for given file.
 
@@ -357,7 +352,7 @@ class Util:
                 get_build_datetime(),
             )
 
-    def get_authors_from_meta(self, in_page: Page) -> Optional[Tuple[str]]:
+    def get_authors_from_meta(self, in_page: Page) -> tuple[str] | None:
         """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
         str and iterable as values types.
 
@@ -541,7 +536,7 @@ class Util:
             )
             return ""
 
-    def get_image(self, in_page: Page, base_url: str) -> Optional[Tuple[str, str, int]]:
+    def get_image(self, in_page: Page, base_url: str) -> tuple[str, str, int] | None:
         """Get page's image from page meta or social cards and returns properties.
 
         Args:
@@ -590,9 +585,9 @@ class Util:
             else:
                 logger.debug(
                     f"Social card: {img_local_path} still not exists. Trying to "
-                    f"retrieve length from remote image: {img_url}"
+                    f"retrieve length from remote image: {img_url}. "
                     "Note that would work only if the social card image has been "
-                    "published before)."
+                    "already published before the build."
                 )
                 img_length = self.get_remote_image_length(image_url=img_url)
 
@@ -643,7 +638,7 @@ class Util:
         http_method: str = "HEAD",
         attempt: int = 0,
         ssl_context: ssl.SSLContext = None,
-    ) -> Optional[int]:
+    ) -> int | None:
         """Retrieve length for remote images (starting with 'http' \
             in meta.image or meta.illustration). \
             It tries to perform a HEAD request and get the length from the headers. \
@@ -695,7 +690,7 @@ class Util:
         return int(img_length)
 
     @staticmethod
-    def get_site_url(mkdocs_config: Config) -> Optional[str]:
+    def get_site_url(mkdocs_config: Config) -> str | None:
         """Extract site URL from MkDocs configuration and enforce the behavior to ensure \
         returning a str with length > 0 or None. If exists, it adds an ending slash.
 
@@ -721,7 +716,7 @@ class Util:
 
         return site_url
 
-    def guess_locale(self, mkdocs_config: Config) -> Optional[str]:
+    def guess_locale(self, mkdocs_config: Config) -> str | None:
         """Extract language code from MkDocs or Theme configuration.
 
         :param mkdocs_config: configuration object

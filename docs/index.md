@@ -56,17 +56,24 @@ plugins:
 
 As examples, here come the feeds generated for this documentation:
 
-- [feed_rss_created.xml](feed_rss_created.xml) for  latest **created** pages: [W3C validator](https://validator.w3.org/feed/check.cgi?url=https%3A//guts.github.io/mkdocs-rss-plugin/feed_rss_created.xml)
-- [feed_rss_updated.xml](feed_rss_updated.xml) for latest **updated** pages: [W3C validator](https://validator.w3.org/feed/check.cgi?url=https%3A//guts.github.io/mkdocs-rss-plugin/feed_rss_updated.xml)
+- [feed_rss_created.xml](feed_rss_created.xml) and [feed_json_created.json](feed_json_created.json) for  latest **created** pages: [W3C validator](https://validator.w3.org/feed/check.cgi?url=https%3A//guts.github.io/mkdocs-rss-plugin/feed_rss_created.xml)
+- [feed_rss_updated.xml](feed_rss_updated.xml) and [feed_json_updated.json](feed_json_updated.json) for latest **updated** pages: [W3C validator](https://validator.w3.org/feed/check.cgi?url=https%3A//guts.github.io/mkdocs-rss-plugin/feed_rss_updated.xml)
 
-Or it could be displayed as a Feedly follow button:
+Or it could be displayed as a RSS or Feedly follow button:
 
-[![Feedly button](https://s3.feedly.com/img/follows/feedly-follow-rectangle-flat-big_2x.png "Follow us on Feedly"){: width=130 height= 50 loading=lazy }](https://feedly.com/i/subscription/feed%2Fhttps%3A%2F%2Fguts.github.io%2Fmkdocs-rss-plugin%2Ffeed_rss_created.xml)
+[![RSS logo](assets/rss_icon.svg "Subscribe to our RSS"){: width=130  loading=lazy }](https://guts.github.io/mkdocs-rss-plugin/feed_rss_created.xml)
+[![Feedly button](https://s3.feedly.com/img/follows/feedly-follow-rectangle-flat-big_2x.png "Follow us on Feedly"){: width=130 loading=lazy }](https://feedly.com/i/subscription/feed%2Fhttps%3A%2F%2Fguts.github.io%2Fmkdocs-rss-plugin%2Ffeed_rss_created.xml)
 {: align=middle }
 
 For JSON Feed, you can use the icon:
 
-[JSON Feed icon](https://jsonfeed.org/graphics/icon.png)
+[![JSON Feed icon](https://jsonfeed.org/graphics/icon.png){: width=130 loading=lazy }](https://guts.github.io/mkdocs-rss-plugin/feed_json_created.json)
+{: align=middle }
+
+!!! tip
+    See how to make your [RSS](integrations.md#reference-rss-feeds-in-html-meta-tags) and [JSON](integrations.md#reference-json-feeds-in-html-meta-tags) discoverable.
+
+----
 
 ## Credits
 
@@ -74,7 +81,7 @@ For JSON Feed, you can use the icon:
 
 - Plugin logic is inspired from [Tim Vink git-based plugins](https://github.com/timvink?tab=repositories&q=mkdocs-git&type=&language=) and main parts of Git stuff are nearly copied/pasted.
 - Using magic mainly from:
-    - [GitPython](https://gitpython.readthedocs.io/)
-    - [Jinja2](https://jinja.palletsprojects.com/)
+  - [GitPython](https://gitpython.readthedocs.io/)
+  - [Jinja2](https://jinja.palletsprojects.com/)
 - Documentation colors are a tribute to the classic RSS color scheme: orange and white.
 - Logo generated with DALL·E.
