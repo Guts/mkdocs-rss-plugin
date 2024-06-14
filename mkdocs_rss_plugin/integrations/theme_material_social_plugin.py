@@ -62,7 +62,7 @@ class IntegrationMaterialSocialCards:
                 self.IS_SOCIAL_PLUGIN_CARDS_ENABLED,
             ]
         )
-        self.IS_INSIDERS = self.is_theme_material_insiders()
+        self.IS_INSIDERS = self.is_mkdocs_theme_material_insiders()
 
         # except if the end-user wants to disable it
         if switch_force is False:
@@ -83,7 +83,7 @@ class IntegrationMaterialSocialCards:
                 mkdocs_config=mkdocs_config
             )
 
-    def is_theme_material(self, mkdocs_config: MkDocsConfig) -> bool:
+    def is_mkdocs_theme_material(self, mkdocs_config: MkDocsConfig) -> bool:
         """Check if the theme set in mkdocs.yml is material or not.
 
         Args:
@@ -95,7 +95,7 @@ class IntegrationMaterialSocialCards:
         self.IS_THEME_MATERIAL = mkdocs_config.theme.name == "material"
         return self.IS_THEME_MATERIAL
 
-    def is_theme_material_insiders(self) -> bool | None:
+    def is_mkdocs_theme_material_insiders(self) -> bool | None:
         """Check if the material theme is community or insiders edition.
 
         Returns:
@@ -121,7 +121,7 @@ class IntegrationMaterialSocialCards:
         Returns:
             bool: True if the theme material and the plugin social cards is enabled.
         """
-        if not self.is_theme_material(mkdocs_config=mkdocs_config):
+        if not self.is_mkdocs_theme_material(mkdocs_config=mkdocs_config):
             logger.debug("Installed theme is not 'material'. Integration disabled.")
             return False
 
