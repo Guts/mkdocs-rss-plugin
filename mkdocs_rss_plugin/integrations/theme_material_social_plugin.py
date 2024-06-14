@@ -15,6 +15,12 @@ from mkdocs.structure.pages import Page
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
 
+# conditional
+try:
+    from material import __version__ as material_version
+except ImportError:
+    material_version = None
+
 # ############################################################################
 # ########## Globals #############
 # ################################
@@ -32,6 +38,7 @@ class IntegrationMaterialSocialCards:
     IS_SOCIAL_PLUGIN_ENABLED: bool = True
     IS_SOCIAL_PLUGIN_CARDS_ENABLED: bool = True
     IS_THEME_MATERIAL: bool = False
+    IS_INSIDERS: bool = False
 
     def __init__(self, mkdocs_config: Config, switch_force: bool = True) -> None:
         """Integration instanciation.
@@ -83,6 +90,23 @@ class IntegrationMaterialSocialCards:
         """
         self.IS_THEME_MATERIAL = mkdocs_config.theme.name == "material"
         return self.IS_THEME_MATERIAL
+
+    def is_theme_material_insiders(self) -> bool | None:
+        """Check if the material theme is community or insiders edition.
+
+        Returns:
+            bool: True if the theme is Insiders edition. False if community. None if
+                the Material theme is not installed.
+        """
+        if not self.IS_THEME_MATERIAL:
+            return None
+
+        if material_version is not None and "insiders" in material_version:
+            logger.debug("Material theme edition INSIDERS")
+            return True
+        else:
+            logger.debug("Material theme edition COMMUNITY")
+            return False
 
     def is_social_plugin_enabled_mkdocs(self, mkdocs_config: Config) -> bool:
         """Check if social plugin is installed and enabled.
