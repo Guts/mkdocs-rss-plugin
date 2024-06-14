@@ -8,7 +8,7 @@
 from pathlib import Path
 
 # 3rd party
-from mkdocs.config.config_options import Config
+from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
 
@@ -40,11 +40,11 @@ class IntegrationMaterialSocialCards:
     IS_THEME_MATERIAL: bool = False
     IS_INSIDERS: bool = False
 
-    def __init__(self, mkdocs_config: Config, switch_force: bool = True) -> None:
+    def __init__(self, mkdocs_config: MkDocsConfig, switch_force: bool = True) -> None:
         """Integration instanciation.
 
         Args:
-            mkdocs_config (Config): Mkdocs website configuration object.
+            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
             switch_force (bool, optional): option to force integration disabling. Set
                 it to False to disable it even if Social Cards are enabled in Mkdocs
                 configuration. Defaults to True.
@@ -62,6 +62,7 @@ class IntegrationMaterialSocialCards:
                 self.IS_SOCIAL_PLUGIN_CARDS_ENABLED,
             ]
         )
+        self.IS_INSIDERS = self.is_theme_material_insiders()
 
         # except if the end-user wants to disable it
         if switch_force is False:
@@ -75,15 +76,18 @@ class IntegrationMaterialSocialCards:
         if self.IS_ENABLED:
             self.mkdocs_site_url = mkdocs_config.site_url
             self.mkdocs_site_build_dir = mkdocs_config.site_dir
-            self.social_cards_assets_dir = self.get_social_cards_dir(
+            self.social_cards_assets_dir = self.get_social_cards_build_dir(
+                mkdocs_config=mkdocs_config
+            )
+            self.social_cards_cache_dir = self.get_social_cards_cache_dir(
                 mkdocs_config=mkdocs_config
             )
 
-    def is_theme_material(self, mkdocs_config: Config) -> bool:
+    def is_theme_material(self, mkdocs_config: MkDocsConfig) -> bool:
         """Check if the theme set in mkdocs.yml is material or not.
 
         Args:
-            mkdocs_config (Config): Mkdocs website configuration object.
+            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
 
         Returns:
             bool: True if the theme's name is 'material'. False if not.
@@ -108,11 +112,11 @@ class IntegrationMaterialSocialCards:
             logger.debug("Material theme edition COMMUNITY")
             return False
 
-    def is_social_plugin_enabled_mkdocs(self, mkdocs_config: Config) -> bool:
+    def is_social_plugin_enabled_mkdocs(self, mkdocs_config: MkDocsConfig) -> bool:
         """Check if social plugin is installed and enabled.
 
         Args:
-            mkdocs_config (Config): Mkdocs website configuration object.
+            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
 
         Returns:
             bool: True if the theme material and the plugin social cards is enabled.
@@ -136,11 +140,13 @@ class IntegrationMaterialSocialCards:
         self.IS_SOCIAL_PLUGIN_CARDS_ENABLED = True
         return True
 
-    def is_social_plugin_and_cards_enabled_mkdocs(self, mkdocs_config: Config) -> bool:
+    def is_social_plugin_and_cards_enabled_mkdocs(
+        self, mkdocs_config: MkDocsConfig
+    ) -> bool:
         """Check if social cards plugin is enabled.
 
         Args:
-            mkdocs_config (Config): Mkdocs website configuration object.
+            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
 
         Returns:
             bool: True if the theme material and the plugin social cards is enabled.
@@ -177,12 +183,12 @@ class IntegrationMaterialSocialCards:
             "cards", fallback_value
         )
 
-    def get_social_cards_dir(self, mkdocs_config: Config) -> str:
+    def get_social_cards_build_dir(self, mkdocs_config: MkDocsConfig) -> str:
         """Get Social Cards folder within Mkdocs site_dir.
         See: https://squidfunk.github.io/mkdocs-material/plugins/social/#config.cards_dir
 
         Args:
-            mkdocs_config (Config): Mkdocs website configuration object.
+            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
 
         Returns:
             str: True if the theme material and the plugin social cards is enabled.
@@ -196,10 +202,28 @@ class IntegrationMaterialSocialCards:
 
         return social_plugin_cfg.config.cards_dir
 
+    def get_social_cards_cache_dir(self, mkdocs_config: MkDocsConfig) -> str:
+        """Get Social Cards folder within Mkdocs site_dir.
+        See: https://squidfunk.github.io/mkdocs-material/plugins/social/#config.cards_dir
+
+        Args:
+            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
+
+        Returns:
+            str: True if the theme material and the plugin social cards is enabled.
+        """
+        social_plugin_cfg = mkdocs_config.plugins.get("material/social")
+
+        logger.debug(
+            "Social cards cache folder: " f"{social_plugin_cfg.config.cache_dir}."
+        )
+
+        return social_plugin_cfg.config.cache_dir
+
     def get_social_card_build_path_for_page(
         self, mkdocs_page: Page, mkdocs_site_dir: str | None = None
     ) -> Path:
-        """Get social card URL for a specific page in documentation.
+        """Get social card path in Mkdocs build dir for a specific page.
 
         Args:
             mkdocs_page (Page): Mkdocs page object.
@@ -207,13 +231,29 @@ class IntegrationMaterialSocialCards:
                 'class.mkdocs_site_build_dir' is used. is Defaults to None.
 
         Returns:
-            str: URL to the image once published
+            str: path to the image once published
         """
         if mkdocs_site_dir is None and self.mkdocs_site_build_dir:
             mkdocs_site_dir = self.mkdocs_site_build_dir
 
         return Path(
             f"{mkdocs_site_dir}/{self.social_cards_assets_dir}/"
+            f"{Path(mkdocs_page.file.src_uri).with_suffix('.png')}"
+        )
+
+    def get_social_card_cache_path_for_page(self, mkdocs_page: Page) -> Path:
+        """Get social card path in social plugin cache folder for a specific page.
+
+        Args:
+            mkdocs_page (Page): Mkdocs page object.
+            social_plugin_cache_dir (Optional[str], optional): Mkdocs build site dir. If None, the
+                'class.mkdocs_site_build_dir' is used. is Defaults to None.
+
+        Returns:
+            str: path to the image once published
+        """
+        return Path(
+            f"{self.social_cards_assets_dir}/"
             f"{Path(mkdocs_page.file.src_uri).with_suffix('.png')}"
         )
 
