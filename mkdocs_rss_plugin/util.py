@@ -17,7 +17,7 @@ from urllib.parse import urlencode, urlparse, urlunparse
 # 3rd party
 import markdown
 from git import GitCommandError, GitCommandNotFound, InvalidGitRepositoryError, Repo
-from mkdocs.config.config_options import Config
+from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_datetime
@@ -162,11 +162,11 @@ class Util:
     def get_file_dates(
         self,
         in_page: Page,
-        source_date_creation: str = "git",
-        source_date_update: str = "git",
-        meta_datetime_format: str = "%Y-%m-%d %H:%M",
-        meta_default_timezone: str = "UTC",
-        meta_default_time: datetime | None = None,
+        source_date_creation: str,
+        source_date_update: str,
+        meta_datetime_format: str,
+        meta_default_timezone: str,
+        meta_default_time: datetime,
     ) -> tuple[datetime, datetime]:
         """Extract creation and update dates from page metadata (yaml frontmatter) or
         git log for given file.
@@ -189,6 +189,7 @@ class Util:
         :return: tuple of timestamps (creation date, last commit date)
         :rtype: Tuple[datetime, datetime]
         """
+        logger.debug(f"Extracting dates for {in_page.file.src_uri}")
         # empty vars
         dt_created = dt_updated = None
         if meta_default_time is None:
@@ -233,13 +234,13 @@ class Util:
             )
 
             if isinstance(dt_updated, str):
-                logger.info(
-                    f"Update date of {in_page.file.abs_src_path} is an "
-                    f"a character string: {dt_updated} ({type(dt_updated)})"
+                logger.debug(
+                    f"Update date of {in_page.file.abs_src_path} is a "
+                    f"character string: {dt_updated} ({type(dt_updated)})"
                 )
 
             elif dt_updated is None:
-                logger.info(
+                logger.debug(
                     f"Update date of {in_page.file.abs_src_path} is an "
                     f"unrecognized type: {dt_updated} ({type(dt_updated)})"
                 )
@@ -287,8 +288,6 @@ class Util:
                 dt_updated = set_datetime_zoneinfo(
                     datetime.fromtimestamp(float(dt_updated)), meta_default_timezone
                 )
-        else:
-            pass
 
         # results
         if all([dt_created, dt_updated]):
@@ -297,25 +296,31 @@ class Util:
                 dt_updated,
             )
         elif dt_created:
-            logger.info(
-                f"Updated date could not be retrieved for page: "
-                f"{in_page.file.abs_src_path}. Maybe it has never been committed yet?"
+            log_msg = (
+                "Updated date could not be retrieved for page: "
+                f"{in_page.file.abs_src_path}. Fallback to build date."
             )
+            if self.use_git:
+                log_msg += "Maybe it has never been committed yet?"
+            logger.debug(log_msg)
             return (
                 dt_created,
                 get_build_datetime(),
             )
         elif dt_updated:
-            logger.info(
-                f"Creation date could not be retrieved for page: "
-                f"{in_page.file.abs_src_path}. Maybe it has never been committed yet?"
+            log_msg = (
+                "Creation date could not be retrieved for page: "
+                f"{in_page.file.abs_src_path}. Fallback to build date."
             )
+            if self.use_git:
+                log_msg += "Maybe it has never been committed yet?"
+            logger.debug(log_msg)
             return (
                 get_build_datetime(),
                 dt_updated,
             )
         else:
-            logging.warning(
+            logger.info(
                 f"Dates could not be retrieved for page: {in_page.file.abs_src_path}."
             )
             return (
@@ -363,7 +368,7 @@ class Util:
 
     def get_categories_from_meta(
         self, in_page: Page, categories_labels: Iterable
-    ) -> tuple:
+    ) -> list | None:
         """Returns category from page meta.
 
         :param in_page: input page to parse
@@ -372,7 +377,7 @@ class Util:
         :type categories_labels: Iterable
 
         :return: found categories
-        :rtype: tuple
+        :rtype: list
         """
         if not categories_labels:
             return None
@@ -384,8 +389,6 @@ class Util:
                     output_categories.extend(in_page.meta.get(category_label))
                 elif isinstance(in_page.meta.get(category_label), str):
                     output_categories.append(in_page.meta.get(category_label))
-                else:
-                    pass
             else:
                 continue
         return sorted(output_categories)
@@ -426,7 +429,7 @@ class Util:
                     date=date_metatag_value, time=meta_default_time.time()
                 )
             else:
-                logger.info(
+                logger.debug(
                     f"Incompatible date type: {type(date_metatag_value)}. It must be: "
                     "date, datetime or str (complying with defined strftime format)."
                 )
@@ -551,6 +554,7 @@ class Util:
             )
 
             if img_local_path.is_file():
+                logger.debug("Local image already exists. Using it to get its length.")
                 img_length = img_local_path.stat().st_size
             else:
                 logger.debug(
@@ -585,7 +589,7 @@ class Util:
         # return final tuple
         return (img_url, mime_type, img_length)
 
-    def get_local_image_length(self, page_path: str, path_to_append: str) -> int:
+    def get_local_image_length(self, page_path: str, path_to_append: str) -> int | None:
         """Calculates local image size in octets.
 
         Args:
@@ -653,7 +657,7 @@ class Util:
         return int(img_length)
 
     @staticmethod
-    def get_site_url(mkdocs_config: Config) -> str | None:
+    def get_site_url(mkdocs_config: MkDocsConfig) -> str | None:
         """Extract site URL from MkDocs configuration and enforce the behavior to ensure \
         returning a str with length > 0 or None. If exists, it adds an ending slash.
 
@@ -679,7 +683,7 @@ class Util:
 
         return site_url
 
-    def guess_locale(self, mkdocs_config: Config) -> str | None:
+    def guess_locale(self, mkdocs_config: MkDocsConfig) -> str | None:
         """Extract language code from MkDocs or Theme configuration.
 
         :param mkdocs_config: configuration object
