@@ -56,7 +56,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     supports_multiple_instances = True
 
     def __init__(self):
-        """Instanciation."""
+        """Instantiation."""
         # pages storage
         self.pages_to_filter: list = []
         # prepare output feeds
@@ -98,7 +98,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             switch_force=self.config.use_material_social_cards,
         )
 
-        # instanciate plugin tooling
+        # instantiate plugin tooling
         self.util = Util(
             use_git=self.config.use_git,
             integration_material_social_cards=self.integration_material_social_cards,

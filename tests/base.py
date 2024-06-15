@@ -45,7 +45,7 @@ class BaseTest(unittest.TestCase):
         not enabled into the mkdocs.yml.
         :rtype: Config
         """
-        # instanciate plugin
+        # instantiate plugin
         cfg_mkdocs = load_config(str(mkdocs_yml_filepath.resolve()))
 
         plugins = cfg_mkdocs.plugins

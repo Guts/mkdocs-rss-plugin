@@ -668,7 +668,7 @@ class Util:
         :rtype: str or None
         """
         # this method exists because the following line returns an empty string instead of \
-        # None (because the key alwayus exists)
+        # None (because the key always exists)
         defined_site_url = mkdocs_config.site_url
 
         # cases

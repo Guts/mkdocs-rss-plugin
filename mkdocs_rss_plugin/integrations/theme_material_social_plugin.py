@@ -34,7 +34,7 @@ class IntegrationMaterialSocialCards:
     IS_THEME_MATERIAL: bool = False
 
     def __init__(self, mkdocs_config: Config, switch_force: bool = True) -> None:
-        """Integration instanciation.
+        """Integration instantiation.
 
         Args:
             mkdocs_config (Config): Mkdocs website configuration object.
