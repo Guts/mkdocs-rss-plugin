@@ -661,7 +661,9 @@ class TestBuildRss(BaseTest):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
-                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_custom_title_description.yml"),
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_custom_title_description.yml"
+                ),
                 output_path=tmpdirname,
             )
             if cli_result.exception is not None:

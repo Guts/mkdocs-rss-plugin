@@ -115,16 +115,20 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             "author": config.site_author or None,
             "buildDate": formatdate(get_build_timestamp()),
             "copyright": config.copyright,
-            "description": self.config['description'] if self.config['description'] \
-                else config['site_description'],
+            "description": (
+                self.config["description"]
+                if self.config["description"]
+                else config["site_description"]
+            ),
             "entries": [],
             "generator": f"{__title__} - v{__version__}",
             "html_url": self.util.get_site_url(mkdocs_config=config),
             "language": self.util.guess_locale(mkdocs_config=config),
             "pubDate": formatdate(get_build_timestamp()),
             "repo_url": config.repo_url,
-            "title": self.config['title'] if self.config['title'] \
-                else config['site_name'],
+            "title": (
+                self.config["title"] if self.config["title"] else config["site_name"]
+            ),
             "ttl": self.config.feed_ttl,
         }
 
