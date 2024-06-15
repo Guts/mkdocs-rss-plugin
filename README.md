@@ -53,6 +53,7 @@ plugins:
         datetime_format: "%Y-%m-%d %H:%M"
         default_time: "09:30"
         default_timezone: Europe/Paris
+      description: "My custom feed description"  # MkDocs site_description: will be used if this key is not present
       enabled: true
       feeds_filenames:
         json_created: feed_json_created.json
@@ -66,6 +67,7 @@ plugins:
       match_path: ".*"
       pretty_print: false
       rss_feed_enabled: true
+      title: "My custom feed title"  # MkDocs site_name: will be used if this key is not present
       url_parameters:
         utm_source: "documentation"
         utm_medium: "RSS"
