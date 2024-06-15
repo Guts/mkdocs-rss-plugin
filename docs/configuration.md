@@ -367,6 +367,24 @@ At the end, into the RSS you will get:
 
 ----
 
+### :material-subtitles: `description`: override site description { #description }
+
+This option allows you to override the default MkDocs site description for the description tag in this RSS feed.
+This is useful if you have multiple instances of this plugin for multiple feeds. (For example, one feed
+for the blog, and a second for documentation updates.)
+
+This setting is optional. If you do not include it, the default site description will be used.
+
+```yaml
+plugins:
+  - rss:
+      description: The best blog from the best site
+```
+
+Default: Use the default MkDocs `site_description:`.
+
+----
+
 ### :material-alphabet-latin: `feeds_filenames`: customize the output feed URL { #feeds_filenames }
 
 > Since version 1.13.0.
@@ -475,6 +493,24 @@ plugins:
 ```
 
 Default: `False`.
+
+----
+
+### :material-format-title: `title`: override site title { #title }
+
+This option allows you to override the default MkDocs site title for the title tag in this RSS feed.
+This is useful if you have multiple instances of this plugin for multiple feeds. (For example, one feed
+for the blog, and a second for documentation updates.)
+
+This setting is optional. If you do not include it, the default site title will be used.
+
+```yaml
+plugins:
+  - rss:
+      title: My awesome blog feed
+```
+
+Default: Use the default MkDocs `site_title:`.
 
 ----
 

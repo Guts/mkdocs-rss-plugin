@@ -657,6 +657,25 @@ class TestBuildRss(BaseTest):
             with Path(Path(tmpdirname) / OUTPUT_RSS_FEED_UPDATED).open("r") as f:
                 self.assertEqual(len(f.readlines()), 1)
 
+    def test_simple_build_custome_title_description(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_custom_title_description.yml"),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED)
+            self.assertEqual(feed_parsed.feed.title, "My custom RSS title")
+            self.assertEqual(feed_parsed.feed.description, "My custom RSS description")
+
     def test_rss_feed_validation(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
