@@ -17,6 +17,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.13.1 - 2024-06-15
+
+### Bugs fixes 🐛
+
+* Fix remote image length warnings using requests instead of urllib (standard lib) by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/289>
+
+### Features and enhancements 🎉
+
+* refacto(cleanup): remove python 3.9 related code and deps (timezone) by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/288>
+* improve(logs): enhance some logs and type hints  by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/293>
+* Feature: improve social cards integration by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/294>
+
 ## 1.13.0 - 2024-06-10
 
 ### Bugs fixes 🐛
