@@ -67,7 +67,7 @@ Or it could be displayed as a RSS or Feedly follow button:
 
 For JSON Feed, you can use the icon:
 
-[![JSON Feed icon](https://jsonfeed.org/graphics/icon.png){: width=130 loading=lazy }](https://guts.github.io/mkdocs-rss-plugin/feed_json_created.json)
+[![JSON Feed icon](https://raw.githubusercontent.com/manton/JSONFeed/master/graphics/icon.png){: width=130 loading=lazy }](https://guts.github.io/mkdocs-rss-plugin/feed_json_created.json)
 {: align=middle }
 
 !!! tip
