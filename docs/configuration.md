@@ -502,7 +502,7 @@ This option allows you to override the default MkDocs site title for the title t
 This is useful if you have multiple instances of this plugin for multiple feeds. (For example, one feed
 for the blog, and a second for documentation updates.)
 
-This setting is optional. If you do not include it, the default site title will be used.
+This setting is optional. If you do not include it, the default site name will be used.
 
 ```yaml
 plugins:
@@ -510,7 +510,7 @@ plugins:
       title: My awesome blog feed
 ```
 
-Default: Use the default MkDocs `site_title:`.
+Default: Use the default MkDocs `site_name:`.
 
 ----
 
