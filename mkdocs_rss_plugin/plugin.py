@@ -116,9 +116,9 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             "buildDate": formatdate(get_build_timestamp()),
             "copyright": config.copyright,
             "description": (
-                self.config["description"]
-                if self.config["description"]
-                else config["site_description"]
+                self.config.feed_description
+                if self.config.feed_description
+                else config.site_description
             ),
             "entries": [],
             "generator": f"{__title__} - v{__version__}",
@@ -127,7 +127,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             "pubDate": formatdate(get_build_timestamp()),
             "repo_url": config.repo_url,
             "title": (
-                self.config["title"] if self.config["title"] else config["site_name"]
+                self.config.feed_title if self.config.feed_title else config.site_name
             ),
             "ttl": self.config.feed_ttl,
         }

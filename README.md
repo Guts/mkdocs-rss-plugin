@@ -53,13 +53,14 @@ plugins:
         datetime_format: "%Y-%m-%d %H:%M"
         default_time: "09:30"
         default_timezone: Europe/Paris
-      description: "My custom feed description"  # MkDocs site_description: will be used if this key is not present
       enabled: true
+      feed_description: "My custom feed description"  # MkDocs site_description: will be used if this key is not present
       feeds_filenames:
         json_created: feed_json_created.json
         json_updated: feed_json_updated.json
         rss_created: feed_rss_created.xml
         rss_updated: feed_rss_updated.xml
+      feed_title: "My custom feed title"  # MkDocs site_name: will be used if this key is not present
       feed_ttl: 1440
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
       json_feed_enabled: true
@@ -67,7 +68,6 @@ plugins:
       match_path: ".*"
       pretty_print: false
       rss_feed_enabled: true
-      title: "My custom feed title"  # MkDocs site_name: will be used if this key is not present
       url_parameters:
         utm_source: "documentation"
         utm_medium: "RSS"

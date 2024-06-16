@@ -4,8 +4,8 @@ site_url: https://guts.github.io/mkdocs-rss-plugin
 
 plugins:
   - rss:
-      title: My custom RSS title
-      description: My custom RSS description
+      feed_title: My custom RSS title
+      feed_description: My custom RSS description
 
 theme:
   name: mkdocs

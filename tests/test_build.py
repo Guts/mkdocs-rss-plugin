@@ -657,7 +657,8 @@ class TestBuildRss(BaseTest):
             with Path(Path(tmpdirname) / OUTPUT_RSS_FEED_UPDATED).open("r") as f:
                 self.assertEqual(len(f.readlines()), 1)
 
-    def test_simple_build_custome_title_description(self):
+    def test_simple_build_custom_title_description(self):
+        """Test simple build with custom description and title."""
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
