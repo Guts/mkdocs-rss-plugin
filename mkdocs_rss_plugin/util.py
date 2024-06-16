@@ -534,40 +534,41 @@ class Util:
                 f"{in_page.file.src_uri}"
             )
         elif (
-            self.social_cards.IS_ENABLED
+            isinstance(self.social_cards, IntegrationMaterialSocialCards)
+            and self.social_cards.IS_ENABLED
             and self.social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED
             and self.social_cards.is_social_plugin_enabled_page(
                 mkdocs_page=in_page,
-                fallback_value=self.social_cards,
+                fallback_value=self.social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED,
             )
         ):
-            img_local_path = self.social_cards.get_social_card_build_path_for_page(
-                mkdocs_page=in_page
-            )
+
             img_url = self.social_cards.get_social_card_url_for_page(
                 mkdocs_page=in_page
             )
-            logger.debug(
-                f"Image found ({img_url}) from social cards for page: "
-                f"{in_page.file.src_uri}. Using local image to get mime and length: "
-                f"{img_local_path}"
-            )
-
-            if img_local_path.is_file():
-                logger.debug("Local image already exists. Using it to get its length.")
-                img_length = img_local_path.stat().st_size
+            if img_local_cache_path := self.social_cards.get_social_card_cache_path_for_page(
+                mkdocs_page=in_page
+            ):
+                img_length = img_local_cache_path.stat().st_size
+                img_type = guess_type(url=img_local_cache_path, strict=False)[0]
+            elif img_local_build_path := self.social_cards.get_social_card_build_path_for_page(
+                mkdocs_page=in_page
+            ):
+                img_length = img_local_build_path.stat().st_size
+                img_type = guess_type(url=img_local_build_path, strict=False)[0]
             else:
                 logger.debug(
-                    f"Social card: {img_local_path} still not exists. Trying to "
+                    "Social card still not exists locally. Trying to "
                     f"retrieve length from remote image: {img_url}. "
                     "Note that would work only if the social card image has been "
                     "already published before the build."
                 )
                 img_length = self.get_remote_image_length(image_url=img_url)
+                img_type = guess_type(url=img_url, strict=False)[0]
 
             return (
                 img_url,
-                guess_type(url=img_local_path, strict=False)[0],
+                img_type,
                 img_length,
             )
 
