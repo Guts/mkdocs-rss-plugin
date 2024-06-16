@@ -18,8 +18,10 @@ from mkdocs.config.base import Config
 
 
 class _DateFromMeta(Config):
+    """Sub configuration object for related date options."""
+
     #  TODO: remove deprecated code in future version. Only str values will be accepted
-    # for  as_creation and as_update
+    # for as_creation and as_update
     as_creation = config_options.Type(Union[bool, str], default="git")
     as_update = config_options.Type(Union[bool, str], default="git")
     datetime_format = config_options.Type(str, default="%Y-%m-%d %H:%M")
@@ -28,6 +30,8 @@ class _DateFromMeta(Config):
 
 
 class _FeedsFilenamesConfig(Config):
+    """Sub configuration for feeds filenames."""
+
     json_created = config_options.Type(str, default="feed_json_created.json")
     json_updated = config_options.Type(str, default="feed_json_updated.json")
     rss_created = config_options.Type(str, default="feed_rss_created.xml")

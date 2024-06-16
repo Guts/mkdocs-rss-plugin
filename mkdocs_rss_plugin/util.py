@@ -9,6 +9,7 @@ import logging
 from collections.abc import Iterable
 from datetime import date, datetime
 from email.utils import format_datetime
+from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
 from typing import Any
@@ -30,6 +31,7 @@ from mkdocs_rss_plugin.git_manager.ci import CiHandler
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
+from mkdocs_rss_plugin.models import PageInformation
 from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
 
 # ############################################################################
@@ -110,18 +112,16 @@ class Util:
         self.req_session.headers.update(REMOTE_REQUEST_HEADERS)
 
     def build_url(self, base_url: str, path: str, args_dict: dict | None = None) -> str:
-        """Build URL using base URL, cumulating existing and passed path, \
-        then adding URL arguments.
+        """Build URL using base URL, cumulating existing and passed path, then adding
+            URL arguments.
 
-        :param base_url: base URL with existing path to use
-        :type base_url: str
-        :param path: URL path to cumulate with existing
-        :type path: str
-        :param args_dict: URL arguments to add, defaults to None
-        :type args_dict: dict, optional
+        Args:
+            base_url (str): base URL with existing path to use
+            path (str): URL path to cumulate with existing
+            args_dict (dict | None, optional): URL arguments to add. Defaults to None.
 
-        :return: complete and valid URL
-        :rtype: str
+        Returns:
+            str: complete and valid URL
         """
         if not base_url:
             logger.error(
@@ -138,17 +138,16 @@ class Util:
         return urlunparse(url_parts)
 
     def get_value_from_dot_key(self, data: dict, dot_key: str | bool) -> Any:
-        """
-        Retrieves a value from a dictionary using a dot notation key.
+        """Retrieves a value from a dictionary using a dot notation key.
 
-        :param data: The dictionary from which to retrieve the value.
-        :type data: dict
-        :param dot_key: The key in dot notation to specify the path in the dictionary.
-        :type dot_key: Union[str, bool]
+        Args:
+            data (dict): the dictionary from which to retrieve the value.
+            dot_key (str | bool): The key in dot notation to specify the path in the
+                dictionary.
 
-        :return: The value retrieved from the dictionary, or None if the key
-        does not exist.
-        :rtype: Any
+        Returns:
+            Any: The value retrieved from the dictionary, or None if the key
+                does not exist.
         """
         if not isinstance(dot_key, str):
             return data.get(dot_key)
@@ -165,29 +164,24 @@ class Util:
         source_date_creation: str,
         source_date_update: str,
         meta_datetime_format: str,
-        meta_default_timezone: str,
         meta_default_time: datetime,
+        meta_default_timezone: str,
     ) -> tuple[datetime, datetime]:
         """Extract creation and update dates from page metadata (yaml frontmatter) or
-        git log for given file.
+            git log for given file.
 
-        :param in_page: input page to work with
-        :type in_page: Page
-        :param source_date_creation: which source to use (git or meta tag) for creation
-        date, defaults to "git"
-        :type source_date_creation: str, optional
-        :param source_date_update: which source to use (git or meta tag) for update
-        date, defaults to "git"
-        :type source_date_update: str, optional
-        :param meta_datetime_format: datetime string format, defaults to "%Y-%m-%d %H:%M"
-        :type meta_datetime_format: str, optional
-        :param meta_default_timezone: timezone to use, defaults to "UTC"
-        :type meta_default_timezone: str, optional
-        :param meta_default_time: time to set if not specified, defaults to None
-        :type meta_default_time: datetime, optional
+        Args:
+            in_page (Page): input page
+            source_date_creation (str): which source to use (git or meta tag) for
+                creation date
+            source_date_update (str): which source to use (git or meta tag) for update
+                date
+            meta_datetime_format (str): datetime string format
+            meta_default_time (datetime): fallback time to set if not specified
+            meta_default_timezone (str): timezone to use
 
-        :return: tuple of timestamps (creation date, last commit date)
-        :rtype: Tuple[datetime, datetime]
+        Returns:
+            tuple[datetime, datetime]: tuple of timestamps (creation date, last commit date)
         """
         logger.debug(f"Extracting dates for {in_page.file.src_uri}")
         # empty vars
@@ -332,11 +326,11 @@ class Util:
         """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
         str and iterable as values types.
 
-        :param in_page: page to look into
-        :type in_page: Page
+        Args:
+            in_page (Page): input page to look into
 
-        :return: tuple of authors names
-        :rtype: Tuple[str] or None
+        Returns:
+            tuple[str] | None: tuple of authors names
         """
         # identify the key
         if "author" in in_page.meta:
@@ -371,13 +365,12 @@ class Util:
     ) -> list | None:
         """Returns category from page meta.
 
-        :param in_page: input page to parse
-        :type in_page: Page
-        :param categories_labels: meta tags to look into
-        :type categories_labels: Iterable
+        Args:
+            in_page (Page): input page to parse
+            categories_labels (Iterable): meta tags to look into
 
-        :return: found categories
-        :rtype: list
+        Returns:
+            list | None: found categories
         """
         if not categories_labels:
             return None
@@ -400,20 +393,17 @@ class Util:
         meta_datetime_timezone: str,
         meta_default_time: datetime,
     ) -> datetime:
-        """Get date from page.meta handling str with associated datetime format and \
+        """Get date from page.meta handling str with associated datetime format and
             date already transformed by MkDocs.
 
-        :param date_metatag_value: value of page.meta.{tag_for_date}
-        :type date_metatag_value: str
-        :param meta_datetime_format: expected format of datetime
-        :type meta_datetime_format: str
-        :param meta_datetime_timezone: timezone to use
-        :type meta_datetime_timezone: str
-        :param meta_default_time: time to set if not specified
-        :type meta_default_time: datetime
+        Args:
+            date_metatag_value (str): value of page.meta.{tag_for_date}
+            meta_datetime_format (str): expected format of datetime
+            meta_datetime_timezone (str): timezone to use
+            meta_default_time (datetime): time to set if not specified
 
-        :return: datetime
-        :rtype: datetime
+        Returns:
+            datetime: page datetime value
         """
         out_date = None
         try:
@@ -453,21 +443,25 @@ class Util:
         return out_date
 
     def get_description_or_abstract(
-        self, in_page: Page, chars_count: int = 160, abstract_delimiter: str = None
+        self,
+        in_page: Page,
+        chars_count: int = 160,
+        abstract_delimiter: str | None = None,
     ) -> str:
-        """Returns description from page meta. If it doesn't exist, use the \
-        page content up to {abstract_delimiter} or the {chars_count} first \
-        characters from page content (in markdown).
+        """Returns description from page meta. If it doesn't exist, use the page
+            content up to {abstract_delimiter} or the {chars_count} first characters
+            from page content (in markdown).
 
-        :param Page in_page: page to look at
-        :param int chars_count: if page.meta.description is not set, number of chars \
-        of the content to use. Defaults to: 160 - optional
-        :param str abstract_delimiter: description delimiter, defaults to None
+        Args:
+            in_page (Page): page to look at
+            chars_count (int, optional): if page.meta.description is not set, number of
+                chars of the content to use. Defaults to 160.
+            abstract_delimiter (str, optional): description delimiter (also called
+                excerpt). Defaults to None.
 
-        :return: page description to use
-        :rtype: str
+        Returns:
+            str: page description to use
         """
-
         description = in_page.meta.get("description")
 
         # If the full page is wanted (unlimited chars count)
@@ -607,6 +601,7 @@ class Util:
 
         return image_path.stat().st_size
 
+    @lru_cache(maxsize=512)
     def get_remote_image_length(
         self,
         image_url: str,
@@ -659,14 +654,14 @@ class Util:
 
     @staticmethod
     def get_site_url(mkdocs_config: MkDocsConfig) -> str | None:
-        """Extract site URL from MkDocs configuration and enforce the behavior to ensure \
-        returning a str with length > 0 or None. If exists, it adds an ending slash.
+        """Extract site URL from MkDocs configuration and enforce the behavior to ensure
+            returning a str with length > 0 or None. If exists, it adds an ending slash.
 
-        :param mkdocs_config: configuration object
-        :type mkdocs_config: Config
+        Args:
+            mkdocs_config (MkDocsConfig): configuration object
 
-        :return: site url
-        :rtype: str or None
+        Returns:
+            str | None: site url
         """
         # this method exists because the following line returns an empty string instead of \
         # None (because the key always exists)
@@ -687,11 +682,11 @@ class Util:
     def guess_locale(self, mkdocs_config: MkDocsConfig) -> str | None:
         """Extract language code from MkDocs or Theme configuration.
 
-        :param mkdocs_config: configuration object
-        :type mkdocs_config: Config
+        Args:
+            mkdocs_config (MkDocsConfig): configuration object
 
-        :return: language code
-        :rtype: str or None
+        Returns:
+            str | None: language code
         """
         # MkDocs locale settings - might be added in future mkdocs versions
         # see: https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/24
@@ -740,18 +735,16 @@ class Util:
         return None
 
     @staticmethod
-    def filter_pages(pages: list, attribute: str, length: int) -> list:
+    def filter_pages(pages: list[PageInformation], attribute: str, length: int) -> list:
         """Filter and return pages into a friendly RSS structure.
 
-        :param pages: pages to filter
-        :type pages: list
-        :param attribute: page attribute as filter variable
-        :type attribute: str
-        :param length: max number of pages to return
-        :type length: int
+        Args:
+            pages (list): pages to filter
+            attribute (str): page attribute as filter variable
+            length (int): max number of pages to return
 
-        :return: list of filtered pages
-        :rtype: list
+        Returns:
+            list: list of filtered pages
         """
         filtered_pages = []
         for page in sorted(
@@ -779,14 +772,13 @@ class Util:
     def feed_to_json(feed: dict, *, updated: bool = False) -> dict:
         """Format internal feed representation as a JSON Feed compliant dict.
 
-        :param feed: internal feed structure, i. e.
-            GitRssPlugin.feed_created/feed_updated value
-        :type feed: dict
-        :param updated: True if this is a feed_updated
-        :type updated: bool
+        Args:
+            feed (dict): internal feed structure, i. e. GitRssPlugin.feed_created or
+                feed_updated value
+            updated (bool, optional): True if this is a feed_updated. Defaults to False.
 
-        :return: dict that can be passed to json.dump
-        :rtype: dict
+        Returns:
+            dict: dict that can be passed to json.dump
         """
         entry_date_key = "date_modified" if updated else "date_published"
 

@@ -58,7 +58,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     def __init__(self):
         """Instantiation."""
         # pages storage
-        self.pages_to_filter: list = []
+        self.pages_to_filter: list[PageInformation] = []
         # prepare output feeds
         self.feed_created: dict = {}
         self.feed_updated: dict = {}
@@ -308,17 +308,16 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             )
         )
 
-    def on_post_build(self, config: config_options.Config) -> dict | None:
-        """The post_build event does not alter any variables. \
-        Use this event to call post-build scripts. \
-        See: <https://www.mkdocs.org/user-guide/plugins/#on_post_build>
+    def on_post_build(self, config: config_options.Config) -> None:
+        """The post_build event does not alter any variables. Use this event to call
+            post-build scripts.
 
-        :param config: global configuration object
-        :type config: config_options.Config
-        :return: global configuration object
-        :rtype: dict
+        See:
+            <https://www.mkdocs.org/user-guide/plugins/#on_post_build>
+
+        Args:
+            config (config_options.Config): global configuration object
         """
-
         # Skip if disabled
         if not self.config.enabled:
             return
