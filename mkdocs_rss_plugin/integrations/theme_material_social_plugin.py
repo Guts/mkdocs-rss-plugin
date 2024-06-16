@@ -44,7 +44,7 @@ class IntegrationMaterialSocialCards:
     CARDS_MANIFEST: dict | None = None
 
     def __init__(self, mkdocs_config: MkDocsConfig, switch_force: bool = True) -> None:
-        """Integration instanciation.
+        """Integration instantiation.
 
         Args:
             mkdocs_config (MkDocsConfig): Mkdocs website configuration object.

@@ -367,6 +367,56 @@ At the end, into the RSS you will get:
 
 ----
 
+### :material-subtitles: `feed_description`: override site description { #description }
+
+This option allows you to override the default MkDocs site description for the description tag in this feed.
+This is useful if you have multiple instances of this plugin for multiple feeds. (For example, one feed
+for the blog, and a second for documentation updates.)
+
+This setting is optional. If you do not include it, the default site description will be used.
+
+```yaml
+plugins:
+  - rss:
+      feed_description: The best blog from the best site
+```
+
+Default: Use the default MkDocs `site_description:`.
+
+----
+
+### :material-format-title: `feed_title`: override site title { #title }
+
+This option allows you to override the default MkDocs site name for the title tag in this feed.
+This is useful if you have multiple instances of this plugin for multiple feeds. (For example, one feed
+for the blog, and a second for documentation updates.)
+
+This setting is optional. If you do not include it, the default site name will be used.
+
+```yaml
+plugins:
+  - rss:
+      feed_title: My awesome blog feed
+```
+
+Default: Use the default MkDocs `site_name:`.
+
+----
+
+### :material-clock-end: `feed_ttl`: feed's cache time { #feed_ttl }
+
+`feed_ttl`: number of minutes to be cached. Inserted as channel `ttl` element. See: [W3C RSS 2.0 documentation](https://www.w3schools.com/xml/rss_tag_ttl.asp).
+
+Default: `1440` (= 1 day)
+
+Output:
+
+```xml
+<ttl>1440</ttl>
+```
+
+----
+
 ### :material-alphabet-latin: `feeds_filenames`: customize the output feed URL { #feeds_filenames }
 
 > Since version 1.13.0.
@@ -389,20 +439,6 @@ Default:
 - JSON feed for **updated** items: `feed_json_updated.json`
 - RSS feed for **created** items: `feed_rss_created.json`
 - RSS feed for **updated** items: `feed_rss_updated.json`
-
-----
-
-### :material-clock-end: `feed_ttl`: feed's cache time { #feed_ttl }
-
-`feed_ttl`: number of minutes to be cached. Inserted as channel `ttl` element. See: [W3C RSS 2.0 documentation](https://www.w3schools.com/xml/rss_tag_ttl.asp).
-
-Default: `1440` (= 1 day)
-
-Output:
-
-```xml
-<ttl>1440</ttl>
-```
 
 ----
 

@@ -54,7 +54,7 @@ plugins:
 
 ## Example
 
-As examples, here come the feeds generated for this documentation:
+As examples, here are the feeds generated for this documentation:
 
 - [feed_rss_created.xml](feed_rss_created.xml) and [feed_json_created.json](feed_json_created.json) for  latest **created** pages: [W3C validator](https://validator.w3.org/feed/check.cgi?url=https%3A//guts.github.io/mkdocs-rss-plugin/feed_rss_created.xml)
 - [feed_rss_updated.xml](feed_rss_updated.xml) and [feed_json_updated.json](feed_json_updated.json) for latest **updated** pages: [W3C validator](https://validator.w3.org/feed/check.cgi?url=https%3A//guts.github.io/mkdocs-rss-plugin/feed_rss_updated.xml)

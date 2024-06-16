@@ -56,7 +56,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     supports_multiple_instances = True
 
     def __init__(self):
-        """Instanciation."""
+        """Instantiation."""
         # pages storage
         self.pages_to_filter: list = []
         # prepare output feeds
@@ -98,7 +98,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             switch_force=self.config.use_material_social_cards,
         )
 
-        # instanciate plugin tooling
+        # instantiate plugin tooling
         self.util = Util(
             use_git=self.config.use_git,
             integration_material_social_cards=self.integration_material_social_cards,
@@ -115,14 +115,20 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             "author": config.site_author or None,
             "buildDate": formatdate(get_build_timestamp()),
             "copyright": config.copyright,
-            "description": config.site_description,
+            "description": (
+                self.config.feed_description
+                if self.config.feed_description
+                else config.site_description
+            ),
             "entries": [],
             "generator": f"{__title__} - v{__version__}",
             "html_url": self.util.get_site_url(mkdocs_config=config),
             "language": self.util.guess_locale(mkdocs_config=config),
             "pubDate": formatdate(get_build_timestamp()),
             "repo_url": config.repo_url,
-            "title": config.site_name,
+            "title": (
+                self.config.feed_title if self.config.feed_title else config.site_name
+            ),
             "ttl": self.config.feed_ttl,
         }
 
