@@ -17,6 +17,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.13.2 - 2024-06-23
+
+### Features and enhancements 🎉
+
+* Feature: add per-feed custom titles and abstracts by @toomanybrians in <https://github.com/Guts/mkdocs-rss-plugin/pull/295>
+* Improve: convert docstrings to google convention by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/298>
+* fix(config): do not raise error for bad date_from_meta.default_time value and fallback to default by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/300>
+
+### New Contributors
+
+* @toomanybrians made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/295>
+
 ## 1.13.1 - 2024-06-15
 
 ### Bugs fixes 🐛
