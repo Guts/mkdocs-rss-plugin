@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.13.3 - 2024-06-23
+
+### Bugs fixes 🐛
+
+* hotfix: bad default_time value type introduced in #300 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/302>
+
 ## 1.13.2 - 2024-06-23
 
 ### Features and enhancements 🎉
