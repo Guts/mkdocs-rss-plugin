@@ -6,18 +6,25 @@
 
 # standard library
 import logging
+import sys
 from collections.abc import Iterable
 from datetime import date, datetime
 from email.utils import format_datetime
 from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Any
+from typing import Any, List, Tuple, Union
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
 import markdown
-from git import GitCommandError, GitCommandNotFound, InvalidGitRepositoryError, Repo
+from git import (
+    GitCommandError,
+    GitCommandNotFound,
+    InvalidGitRepositoryError,
+    Optional,
+    Repo,
+)
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
@@ -32,7 +39,12 @@ from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
 from mkdocs_rss_plugin.models import PageInformation
-from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
+
+# conditional imports
+if sys.version_info < (3, 9):
+    from mkdocs_rss_plugin.timezoner_pre39 import set_datetime_zoneinfo
+else:
+    from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
 
 # ############################################################################
 # ########## Globals #############
@@ -54,9 +66,9 @@ class Util:
         self,
         path: str = ".",
         use_git: bool = True,
-        integration_material_social_cards: None | (
+        integration_material_social_cards: Optional[
             IntegrationMaterialSocialCards
-        ) = None,
+        ] = None,
     ):
         """Class hosting the plugin logic.
 
@@ -111,7 +123,9 @@ class Util:
         self.req_session = Session()
         self.req_session.headers.update(REMOTE_REQUEST_HEADERS)
 
-    def build_url(self, base_url: str, path: str, args_dict: dict | None = None) -> str:
+    def build_url(
+        self, base_url: str, path: str, args_dict: Optional[dict] = None
+    ) -> str:
         """Build URL using base URL, cumulating existing and passed path, then adding
             URL arguments.
 
@@ -137,7 +151,7 @@ class Util:
             url_parts[4] = urlencode(args_dict)
         return urlunparse(url_parts)
 
-    def get_value_from_dot_key(self, data: dict, dot_key: str | bool) -> Any:
+    def get_value_from_dot_key(self, data: dict, dot_key: Union[str, bool]) -> Any:
         """Retrieves a value from a dictionary using a dot notation key.
 
         Args:
@@ -166,7 +180,7 @@ class Util:
         meta_datetime_format: str,
         meta_default_time: datetime,
         meta_default_timezone: str,
-    ) -> tuple[datetime, datetime]:
+    ) -> Tuple[datetime, datetime]:
         """Extract creation and update dates from page metadata (yaml frontmatter) or
             git log for given file.
 
@@ -322,7 +336,7 @@ class Util:
                 get_build_datetime(),
             )
 
-    def get_authors_from_meta(self, in_page: Page) -> tuple[str] | None:
+    def get_authors_from_meta(self, in_page: Page) -> Optional[Tuple[str]]:
         """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
         str and iterable as values types.
 
@@ -362,7 +376,7 @@ class Util:
 
     def get_categories_from_meta(
         self, in_page: Page, categories_labels: Iterable
-    ) -> list | None:
+    ) -> Optional[list]:
         """Returns category from page meta.
 
         Args:
@@ -446,7 +460,7 @@ class Util:
         self,
         in_page: Page,
         chars_count: int = 160,
-        abstract_delimiter: str | None = None,
+        abstract_delimiter: Optional[str] = None,
     ) -> str:
         """Returns description from page meta. If it doesn't exist, use the page
             content up to {abstract_delimiter} or the {chars_count} first characters
@@ -503,7 +517,7 @@ class Util:
             )
             return ""
 
-    def get_image(self, in_page: Page, base_url: str) -> tuple[str, str, int] | None:
+    def get_image(self, in_page: Page, base_url: str) -> Optional[Tuple[str, str, int]]:
         """Get page's image from page meta or social cards and returns properties.
 
         Args:
@@ -536,7 +550,6 @@ class Util:
                 fallback_value=self.social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED,
             )
         ):
-
             img_url = self.social_cards.get_social_card_url_for_page(
                 mkdocs_page=in_page
             )
@@ -584,7 +597,9 @@ class Util:
         # return final tuple
         return (img_url, mime_type, img_length)
 
-    def get_local_image_length(self, page_path: str, path_to_append: str) -> int | None:
+    def get_local_image_length(
+        self, page_path: str, path_to_append: str
+    ) -> Optional[int]:
         """Calculates local image size in octets.
 
         Args:
@@ -608,7 +623,7 @@ class Util:
         http_method: str = "HEAD",
         attempt: int = 0,
         ssl_verify: bool = True,
-    ) -> int | None:
+    ) -> Optional[int]:
         """Retrieve length for remote images (starting with 'http').
 
         Firstly, it tries to perform a HEAD request and get the length from the headers. \
@@ -653,7 +668,7 @@ class Util:
         return int(img_length)
 
     @staticmethod
-    def get_site_url(mkdocs_config: MkDocsConfig) -> str | None:
+    def get_site_url(mkdocs_config: MkDocsConfig) -> Optional[str]:
         """Extract site URL from MkDocs configuration and enforce the behavior to ensure
             returning a str with length > 0 or None. If exists, it adds an ending slash.
 
@@ -679,7 +694,7 @@ class Util:
 
         return site_url
 
-    def guess_locale(self, mkdocs_config: MkDocsConfig) -> str | None:
+    def guess_locale(self, mkdocs_config: MkDocsConfig) -> Optional[str]:
         """Extract language code from MkDocs or Theme configuration.
 
         Args:
@@ -735,7 +750,7 @@ class Util:
         return None
 
     @staticmethod
-    def filter_pages(pages: list[PageInformation], attribute: str, length: int) -> list:
+    def filter_pages(pages: List[PageInformation], attribute: str, length: int) -> list:
         """Filter and return pages into a friendly RSS structure.
 
         Args:

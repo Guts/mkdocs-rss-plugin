@@ -2,10 +2,10 @@
 
 """Usage from the repo root folder:
 
-    .. code-block:: python
+.. code-block:: python
 
-        # for whole test
-        python -m unittest tests.test_rss_util
+    # for whole test
+    python -m unittest tests.test_rss_util
 
 """
 

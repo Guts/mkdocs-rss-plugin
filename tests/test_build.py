@@ -2,10 +2,10 @@
 
 """Usage from the repo root folder:
 
-    .. code-block:: python
+.. code-block:: python
 
-        # for whole test
-        python -m unittest tests.test_build
+    # for whole test
+    python -m unittest tests.test_build
 
 """
 
@@ -721,20 +721,16 @@ class TestBuildRss(BaseTest):
             self.assertIsNone(cli_result.exception)
 
             # created items
-            with (
-                Path(tmpdirname)
-                .joinpath(OUTPUT_JSON_FEED_CREATED)
-                .open("r", encoding="UTF-8") as in_json
-            ):
+            with Path(tmpdirname).joinpath(OUTPUT_JSON_FEED_CREATED).open(
+                "r", encoding="UTF-8"
+            ) as in_json:
                 json_feed_created_data = json.load(in_json)
             jsonfeed.Feed.parse(json_feed_created_data)
 
             # updated items
-            with (
-                Path(tmpdirname)
-                .joinpath(OUTPUT_JSON_FEED_UPDATED)
-                .open("r", encoding="UTF-8") as in_json
-            ):
+            with Path(tmpdirname).joinpath(OUTPUT_JSON_FEED_UPDATED).open(
+                "r", encoding="UTF-8"
+            ) as in_json:
                 json_feed_updated_data = json.load(in_json)
             jsonfeed.Feed.parse(json_feed_updated_data)
 

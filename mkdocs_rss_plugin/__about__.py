@@ -1,9 +1,9 @@
 #! python3  # noqa: E265
 
 """
-    Metadata about the package to easily retrieve informations about it.
+Metadata about the package to easily retrieve informations about it.
 
-    See: https://packaging.python.org/guides/single-sourcing-package-version/
+See: https://packaging.python.org/guides/single-sourcing-package-version/
 """
 
 # ############################################################################

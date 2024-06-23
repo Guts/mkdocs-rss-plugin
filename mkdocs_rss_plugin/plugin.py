@@ -11,6 +11,7 @@ from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from re import compile as re_compile
+from typing import List, Optional
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -57,7 +58,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     def __init__(self):
         """Instantiation."""
         # pages storage
-        self.pages_to_filter: list[PageInformation] = []
+        self.pages_to_filter: List[PageInformation] = []
         # prepare output feeds
         self.feed_created: dict = {}
         self.feed_updated: dict = {}
@@ -229,7 +230,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     @event_priority(priority=-75)
     def on_page_content(
         self, html: str, page: Page, config: MkDocsConfig, files: Files
-    ) -> str | None:
+    ) -> Optional[str]:
         """The page_content event is called after the Markdown text is rendered to HTML
             (but before being passed to a template) and can be used to alter the HTML
             body of the page.
