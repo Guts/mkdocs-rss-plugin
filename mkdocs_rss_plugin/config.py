@@ -5,7 +5,6 @@
 # ##################################
 
 # standard
-from datetime import datetime
 from typing import Union
 
 # 3rd party
@@ -25,7 +24,7 @@ class _DateFromMeta(Config):
     as_creation = config_options.Type(Union[bool, str], default="git")
     as_update = config_options.Type(Union[bool, str], default="git")
     datetime_format = config_options.Type(str, default="%Y-%m-%d %H:%M")
-    default_time = config_options.Type(str, default=datetime.min.strftime("%H:%M"))
+    default_time = config_options.Type(str, default="00:00")
     default_timezone = config_options.Type(str, default="UTC")
 
 

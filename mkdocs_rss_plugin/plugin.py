@@ -16,7 +16,6 @@ from re import compile as re_compile
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from mkdocs.config import config_options
 from mkdocs.config.defaults import MkDocsConfig
-from mkdocs.exceptions import PluginError
 from mkdocs.plugins import BasePlugin, event_priority, get_plugin_logger
 from mkdocs.structure.files import Files
 from mkdocs.structure.pages import Page
@@ -169,12 +168,13 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             self.config.date_from_meta.default_time = datetime.strptime(
                 self.config.date_from_meta.default_time, "%H:%M"
             )
-        except ValueError as err:
-            raise PluginError(
+        except (TypeError, ValueError) as err:
+            logger.warning(
                 "Config error: `date_from_meta.default_time` value "
                 f"'{self.config.date_from_meta.default_time}' format doesn't match the "
-                f"expected format %H:%M. Trace: {err}"
+                f"expected format %H:%M. Fallback to the default value. Trace: {err}"
             )
+            self.config.date_from_meta.default_time = "00:00"
 
         if self.config.use_git:
             logger.debug(
