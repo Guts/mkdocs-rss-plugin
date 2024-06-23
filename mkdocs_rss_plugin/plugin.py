@@ -168,13 +168,19 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             self.config.date_from_meta.default_time = datetime.strptime(
                 self.config.date_from_meta.default_time, "%H:%M"
             )
+            print(
+                self.config.date_from_meta.default_time,
+                type(self.config.date_from_meta.default_time),
+            )
         except (TypeError, ValueError) as err:
             logger.warning(
                 "Config error: `date_from_meta.default_time` value "
                 f"'{self.config.date_from_meta.default_time}' format doesn't match the "
                 f"expected format %H:%M. Fallback to the default value. Trace: {err}"
             )
-            self.config.date_from_meta.default_time = "00:00"
+            self.config.date_from_meta.default_time = datetime.strptime(
+                "00:00", "%H:%M"
+            )
 
         if self.config.use_git:
             logger.debug(
