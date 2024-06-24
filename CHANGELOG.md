@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 -->
+## 1.13.4 - 2024-06-24
+
+### Bugs fixes 🐛
+
+* fix incompatible option type for Python < 3.10 and restore Python 3.8 and 3.9 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/304> and @pawamoy in <https://github.com/mkdocs/mkdocs/issues/3753#issuecomment-2187180187>
 
 ## 1.13.3 - 2024-06-23
 
