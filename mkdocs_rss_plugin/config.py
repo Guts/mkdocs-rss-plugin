@@ -4,9 +4,6 @@
 # ########## Libraries #############
 # ##################################
 
-# standard
-from typing import Union
-
 # 3rd party
 from mkdocs.config import config_options
 from mkdocs.config.base import Config
@@ -21,8 +18,8 @@ class _DateFromMeta(Config):
 
     #  TODO: remove deprecated code in future version. Only str values will be accepted
     # for as_creation and as_update
-    as_creation = config_options.Type(Union[bool, str], default="git")
-    as_update = config_options.Type(Union[bool, str], default="git")
+    as_creation = config_options.Type(str, default="git")
+    as_update = config_options.Type(str, default="git")
     datetime_format = config_options.Type(str, default="%Y-%m-%d %H:%M")
     default_time = config_options.Type(str, default="00:00")
     default_timezone = config_options.Type(str, default="UTC")
