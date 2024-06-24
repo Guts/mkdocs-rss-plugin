@@ -8,6 +8,7 @@
 import json
 from hashlib import md5
 from pathlib import Path
+from typing import Optional
 
 # 3rd party
 from mkdocs.config.defaults import MkDocsConfig
@@ -41,7 +42,7 @@ class IntegrationMaterialSocialCards:
     IS_SOCIAL_PLUGIN_CARDS_ENABLED: bool = True
     IS_THEME_MATERIAL: bool = False
     IS_INSIDERS: bool = False
-    CARDS_MANIFEST: dict | None = None
+    CARDS_MANIFEST: Optional[dict] = None
 
     def __init__(self, mkdocs_config: MkDocsConfig, switch_force: bool = True) -> None:
         """Integration instantiation.
@@ -103,7 +104,7 @@ class IntegrationMaterialSocialCards:
         self.IS_THEME_MATERIAL = mkdocs_config.theme.name == "material"
         return self.IS_THEME_MATERIAL
 
-    def is_mkdocs_theme_material_insiders(self) -> bool | None:
+    def is_mkdocs_theme_material_insiders(self) -> Optional[bool]:
         """Check if the material theme is community or insiders edition.
 
         Returns:
@@ -195,7 +196,7 @@ class IntegrationMaterialSocialCards:
             "cards", fallback_value
         )
 
-    def load_cache_cards_manifest(self) -> dict | None:
+    def load_cache_cards_manifest(self) -> Optional[dict]:
         """Load social cards manifest if the file exists.
 
         Returns:
@@ -258,8 +259,8 @@ class IntegrationMaterialSocialCards:
         return self.social_cards_cache_dir
 
     def get_social_card_build_path_for_page(
-        self, mkdocs_page: Page, mkdocs_site_dir: str | None = None
-    ) -> Path | None:
+        self, mkdocs_page: Page, mkdocs_site_dir: Optional[str] = None
+    ) -> Optional[Path]:
         """Get social card path in Mkdocs build dir for a specific page.
 
         Args:
@@ -287,7 +288,7 @@ class IntegrationMaterialSocialCards:
             logger.debug(f"Not found: {expected_built_card_path}")
             return None
 
-    def get_social_card_cache_path_for_page(self, mkdocs_page: Page) -> Path | None:
+    def get_social_card_cache_path_for_page(self, mkdocs_page: Page) -> Optional[Path]:
         """Get social card path in social plugin cache folder for a specific page.
 
         Note:
@@ -346,7 +347,7 @@ class IntegrationMaterialSocialCards:
     def get_social_card_url_for_page(
         self,
         mkdocs_page: Page,
-        mkdocs_site_url: str | None = None,
+        mkdocs_site_url: Optional[str] = None,
     ) -> str:
         """Get social card URL for a specific page in documentation.
 
