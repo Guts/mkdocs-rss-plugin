@@ -18,6 +18,7 @@ from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
 import markdown
+import urllib3
 from git import (
     GitCommandError,
     GitCommandNotFound,
@@ -51,6 +52,7 @@ else:
 # ################################
 
 logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
+urllib3.disable_warnings()  # disable warnings for unverified requests
 
 # ############################################################################
 # ########## Classes #############
