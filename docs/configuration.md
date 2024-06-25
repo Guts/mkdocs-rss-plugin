@@ -315,7 +315,7 @@ For example, in your `best_article.md` created in 2019, you can write the front-
       - rss:
           date_from_meta:
             as_creation: "date"
-            as_update: false
+            as_update: "git"
             datetime_format: "%Y-%m-%d %H:%M"
             default_timezone: Europe/Paris
     ```
@@ -343,7 +343,7 @@ For example, in your `best_article.md` created in 2019, you can write the front-
       - rss:
           date_from_meta:
             as_creation: "date.created"
-            as_update: false
+            as_update: "false"
             datetime_format: "%Y-%m-%d %H:%M"
             default_timezone: Europe/Paris
     ```

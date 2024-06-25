@@ -61,7 +61,6 @@
                 },
                 "as_update": {
                   "type": [
-                    "boolean",
                     "string"
                   ]
                 },
