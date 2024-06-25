@@ -11,7 +11,7 @@ from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from re import compile as re_compile
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -62,6 +62,21 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         # prepare output feeds
         self.feed_created: dict = {}
         self.feed_updated: dict = {}
+        # flag used command to disable some actions if serve is used
+        self.cmd_is_serve: bool = False
+
+    def on_startup(
+        self, *, command: Literal["build", "gh-deploy", "serve"], dirty: bool
+    ) -> None:
+        """The `startup` event runs once at the very beginning of an `mkdocs` invocation.
+
+        See: https://www.mkdocs.org/user-guide/plugins/#on_startup
+
+        Args:
+            command: the command that MkDocs was invoked with, e.g. "serve" for `mkdocs serve`.
+            dirty: whether `--dirty` flag was passed.
+        """
+        self.cmd_is_serve = command == "serve"
 
     def on_config(self, config: MkDocsConfig) -> MkDocsConfig:
         """The config event is the first event called on build and
