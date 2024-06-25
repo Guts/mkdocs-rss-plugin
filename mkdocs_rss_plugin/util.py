@@ -30,7 +30,7 @@ from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_datetime
 from requests import Session
-from requests.exceptions import HTTPError
+from requests.exceptions import ConnectionError, HTTPError
 
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME, REMOTE_REQUEST_HEADERS
@@ -643,16 +643,20 @@ class Util:
         # first, try HEAD request to avoid downloading the image
         try:
             attempt += 1
+            logger.debug(
+                f"Get remote image length (attempt {attempt}/2) - "
+                f"Sending {http_method} request to {image_url}"
+            )
             req_response = self.req_session.request(
                 method=http_method, url=image_url, verify=ssl_verify
             )
             req_response.raise_for_status()
             img_length = req_response.headers.get("content-length")
-        except HTTPError as err:
+        except (ConnectionError, HTTPError) as err:
             logger.debug(
                 f"Remote image could not been reached: {image_url}. "
-                f"Trying again with GET and disabling SSL verification. Attempt: {attempt}. "
-                f"Trace: {err}"
+                f"Trying again with {http_method} and disabling SSL verification. "
+                f"Attempt: {attempt}/2. Trace: {err}"
             )
             if attempt < 2:
                 return self.get_remote_image_length(
