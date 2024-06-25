@@ -35,7 +35,7 @@ repos:
     hooks:
       - id: pyupgrade
         args:
-          - "--py310-plus"
+          - "--py38-plus"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.4.7"
@@ -43,7 +43,7 @@ repos:
       - id: ruff
         args:
           - --fix-only
-          - --target-version=py310
+          - --target-version=py38
 
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
@@ -59,16 +59,19 @@ repos:
     hooks:
       - id: black
         args:
-          - --target-version=py310
+          - --target-version=py38
 
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:
       - id: flake8
+        additional_dependencies:
+          - flake8-docstrings<2
         language: python
         args:
           - --config=setup.cfg
           - --select=E9,F63,F7,F82
+          - --docstring-convention=google
 
 ci:
   autofix_prs: true

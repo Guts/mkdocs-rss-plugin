@@ -4,10 +4,6 @@
 # ########## Libraries #############
 # ##################################
 
-# standard
-from datetime import datetime
-from typing import Union
-
 # 3rd party
 from mkdocs.config import config_options
 from mkdocs.config.base import Config
@@ -18,16 +14,20 @@ from mkdocs.config.base import Config
 
 
 class _DateFromMeta(Config):
+    """Sub configuration object for related date options."""
+
     #  TODO: remove deprecated code in future version. Only str values will be accepted
-    # for  as_creation and as_update
-    as_creation = config_options.Type(Union[bool, str], default="git")
-    as_update = config_options.Type(Union[bool, str], default="git")
+    # for as_creation and as_update
+    as_creation = config_options.Type(str, default="git")
+    as_update = config_options.Type(str, default="git")
     datetime_format = config_options.Type(str, default="%Y-%m-%d %H:%M")
-    default_time = config_options.Type(str, default=datetime.min.strftime("%H:%M"))
+    default_time = config_options.Type(str, default="00:00")
     default_timezone = config_options.Type(str, default="UTC")
 
 
 class _FeedsFilenamesConfig(Config):
+    """Sub configuration for feeds filenames."""
+
     json_created = config_options.Type(str, default="feed_json_created.json")
     json_updated = config_options.Type(str, default="feed_json_updated.json")
     rss_created = config_options.Type(str, default="feed_rss_created.xml")
@@ -45,8 +45,10 @@ class RssPluginConfig(Config):
     comments_path = config_options.Optional(config_options.Type(str))
     date_from_meta = config_options.SubConfig(_DateFromMeta)
     enabled = config_options.Type(bool, default=True)
-    feed_ttl = config_options.Type(int, default=1440)
     feeds_filenames = config_options.SubConfig(_FeedsFilenamesConfig)
+    feed_description = config_options.Optional(config_options.Type(str))
+    feed_title = config_options.Optional(config_options.Type(str))
+    feed_ttl = config_options.Type(int, default=1440)
     image = config_options.Optional(config_options.Type(str))
     json_feed_enabled = config_options.Type(bool, default=True)
     length = config_options.Type(int, default=20)

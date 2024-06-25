@@ -6,25 +6,32 @@
 
 # standard library
 import logging
-import re
-import ssl
+import sys
 from collections.abc import Iterable
 from datetime import date, datetime
 from email.utils import format_datetime
+from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Any
-from urllib import request
-from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode, urljoin, urlparse, urlunparse
+from typing import Any, List, Tuple, Union
+
+from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
 import markdown
-from git import GitCommandError, GitCommandNotFound, InvalidGitRepositoryError, Repo
-from mkdocs.config.config_options import Config
+from git import (
+    GitCommandError,
+    GitCommandNotFound,
+    InvalidGitRepositoryError,
+    Optional,
+    Repo,
+)
+from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_datetime
+from requests import Session
+from requests.exceptions import HTTPError
 
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME, REMOTE_REQUEST_HEADERS
@@ -32,7 +39,14 @@ from mkdocs_rss_plugin.git_manager.ci import CiHandler
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
-from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
+from mkdocs_rss_plugin.models import PageInformation
+from mkdocs_rss_plugin.hacky_fix_links import relative_links_resolve_to_page, remove_wrappers
+
+# conditional imports
+if sys.version_info < (3, 9):
+    from mkdocs_rss_plugin.timezoner_pre39 import set_datetime_zoneinfo
+else:
+    from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
 
 # ############################################################################
 # ########## Globals #############
@@ -44,38 +58,6 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 # ########## Classes #############
 # ################################
 
-HREF_MATCH_PATTERN = re.compile('href="(.*?)"')
-SRC_MATCH_PATTERN = re.compile('src="(.*?)"')
-
-
-def relative_links_resolve_to_page(page_html, page_url):
-    href_links_to_replace = re.findall(HREF_MATCH_PATTERN, page_html)
-    src_links_to_replace = re.findall(SRC_MATCH_PATTERN, page_html)
-    links_to_replace = set(href_links_to_replace + src_links_to_replace)
-    links_with_replacements = [
-        (link, urljoin(page_url, link)) for link in links_to_replace
-    ]
-    replaced_html = page_html
-    for original, replacement in links_with_replacements:
-        replaced_html = replaced_html.replace(original, replacement)
-    return replaced_html
-
-
-WRAPPER_PATTERNS = [
-    re.compile(p, flags=re.DOTALL)
-    for p in [
-        '<a class="glightbox".*?>(.*?)</a>',
-        '<div class="grid cards".*?>(.*?)</div>',
-    ]
-]
-
-
-def remove_wrappers(page_html):
-    for wrapper_pattern in WRAPPER_PATTERNS:
-        page_html = re.sub(wrapper_pattern, r"\1", page_html)
-    return page_html
-
-
 class Util:
     """Plugin logic."""
 
@@ -85,9 +67,9 @@ class Util:
         self,
         path: str = ".",
         use_git: bool = True,
-        integration_material_social_cards: None | (
+        integration_material_social_cards: Optional[
             IntegrationMaterialSocialCards
-        ) = None,
+        ] = None,
     ):
         """Class hosting the plugin logic.
 
@@ -138,19 +120,23 @@ class Util:
         # save integrations
         self.social_cards = integration_material_social_cards
 
-    def build_url(self, base_url: str, path: str, args_dict: dict = None) -> str:
-        """Build URL using base URL, cumulating existing and passed path, \
-        then adding URL arguments.
+        # http/s session
+        self.req_session = Session()
+        self.req_session.headers.update(REMOTE_REQUEST_HEADERS)
 
-        :param base_url: base URL with existing path to use
-        :type base_url: str
-        :param path: URL path to cumulate with existing
-        :type path: str
-        :param args_dict: URL arguments to add, defaults to None
-        :type args_dict: dict, optional
+    def build_url(
+        self, base_url: str, path: str, args_dict: Optional[dict] = None
+    ) -> str:
+        """Build URL using base URL, cumulating existing and passed path, then adding
+            URL arguments.
 
-        :return: complete and valid URL
-        :rtype: str
+        Args:
+            base_url (str): base URL with existing path to use
+            path (str): URL path to cumulate with existing
+            args_dict (dict | None, optional): URL arguments to add. Defaults to None.
+
+        Returns:
+            str: complete and valid URL
         """
         if not base_url:
             logger.error(
@@ -166,18 +152,17 @@ class Util:
             url_parts[4] = urlencode(args_dict)
         return urlunparse(url_parts)
 
-    def get_value_from_dot_key(self, data: dict, dot_key: str | bool) -> Any:
-        """
-        Retrieves a value from a dictionary using a dot notation key.
+    def get_value_from_dot_key(self, data: dict, dot_key: Union[str, bool]) -> Any:
+        """Retrieves a value from a dictionary using a dot notation key.
 
-        :param data: The dictionary from which to retrieve the value.
-        :type data: dict
-        :param dot_key: The key in dot notation to specify the path in the dictionary.
-        :type dot_key: Union[str, bool]
+        Args:
+            data (dict): the dictionary from which to retrieve the value.
+            dot_key (str | bool): The key in dot notation to specify the path in the
+                dictionary.
 
-        :return: The value retrieved from the dictionary, or None if the key
-        does not exist.
-        :rtype: Any
+        Returns:
+            Any: The value retrieved from the dictionary, or None if the key
+                does not exist.
         """
         if not isinstance(dot_key, str):
             return data.get(dot_key)
@@ -191,33 +176,29 @@ class Util:
     def get_file_dates(
         self,
         in_page: Page,
-        source_date_creation: str = "git",
-        source_date_update: str = "git",
-        meta_datetime_format: str = "%Y-%m-%d %H:%M",
-        meta_default_timezone: str = "UTC",
-        meta_default_time: datetime | None = None,
-    ) -> tuple[datetime, datetime]:
+        source_date_creation: str,
+        source_date_update: str,
+        meta_datetime_format: str,
+        meta_default_time: datetime,
+        meta_default_timezone: str,
+    ) -> Tuple[datetime, datetime]:
         """Extract creation and update dates from page metadata (yaml frontmatter) or
-        git log for given file.
+            git log for given file.
 
-        :param in_page: input page to work with
-        :type in_page: Page
-        :param source_date_creation: which source to use (git or meta tag) for creation
-        date, defaults to "git"
-        :type source_date_creation: str, optional
-        :param source_date_update: which source to use (git or meta tag) for update
-        date, defaults to "git"
-        :type source_date_update: str, optional
-        :param meta_datetime_format: datetime string format, defaults to "%Y-%m-%d %H:%M"
-        :type meta_datetime_format: str, optional
-        :param meta_default_timezone: timezone to use, defaults to "UTC"
-        :type meta_default_timezone: str, optional
-        :param meta_default_time: time to set if not specified, defaults to None
-        :type meta_default_time: datetime, optional
+        Args:
+            in_page (Page): input page
+            source_date_creation (str): which source to use (git or meta tag) for
+                creation date
+            source_date_update (str): which source to use (git or meta tag) for update
+                date
+            meta_datetime_format (str): datetime string format
+            meta_default_time (datetime): fallback time to set if not specified
+            meta_default_timezone (str): timezone to use
 
-        :return: tuple of timestamps (creation date, last commit date)
-        :rtype: Tuple[datetime, datetime]
+        Returns:
+            tuple[datetime, datetime]: tuple of timestamps (creation date, last commit date)
         """
+        logger.debug(f"Extracting dates for {in_page.file.src_uri}")
         # empty vars
         dt_created = dt_updated = None
         if meta_default_time is None:
@@ -262,13 +243,13 @@ class Util:
             )
 
             if isinstance(dt_updated, str):
-                logger.info(
-                    f"Update date of {in_page.file.abs_src_path} is an "
-                    f"a character string: {dt_updated} ({type(dt_updated)})"
+                logger.debug(
+                    f"Update date of {in_page.file.abs_src_path} is a "
+                    f"character string: {dt_updated} ({type(dt_updated)})"
                 )
 
             elif dt_updated is None:
-                logger.info(
+                logger.debug(
                     f"Update date of {in_page.file.abs_src_path} is an "
                     f"unrecognized type: {dt_updated} ({type(dt_updated)})"
                 )
@@ -316,8 +297,6 @@ class Util:
                 dt_updated = set_datetime_zoneinfo(
                     datetime.fromtimestamp(float(dt_updated)), meta_default_timezone
                 )
-        else:
-            pass
 
         # results
         if all([dt_created, dt_updated]):
@@ -326,25 +305,31 @@ class Util:
                 dt_updated,
             )
         elif dt_created:
-            logger.info(
-                f"Updated date could not be retrieved for page: "
-                f"{in_page.file.abs_src_path}. Maybe it has never been committed yet?"
+            log_msg = (
+                "Updated date could not be retrieved for page: "
+                f"{in_page.file.abs_src_path}. Fallback to build date."
             )
+            if self.use_git:
+                log_msg += "Maybe it has never been committed yet?"
+            logger.debug(log_msg)
             return (
                 dt_created,
                 get_build_datetime(),
             )
         elif dt_updated:
-            logger.info(
-                f"Creation date could not be retrieved for page: "
-                f"{in_page.file.abs_src_path}. Maybe it has never been committed yet?"
+            log_msg = (
+                "Creation date could not be retrieved for page: "
+                f"{in_page.file.abs_src_path}. Fallback to build date."
             )
+            if self.use_git:
+                log_msg += "Maybe it has never been committed yet?"
+            logger.debug(log_msg)
             return (
                 get_build_datetime(),
                 dt_updated,
             )
         else:
-            logging.warning(
+            logger.info(
                 f"Dates could not be retrieved for page: {in_page.file.abs_src_path}."
             )
             return (
@@ -352,15 +337,15 @@ class Util:
                 get_build_datetime(),
             )
 
-    def get_authors_from_meta(self, in_page: Page) -> tuple[str] | None:
+    def get_authors_from_meta(self, in_page: Page) -> Optional[Tuple[str]]:
         """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
         str and iterable as values types.
 
-        :param in_page: page to look into
-        :type in_page: Page
+        Args:
+            in_page (Page): input page to look into
 
-        :return: tuple of authors names
-        :rtype: Tuple[str] or None
+        Returns:
+            tuple[str] | None: tuple of authors names
         """
         # identify the key
         if "author" in in_page.meta:
@@ -392,16 +377,15 @@ class Util:
 
     def get_categories_from_meta(
         self, in_page: Page, categories_labels: Iterable
-    ) -> tuple:
+    ) -> Optional[list]:
         """Returns category from page meta.
 
-        :param in_page: input page to parse
-        :type in_page: Page
-        :param categories_labels: meta tags to look into
-        :type categories_labels: Iterable
+        Args:
+            in_page (Page): input page to parse
+            categories_labels (Iterable): meta tags to look into
 
-        :return: found categories
-        :rtype: tuple
+        Returns:
+            list | None: found categories
         """
         if not categories_labels:
             return None
@@ -413,8 +397,6 @@ class Util:
                     output_categories.extend(in_page.meta.get(category_label))
                 elif isinstance(in_page.meta.get(category_label), str):
                     output_categories.append(in_page.meta.get(category_label))
-                else:
-                    pass
             else:
                 continue
         return sorted(output_categories)
@@ -426,20 +408,17 @@ class Util:
         meta_datetime_timezone: str,
         meta_default_time: datetime,
     ) -> datetime:
-        """Get date from page.meta handling str with associated datetime format and \
+        """Get date from page.meta handling str with associated datetime format and
             date already transformed by MkDocs.
 
-        :param date_metatag_value: value of page.meta.{tag_for_date}
-        :type date_metatag_value: str
-        :param meta_datetime_format: expected format of datetime
-        :type meta_datetime_format: str
-        :param meta_datetime_timezone: timezone to use
-        :type meta_datetime_timezone: str
-        :param meta_default_time: time to set if not specified
-        :type meta_default_time: datetime
+        Args:
+            date_metatag_value (str): value of page.meta.{tag_for_date}
+            meta_datetime_format (str): expected format of datetime
+            meta_datetime_timezone (str): timezone to use
+            meta_default_time (datetime): time to set if not specified
 
-        :return: datetime
-        :rtype: datetime
+        Returns:
+            datetime: page datetime value
         """
         out_date = None
         try:
@@ -455,7 +434,7 @@ class Util:
                     date=date_metatag_value, time=meta_default_time.time()
                 )
             else:
-                logger.info(
+                logger.debug(
                     f"Incompatible date type: {type(date_metatag_value)}. It must be: "
                     "date, datetime or str (complying with defined strftime format)."
                 )
@@ -483,21 +462,22 @@ class Util:
         in_page: Page,
         html: str,
         chars_count: int = 160,
-        abstract_delimiter: str = None,
+        abstract_delimiter: Optional[str] = None,
     ) -> str:
-        """Returns description from page meta. If it doesn't exist, use the \
-        {chars_count} first characters from page content (in html).
+        """Returns description from page meta. If it doesn't exist, use the page
+            content up to {abstract_delimiter} or the {chars_count} first characters
+            from page content (in markdown).
 
-        :param Page in_page: page to look at
-        :param str html: rendered page html
-        :param int chars_count: if page.meta.description is not set, number of chars \
-        of the content to use. Defaults to: 160 - optional
-        :param str abstract_delimiter: description delimiter, defaults to None
+        Args:
+            in_page (Page): page to look at
+            chars_count (int, optional): if page.meta.description is not set, number of
+                chars of the content to use. Defaults to 160.
+            abstract_delimiter (str, optional): description delimiter (also called
+                excerpt). Defaults to None.
 
-        :return: page description to use
-        :rtype: str
+        Returns:
+            str: page description to use
         """
-
         description = in_page.meta.get("description")
 
         # If the full page is wanted (unlimited chars count)
@@ -536,7 +516,7 @@ class Util:
             )
             return ""
 
-    def get_image(self, in_page: Page, base_url: str) -> tuple[str, str, int] | None:
+    def get_image(self, in_page: Page, base_url: str) -> Optional[Tuple[str, str, int]]:
         """Get page's image from page meta or social cards and returns properties.
 
         Args:
@@ -561,39 +541,40 @@ class Util:
                 f"{in_page.file.src_uri}"
             )
         elif (
-            self.social_cards.IS_ENABLED
+            isinstance(self.social_cards, IntegrationMaterialSocialCards)
+            and self.social_cards.IS_ENABLED
             and self.social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED
             and self.social_cards.is_social_plugin_enabled_page(
                 mkdocs_page=in_page,
-                fallback_value=self.social_cards,
+                fallback_value=self.social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED,
             )
         ):
-            img_local_path = self.social_cards.get_social_card_build_path_for_page(
-                mkdocs_page=in_page
-            )
             img_url = self.social_cards.get_social_card_url_for_page(
                 mkdocs_page=in_page
             )
-            logger.debug(
-                f"Image found ({img_url}) from social cards for page: "
-                f"{in_page.file.src_uri}. Using local image to get mime and length: "
-                f"{img_local_path}"
-            )
-
-            if img_local_path.is_file():
-                img_length = img_local_path.stat().st_size
+            if img_local_cache_path := self.social_cards.get_social_card_cache_path_for_page(
+                mkdocs_page=in_page
+            ):
+                img_length = img_local_cache_path.stat().st_size
+                img_type = guess_type(url=img_local_cache_path, strict=False)[0]
+            elif img_local_build_path := self.social_cards.get_social_card_build_path_for_page(
+                mkdocs_page=in_page
+            ):
+                img_length = img_local_build_path.stat().st_size
+                img_type = guess_type(url=img_local_build_path, strict=False)[0]
             else:
                 logger.debug(
-                    f"Social card: {img_local_path} still not exists. Trying to "
+                    "Social card still not exists locally. Trying to "
                     f"retrieve length from remote image: {img_url}. "
                     "Note that would work only if the social card image has been "
                     "already published before the build."
                 )
                 img_length = self.get_remote_image_length(image_url=img_url)
+                img_type = guess_type(url=img_url, strict=False)[0]
 
             return (
                 img_url,
-                guess_type(url=img_local_path, strict=False)[0],
+                img_type,
                 img_length,
             )
 
@@ -615,7 +596,9 @@ class Util:
         # return final tuple
         return (img_url, mime_type, img_length)
 
-    def get_local_image_length(self, page_path: str, path_to_append: str) -> int:
+    def get_local_image_length(
+        self, page_path: str, path_to_append: str
+    ) -> Optional[int]:
         """Calculates local image size in octets.
 
         Args:
@@ -632,56 +615,50 @@ class Util:
 
         return image_path.stat().st_size
 
+    @lru_cache(maxsize=512)
     def get_remote_image_length(
         self,
         image_url: str,
         http_method: str = "HEAD",
         attempt: int = 0,
-        ssl_context: ssl.SSLContext = None,
-    ) -> int | None:
-        """Retrieve length for remote images (starting with 'http' \
-            in meta.image or meta.illustration). \
-            It tries to perform a HEAD request and get the length from the headers. \
-            If it fails, it tries again with a GET and disabling SSL verification.
+        ssl_verify: bool = True,
+    ) -> Optional[int]:
+        """Retrieve length for remote images (starting with 'http').
 
-        :param image_url: remote image URL
-        :type image_url: str
-        :param http_method: HTTP method used to perform request, defaults to "HEAD"
-        :type http_method: str, optional
-        :param attempt: request tries counter, defaults to 0
-        :type attempt: int, optional
-        :param ssl_context: SSL context, defaults to None
-        :type ssl_context: ssl.SSLContext, optional
+        Firstly, it tries to perform a HEAD request and get the length from the headers. \
+        If it fails, it tries again with a GET and disabling SSL verification.
 
-        :return: image length as str or None
-        :rtype: Optional[int]
+        Args:
+            image_url (str): image URL
+            http_method (str, optional): HTTP method to use for the request.
+                Defaults to "HEAD".
+            attempt (int, optional): request tries counter. Defaults to 0.
+            ssl_verify (bool, optional): option to perform SSL verification or not.
+                Defaults to True.
+
+        Returns:
+            int | None: image length as int or None
         """
-        # prepare request
-        req = request.Request(
-            image_url,
-            method=http_method,
-            headers=REMOTE_REQUEST_HEADERS,
-        )
         # first, try HEAD request to avoid downloading the image
         try:
             attempt += 1
-            remote_img = request.urlopen(url=req, context=ssl_context)
-            img_length = remote_img.getheader("content-length")
-        except (HTTPError, URLError) as err:
-            logging.warning(
+            req_response = self.req_session.request(
+                method=http_method, url=image_url, verify=ssl_verify
+            )
+            req_response.raise_for_status()
+            img_length = req_response.headers.get("content-length")
+        except HTTPError as err:
+            logger.debug(
                 f"Remote image could not been reached: {image_url}. "
                 f"Trying again with GET and disabling SSL verification. Attempt: {attempt}. "
                 f"Trace: {err}"
             )
             if attempt < 2:
                 return self.get_remote_image_length(
-                    image_url,
-                    http_method="GET",
-                    attempt=attempt,
-                    ssl_context=ssl._create_unverified_context(),
+                    image_url, http_method="GET", attempt=attempt, ssl_verify=False
                 )
             else:
-                logging.error(
+                logger.info(
                     f"Remote image is not reachable: {image_url} after "
                     f"{attempt} attempts. Trace: {err}"
                 )
@@ -690,18 +667,18 @@ class Util:
         return int(img_length)
 
     @staticmethod
-    def get_site_url(mkdocs_config: Config) -> str | None:
-        """Extract site URL from MkDocs configuration and enforce the behavior to ensure \
-        returning a str with length > 0 or None. If exists, it adds an ending slash.
+    def get_site_url(mkdocs_config: MkDocsConfig) -> Optional[str]:
+        """Extract site URL from MkDocs configuration and enforce the behavior to ensure
+            returning a str with length > 0 or None. If exists, it adds an ending slash.
 
-        :param mkdocs_config: configuration object
-        :type mkdocs_config: Config
+        Args:
+            mkdocs_config (MkDocsConfig): configuration object
 
-        :return: site url
-        :rtype: str or None
+        Returns:
+            str | None: site url
         """
         # this method exists because the following line returns an empty string instead of \
-        # None (because the key alwayus exists)
+        # None (because the key always exists)
         defined_site_url = mkdocs_config.site_url
 
         # cases
@@ -716,14 +693,14 @@ class Util:
 
         return site_url
 
-    def guess_locale(self, mkdocs_config: Config) -> str | None:
+    def guess_locale(self, mkdocs_config: MkDocsConfig) -> Optional[str]:
         """Extract language code from MkDocs or Theme configuration.
 
-        :param mkdocs_config: configuration object
-        :type mkdocs_config: Config
+        Args:
+            mkdocs_config (MkDocsConfig): configuration object
 
-        :return: language code
-        :rtype: str or None
+        Returns:
+            str | None: language code
         """
         # MkDocs locale settings - might be added in future mkdocs versions
         # see: https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/24
@@ -772,18 +749,16 @@ class Util:
         return None
 
     @staticmethod
-    def filter_pages(pages: list, attribute: str, length: int) -> list:
+    def filter_pages(pages: List[PageInformation], attribute: str, length: int) -> list:
         """Filter and return pages into a friendly RSS structure.
 
-        :param pages: pages to filter
-        :type pages: list
-        :param attribute: page attribute as filter variable
-        :type attribute: str
-        :param length: max number of pages to return
-        :type length: int
+        Args:
+            pages (list): pages to filter
+            attribute (str): page attribute as filter variable
+            length (int): max number of pages to return
 
-        :return: list of filtered pages
-        :rtype: list
+        Returns:
+            list: list of filtered pages
         """
         filtered_pages = []
         for page in sorted(
@@ -811,14 +786,13 @@ class Util:
     def feed_to_json(feed: dict, *, updated: bool = False) -> dict:
         """Format internal feed representation as a JSON Feed compliant dict.
 
-        :param feed: internal feed structure, i. e.
-            GitRssPlugin.feed_created/feed_updated value
-        :type feed: dict
-        :param updated: True if this is a feed_updated
-        :type updated: bool
+        Args:
+            feed (dict): internal feed structure, i. e. GitRssPlugin.feed_created or
+                feed_updated value
+            updated (bool, optional): True if this is a feed_updated. Defaults to False.
 
-        :return: dict that can be passed to json.dump
-        :rtype: dict
+        Returns:
+            dict: dict that can be passed to json.dump
         """
         entry_date_key = "date_modified" if updated else "date_published"
 

@@ -2,8 +2,8 @@
 
 
 """
-Manage timezones for pages date(time)s using zoneinfo module, added in Python 3.9.
-
+Manage timezones for pages date(time)s using pytz module.
+Meant to be dropped when Python 3.8 reaches EOL.
 """
 
 # ############################################################################
@@ -11,10 +11,10 @@ Manage timezones for pages date(time)s using zoneinfo module, added in Python 3.
 # ##################################
 
 # standard library
-from datetime import datetime, timezone
-from zoneinfo import ZoneInfo
+from datetime import datetime
 
 # 3rd party
+import pytz
 from mkdocs.plugins import get_plugin_logger
 
 # package
@@ -50,7 +50,7 @@ def set_datetime_zoneinfo(
     if input_datetime.tzinfo:
         return input_datetime
     elif not config_timezone:
-        return input_datetime.replace(tzinfo=timezone.utc)
+        return input_datetime.replace(tzinfo=pytz.utc)
     else:
-        config_tz = ZoneInfo(config_timezone)
-        return input_datetime.replace(tzinfo=config_tz)
+        config_tz = pytz.timezone(config_timezone)
+        return config_tz.localize(input_datetime)

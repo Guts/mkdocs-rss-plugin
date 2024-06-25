@@ -2,12 +2,12 @@
 
 """Usage from the repo root folder:
 
-    .. code-block:: python
+.. code-block:: python
 
-        # for whole test
-        python -m unittest tests.test_build_no_git
-        # for specific test
-        python -m unittest tests.test_build_no_git.TestBuildRssNoGit.test_not_git_repo_without_option
+    # for whole test
+    python -m unittest tests.test_build_no_git
+    # for specific test
+    python -m unittest tests.test_build_no_git.TestBuildRssNoGit.test_not_git_repo_without_option
 """
 
 # #############################################################################

@@ -11,12 +11,12 @@ from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from re import compile as re_compile
+from typing import List, Optional
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from mkdocs.config import config_options
 from mkdocs.config.defaults import MkDocsConfig
-from mkdocs.exceptions import PluginError
 from mkdocs.plugins import BasePlugin, event_priority, get_plugin_logger
 from mkdocs.structure.files import Files
 from mkdocs.structure.pages import Page
@@ -56,9 +56,9 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     supports_multiple_instances = True
 
     def __init__(self):
-        """Instanciation."""
+        """Instantiation."""
         # pages storage
-        self.pages_to_filter: list = []
+        self.pages_to_filter: List[PageInformation] = []
         # prepare output feeds
         self.feed_created: dict = {}
         self.feed_updated: dict = {}
@@ -98,7 +98,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             switch_force=self.config.use_material_social_cards,
         )
 
-        # instanciate plugin tooling
+        # instantiate plugin tooling
         self.util = Util(
             use_git=self.config.use_git,
             integration_material_social_cards=self.integration_material_social_cards,
@@ -115,14 +115,20 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             "author": config.site_author or None,
             "buildDate": formatdate(get_build_timestamp()),
             "copyright": config.copyright,
-            "description": config.site_description,
+            "description": (
+                self.config.feed_description
+                if self.config.feed_description
+                else config.site_description
+            ),
             "entries": [],
             "generator": f"{__title__} - v{__version__}",
             "html_url": self.util.get_site_url(mkdocs_config=config),
             "language": self.util.guess_locale(mkdocs_config=config),
             "pubDate": formatdate(get_build_timestamp()),
             "repo_url": config.repo_url,
-            "title": config.site_name,
+            "title": (
+                self.config.feed_title if self.config.feed_title else config.site_name
+            ),
             "ttl": self.config.feed_ttl,
         }
 
@@ -163,11 +169,18 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             self.config.date_from_meta.default_time = datetime.strptime(
                 self.config.date_from_meta.default_time, "%H:%M"
             )
-        except ValueError as err:
-            raise PluginError(
+            print(
+                self.config.date_from_meta.default_time,
+                type(self.config.date_from_meta.default_time),
+            )
+        except (TypeError, ValueError) as err:
+            logger.warning(
                 "Config error: `date_from_meta.default_time` value "
                 f"'{self.config.date_from_meta.default_time}' format doesn't match the "
-                f"expected format %H:%M. Trace: {err}"
+                f"expected format %H:%M. Fallback to the default value. Trace: {err}"
+            )
+            self.config.date_from_meta.default_time = datetime.strptime(
+                "00:00", "%H:%M"
             )
 
         if self.config.use_git:
@@ -217,7 +230,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     @event_priority(priority=-75)
     def on_page_content(
         self, html: str, page: Page, config: MkDocsConfig, files: Files
-    ) -> str | None:
+    ) -> Optional[str]:
         """The page_content event is called after the Markdown text is rendered to HTML
             (but before being passed to a template) and can be used to alter the HTML
             body of the page.
@@ -303,17 +316,16 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             )
         )
 
-    def on_post_build(self, config: config_options.Config) -> dict | None:
-        """The post_build event does not alter any variables. \
-        Use this event to call post-build scripts. \
-        See: <https://www.mkdocs.org/user-guide/plugins/#on_post_build>
+    def on_post_build(self, config: config_options.Config) -> None:
+        """The post_build event does not alter any variables. Use this event to call
+            post-build scripts.
 
-        :param config: global configuration object
-        :type config: config_options.Config
-        :return: global configuration object
-        :rtype: dict
+        See:
+            <https://www.mkdocs.org/user-guide/plugins/#on_post_build>
+
+        Args:
+            config (config_options.Config): global configuration object
         """
-
         # Skip if disabled
         if not self.config.enabled:
             return

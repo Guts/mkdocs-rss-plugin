@@ -64,7 +64,6 @@ month_map = {
 
 
 def get_time(heading):
-
     heading = heading.split("-")[0]
     heading = heading.strip().replace(",", " ").replace(".", " ")
 
@@ -75,7 +74,6 @@ def get_time(heading):
 
 
 def rdftime(time):
-
     time = time.replace(":", " ")
     time = time.replace("/", " ")
     time = time.split()
@@ -95,7 +93,6 @@ def get_date(text):
 
 class RssExtension(markdown.Extension):
     def extendMarkdown(self, md, md_globals):
-
         self.config = {
             "URL": [DEFAULT_URL, "Main URL"],
             "CREATOR": [DEFAULT_CREATOR, "Feed creator's name"],
@@ -114,7 +111,6 @@ class RssExtension(markdown.Extension):
 
 class RssTreeProcessor(markdown.treeprocessors.Treeprocessor):
     def run(self, root):
-
         rss = etree.Element("rss")
         rss.set("version", "2.0")
 
@@ -125,14 +121,11 @@ class RssTreeProcessor(markdown.treeprocessors.Treeprocessor):
             ("link", self.ext.getConfig("URL")),
             ("description", None),
         ):
-
             element = etree.SubElement(channel, tag)
             element.text = text
 
         for child in root:
-
             if child.tag in ["h1", "h2", "h3", "h4", "h5"]:
-
                 heading = child.text.strip()
                 item = etree.SubElement(channel, "item")
                 link = etree.SubElement(item, "link")
@@ -163,5 +156,4 @@ class RssTreeProcessor(markdown.treeprocessors.Treeprocessor):
 
 
 def makeExtension(configs):
-
     return RssExtension(configs)

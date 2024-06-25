@@ -48,12 +48,19 @@ plugins:
         - tags
       comments_path: "#__comments"
       date_from_meta:
-        as_creation: "date"
-        as_update: false
+        as_creation: "date" # means from page.meta.date
+        as_update: "git" # means from git log
         datetime_format: "%Y-%m-%d %H:%M"
-        default_timezone: Europe/Paris
         default_time: "09:30"
+        default_timezone: Europe/Paris
       enabled: true
+      feed_description: "My custom feed description"  # MkDocs site_description: will be used if this key is not present
+      feeds_filenames:
+        json_created: feed_json_created.json
+        json_updated: feed_json_updated.json
+        rss_created: feed_rss_created.xml
+        rss_updated: feed_rss_updated.xml
+      feed_title: "My custom feed title"  # MkDocs site_name: will be used if this key is not present
       feed_ttl: 1440
       image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
       json_feed_enabled: true

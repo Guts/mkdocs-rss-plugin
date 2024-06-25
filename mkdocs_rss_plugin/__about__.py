@@ -1,9 +1,9 @@
 #! python3  # noqa: E265
 
 """
-    Metadata about the package to easily retrieve informations about it.
+Metadata about the package to easily retrieve informations about it.
 
-    See: https://packaging.python.org/guides/single-sourcing-package-version/
+See: https://packaging.python.org/guides/single-sourcing-package-version/
 """
 
 # ############################################################################
@@ -40,7 +40,7 @@ __title__ = "MkDocs RSS plugin"
 __title_clean__ = "".join(e for e in __title__ if e.isalnum())
 __uri__ = "https://github.com/Guts/mkdocs-rss-plugin/"
 
-__version__ = "1.13.0"
+__version__ = "1.13.4"
 __version_info__ = tuple(
     [
         int(num) if num.isdigit() else num

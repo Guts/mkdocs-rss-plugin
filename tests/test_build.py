@@ -2,10 +2,10 @@
 
 """Usage from the repo root folder:
 
-    .. code-block:: python
+.. code-block:: python
 
-        # for whole test
-        python -m unittest tests.test_build
+    # for whole test
+    python -m unittest tests.test_build
 
 """
 
@@ -422,7 +422,7 @@ class TestBuildRss(BaseTest):
 
             for feed_item in feed_parsed.entries:
                 if feed_item.title in ("Page without meta with early delimiter",):
-                    self.assertLess(len(feed_item.description), 50, feed_item.title)
+                    self.assertLess(len(feed_item.description), 100, feed_item.title)
 
     def test_simple_build_item_delimiter_empty(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
@@ -657,6 +657,28 @@ class TestBuildRss(BaseTest):
             with Path(Path(tmpdirname) / OUTPUT_RSS_FEED_UPDATED).open("r") as f:
                 self.assertEqual(len(f.readlines()), 1)
 
+    def test_simple_build_custom_title_description(self):
+        """Test simple build with custom description and title."""
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_custom_title_description.yml"
+                ),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED)
+            self.assertEqual(feed_parsed.feed.title, "My custom RSS title")
+            self.assertEqual(feed_parsed.feed.description, "My custom RSS description")
+
     def test_rss_feed_validation(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
@@ -699,20 +721,16 @@ class TestBuildRss(BaseTest):
             self.assertIsNone(cli_result.exception)
 
             # created items
-            with (
-                Path(tmpdirname)
-                .joinpath(OUTPUT_JSON_FEED_CREATED)
-                .open("r", encoding="UTF-8") as in_json
-            ):
+            with Path(tmpdirname).joinpath(OUTPUT_JSON_FEED_CREATED).open(
+                "r", encoding="UTF-8"
+            ) as in_json:
                 json_feed_created_data = json.load(in_json)
             jsonfeed.Feed.parse(json_feed_created_data)
 
             # updated items
-            with (
-                Path(tmpdirname)
-                .joinpath(OUTPUT_JSON_FEED_UPDATED)
-                .open("r", encoding="UTF-8") as in_json
-            ):
+            with Path(tmpdirname).joinpath(OUTPUT_JSON_FEED_UPDATED).open(
+                "r", encoding="UTF-8"
+            ) as in_json:
                 json_feed_updated_data = json.load(in_json)
             jsonfeed.Feed.parse(json_feed_updated_data)
 

@@ -24,13 +24,14 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 # ############################################################################
 # ########## Functions #############
 # ##################################
+
+
 class CiHandler:
     def __init__(self, repo: Git):
         self.repo = repo
 
-    def raise_ci_warnings(self):
+    def raise_ci_warnings(self) -> None:
         """Raise warnings when users use mkdocs-rss-plugin on CI build runners."""
-
         if not self.is_shallow_clone():
             return None
 
@@ -86,11 +87,11 @@ class CiHandler:
                     """
             )
 
-    def commit_count(self) -> bool:
+    def commit_count(self) -> int:
         """Helper function to determine the number of commits in a repository.
 
-        :return: Number of commits
-        :rtype: bool
+        Returns:
+            int: Number of commits
         """
         refs = self.repo.for_each_ref().split("\n")
         refs = [x.split()[0] for x in refs]
@@ -101,12 +102,14 @@ class CiHandler:
         return max(counts)
 
     def is_shallow_clone(self) -> bool:
-        """Helper function to determine if repository is a shallow clone. \
+        """Helper function to determine if repository is a shallow clone.
+
         References & Context:
         - https://github.com/timvink/mkdocs-rss-plugin/issues/10
         - https://stackoverflow.com/a/37203240/5525118
 
-        :return: True if a repo is shallow clone
-        :rtype: bool
+
+        Returns:
+            bool: True if a repo is shallow clone
         """
         return path.exists(".git/shallow")

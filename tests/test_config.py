@@ -2,10 +2,10 @@
 
 """Usage from the repo root folder:
 
-    .. code-block:: python
+.. code-block:: python
 
-        # for whole test
-        python -m unittest tests.test_config
+    # for whole test
+    python -m unittest tests.test_config
 
 """
 
@@ -71,6 +71,8 @@ class TestConfig(BaseTest):
                 "default_timezone": "UTC",
             },
             "enabled": True,
+            "feed_description": None,
+            "feed_title": None,
             "feed_ttl": 1440,
             "image": None,
             "json_feed_enabled": True,
@@ -113,6 +115,8 @@ class TestConfig(BaseTest):
                 "default_timezone": "UTC",
             },
             "enabled": True,
+            "feed_description": None,
+            "feed_title": None,
             "feed_ttl": 1440,
             "image": self.feed_image,
             "json_feed_enabled": True,
