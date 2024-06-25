@@ -8,6 +8,9 @@
 from mkdocs.config import config_options
 from mkdocs.config.base import Config
 
+# package
+from mkdocs_rss_plugin.constants import DEFAULT_CACHE_FOLDER
+
 # ############################################################################
 # ########## Classes ###############
 # ##################################
@@ -42,6 +45,7 @@ class RssPluginConfig(Config):
     categories = config_options.Optional(
         config_options.ListOfItems(config_options.Type(str))
     )
+    cache_dir = config_options.Type(str, default=f"{DEFAULT_CACHE_FOLDER.resolve()}")
     comments_path = config_options.Optional(config_options.Type(str))
     date_from_meta = config_options.SubConfig(_DateFromMeta)
     enabled = config_options.Type(bool, default=True)

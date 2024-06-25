@@ -92,6 +92,11 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             self.config.enabled = False
             return config
 
+        # cache dir
+        self.cache_dir = Path(self.config.cache_dir)
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        logger.debug(f"Caching HTTP requests to: {self.cache_dir.resolve()}")
+
         # integrations - check if theme is Material and if social cards are enabled
         self.integration_material_social_cards = IntegrationMaterialSocialCards(
             mkdocs_config=config,
@@ -100,6 +105,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
 
         # instantiate plugin tooling
         self.util = Util(
+            cache_dir=self.cache_dir,
             use_git=self.config.use_git,
             integration_material_social_cards=self.integration_material_social_cards,
         )
@@ -168,10 +174,6 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         try:
             self.config.date_from_meta.default_time = datetime.strptime(
                 self.config.date_from_meta.default_time, "%H:%M"
-            )
-            print(
-                self.config.date_from_meta.default_time,
-                type(self.config.date_from_meta.default_time),
             )
         except (TypeError, ValueError) as err:
             logger.warning(

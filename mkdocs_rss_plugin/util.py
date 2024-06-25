@@ -19,6 +19,8 @@ from urllib.parse import urlencode, urlparse, urlunparse
 # 3rd party
 import markdown
 import urllib3
+from cachecontrol import CacheControl
+from cachecontrol.caches.file_cache import SeparateBodyFileCache
 from git import (
     GitCommandError,
     GitCommandNotFound,
@@ -34,7 +36,11 @@ from requests import Session
 from requests.exceptions import ConnectionError, HTTPError
 
 # package
-from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME, REMOTE_REQUEST_HEADERS
+from mkdocs_rss_plugin.constants import (
+    DEFAULT_CACHE_FOLDER,
+    MKDOCS_LOGGER_NAME,
+    REMOTE_REQUEST_HEADERS,
+)
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
@@ -67,6 +73,7 @@ class Util:
     def __init__(
         self,
         path: str = ".",
+        cache_dir: Path = DEFAULT_CACHE_FOLDER,
         use_git: bool = True,
         integration_material_social_cards: Optional[
             IntegrationMaterialSocialCards
@@ -122,8 +129,13 @@ class Util:
         self.social_cards = integration_material_social_cards
 
         # http/s session
-        self.req_session = Session()
-        self.req_session.headers.update(REMOTE_REQUEST_HEADERS)
+        session = Session()
+        session.headers.update(REMOTE_REQUEST_HEADERS)
+        self.req_session = CacheControl(
+            sess=session,
+            cache=SeparateBodyFileCache(directory=cache_dir),
+            cacheable_methods=("GET", "HEAD"),
+        )
 
     def build_url(
         self, base_url: str, path: str, args_dict: Optional[dict] = None
