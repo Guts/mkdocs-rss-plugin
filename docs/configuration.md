@@ -173,6 +173,7 @@ Default: `true`.
 Used, in combination with `abstract_delimiter`, to determine each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
 - If this value is set to `-1`, then the articles' full HTML content will be filled into the description element.
+- If the `rss.feed_description` per-page is set, that will override the site description and the plugin description.
 - Otherwise, the plugin first tries to retrieve the value of the keyword `description` from the [page metadata].
 - If that fails and `abstract_delimiter` is found in the page, the article content up to (but not including) the delimiter is used.
 - If the above has failed, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted roughly into HTML.
