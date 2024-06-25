@@ -14,7 +14,6 @@ from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
 from typing import Any, List, Tuple, Union
-
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
@@ -36,11 +35,14 @@ from requests.exceptions import HTTPError
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME, REMOTE_REQUEST_HEADERS
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
+from mkdocs_rss_plugin.hacky_fix_links import (
+    relative_links_resolve_to_page,
+    remove_wrappers,
+)
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
 from mkdocs_rss_plugin.models import PageInformation
-from mkdocs_rss_plugin.hacky_fix_links import relative_links_resolve_to_page, remove_wrappers
 
 # conditional imports
 if sys.version_info < (3, 9):
@@ -57,6 +59,7 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 # ############################################################################
 # ########## Classes #############
 # ################################
+
 
 class Util:
     """Plugin logic."""

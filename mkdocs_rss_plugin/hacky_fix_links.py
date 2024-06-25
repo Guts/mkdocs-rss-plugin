@@ -31,4 +31,3 @@ def remove_wrappers(page_html):
     for wrapper_pattern in WRAPPER_PATTERNS:
         page_html = re.sub(wrapper_pattern, r"\1", page_html)
     return page_html
-
