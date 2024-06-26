@@ -19,7 +19,6 @@ from mkdocs_rss_plugin.constants import DEFAULT_CACHE_FOLDER
 class _DateFromMeta(Config):
     """Sub configuration object for related date options."""
 
-    #  TODO: remove deprecated code in future version. Only str values will be accepted
     # for as_creation and as_update
     as_creation = config_options.Type(str, default="git")
     as_update = config_options.Type(str, default="git")
