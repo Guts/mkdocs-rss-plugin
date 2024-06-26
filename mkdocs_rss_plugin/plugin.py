@@ -60,6 +60,8 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         # pages storage
         super().__init__(*args, **kwargs)
 
+        self.cmd_is_serve: bool = False
+
     def on_startup(
         self, *, command: Literal["build", "gh-deploy", "serve"], dirty: bool
     ) -> None:
