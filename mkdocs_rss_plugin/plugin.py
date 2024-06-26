@@ -55,20 +55,18 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     # allow to set the plugin multiple times in the same mkdocs config
     supports_multiple_instances = True
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Instantiation."""
         # pages storage
-        self.pages_to_filter: List[PageInformation] = []
-        # prepare output feeds
-        self.feed_created: dict = {}
-        self.feed_updated: dict = {}
-        # flag used command to disable some actions if serve is used
-        self.cmd_is_serve: bool = False
+        super().__init__(*args, **kwargs)
 
     def on_startup(
         self, *, command: Literal["build", "gh-deploy", "serve"], dirty: bool
     ) -> None:
         """The `startup` event runs once at the very beginning of an `mkdocs` invocation.
+        Note that for initializing variables, the __init__ method is still preferred.
+        For initializing per-build variables (and whenever in doubt), use the
+        on_config event.
 
         See: https://www.mkdocs.org/user-guide/plugins/#on_startup
 
@@ -76,7 +74,13 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             command: the command that MkDocs was invoked with, e.g. "serve" for `mkdocs serve`.
             dirty: whether `--dirty` flag was passed.
         """
+        # flag used command to disable some actions if serve is used
         self.cmd_is_serve = command == "serve"
+
+        self.pages_to_filter: List[PageInformation] = []
+        # prepare output feeds
+        self.feed_created: dict = {}
+        self.feed_updated: dict = {}
 
     def on_config(self, config: MkDocsConfig) -> MkDocsConfig:
         """The config event is the first event called on build and
