@@ -72,12 +72,13 @@ class Util:
 
     def __init__(
         self,
-        path: str = ".",
         cache_dir: Path = DEFAULT_CACHE_FOLDER,
-        use_git: bool = True,
         integration_material_social_cards: Optional[
             IntegrationMaterialSocialCards
         ] = None,
+        mkdocs_command_is_on_serve: bool = False,
+        path: str = ".",
+        use_git: bool = True,
     ):
         """Class hosting the plugin logic.
 
@@ -87,6 +88,13 @@ class Util:
             integration_material_social_cards (bool, optional): option to enable
                 integration with Social Cards plugin from Material theme. Defaults to True.
         """
+        self.mkdocs_command_is_on_serve = mkdocs_command_is_on_serve
+        if self.mkdocs_command_is_on_serve:
+            logger.debug(
+                "Mkdocs serve - Fetching remote images length is disabled to avoid "
+                "HTTP errors."
+            )
+
         if use_git:
             logger.debug("Git use is enabled.")
             try:
@@ -654,6 +662,9 @@ class Util:
         Returns:
             int | None: image length as int or None
         """
+        if self.mkdocs_command_is_on_serve:
+            return None
+
         # first, try HEAD request to avoid downloading the image
         try:
             attempt += 1

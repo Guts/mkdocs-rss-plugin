@@ -11,7 +11,7 @@ from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from re import compile as re_compile
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -55,9 +55,30 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     # allow to set the plugin multiple times in the same mkdocs config
     supports_multiple_instances = True
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Instantiation."""
         # pages storage
+        super().__init__(*args, **kwargs)
+
+        self.cmd_is_serve: bool = False
+
+    def on_startup(
+        self, *, command: Literal["build", "gh-deploy", "serve"], dirty: bool
+    ) -> None:
+        """The `startup` event runs once at the very beginning of an `mkdocs` invocation.
+        Note that for initializing variables, the __init__ method is still preferred.
+        For initializing per-build variables (and whenever in doubt), use the
+        on_config event.
+
+        See: https://www.mkdocs.org/user-guide/plugins/#on_startup
+
+        Args:
+            command: the command that MkDocs was invoked with, e.g. "serve" for `mkdocs serve`.
+            dirty: whether `--dirty` flag was passed.
+        """
+        # flag used command to disable some actions if serve is used
+        self.cmd_is_serve = command == "serve"
+
         self.pages_to_filter: List[PageInformation] = []
         # prepare output feeds
         self.feed_created: dict = {}
@@ -108,6 +129,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             cache_dir=self.cache_dir,
             use_git=self.config.use_git,
             integration_material_social_cards=self.integration_material_social_cards,
+            mkdocs_command_is_on_serve=self.cmd_is_serve,
         )
 
         # check template dirs
