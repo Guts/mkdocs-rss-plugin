@@ -123,6 +123,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             cache_dir=self.cache_dir,
             use_git=self.config.use_git,
             integration_material_social_cards=self.integration_material_social_cards,
+            mkdocs_command_is_on_serve=self.cmd_is_serve,
         )
 
         # check template dirs
