@@ -19,6 +19,8 @@ from urllib.parse import urlencode, urlparse, urlunparse
 # 3rd party
 import markdown
 import urllib3
+from cachecontrol import CacheControl
+from cachecontrol.caches.file_cache import SeparateBodyFileCache
 from git import (
     GitCommandError,
     GitCommandNotFound,
@@ -34,7 +36,11 @@ from requests import Session
 from requests.exceptions import ConnectionError, HTTPError
 
 # package
-from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME, REMOTE_REQUEST_HEADERS
+from mkdocs_rss_plugin.constants import (
+    DEFAULT_CACHE_FOLDER,
+    MKDOCS_LOGGER_NAME,
+    REMOTE_REQUEST_HEADERS,
+)
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
@@ -66,11 +72,13 @@ class Util:
 
     def __init__(
         self,
-        path: str = ".",
-        use_git: bool = True,
+        cache_dir: Path = DEFAULT_CACHE_FOLDER,
         integration_material_social_cards: Optional[
             IntegrationMaterialSocialCards
         ] = None,
+        mkdocs_command_is_on_serve: bool = False,
+        path: str = ".",
+        use_git: bool = True,
     ):
         """Class hosting the plugin logic.
 
@@ -80,6 +88,13 @@ class Util:
             integration_material_social_cards (bool, optional): option to enable
                 integration with Social Cards plugin from Material theme. Defaults to True.
         """
+        self.mkdocs_command_is_on_serve = mkdocs_command_is_on_serve
+        if self.mkdocs_command_is_on_serve:
+            logger.debug(
+                "Mkdocs serve - Fetching remote images length is disabled to avoid "
+                "HTTP errors."
+            )
+
         if use_git:
             logger.debug("Git use is enabled.")
             try:
@@ -122,8 +137,13 @@ class Util:
         self.social_cards = integration_material_social_cards
 
         # http/s session
-        self.req_session = Session()
-        self.req_session.headers.update(REMOTE_REQUEST_HEADERS)
+        session = Session()
+        session.headers.update(REMOTE_REQUEST_HEADERS)
+        self.req_session = CacheControl(
+            sess=session,
+            cache=SeparateBodyFileCache(directory=cache_dir),
+            cacheable_methods=("GET", "HEAD"),
+        )
 
     def build_url(
         self, base_url: str, path: str, args_dict: Optional[dict] = None
@@ -645,6 +665,9 @@ class Util:
         Returns:
             int | None: image length as int or None
         """
+        if self.mkdocs_command_is_on_serve:
+            return None
+
         # first, try HEAD request to avoid downloading the image
         try:
             attempt += 1

@@ -16,6 +16,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 -->
+
+## 1.14.0 - 2024-06-25
+
+### Bugs fixes 🐛
+
+* Update docs for `as_update` (boolean not supported anymore) by @brapoprod in <https://github.com/Guts/mkdocs-rss-plugin/pull/306>
+* improve(remote_images): handle connection error by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/307>
+* act depending on the used Mkdocs command and disable remote images length fetching to avoid HTTP errors by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/311>
+
+### Features and enhancements 🎉
+
+* Feature: add http caching mechanism by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/309>
+* improve(http): disable warnings for unverified requests by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/308>
+
+## New Contributors
+
+* @brapoprod made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/306>
+
 ## 1.13.4 - 2024-06-24
 
 ### Bugs fixes 🐛

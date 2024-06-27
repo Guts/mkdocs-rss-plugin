@@ -14,6 +14,7 @@ from mkdocs_rss_plugin import __about__
 # ########## Globals #############
 # ################################
 
+DEFAULT_CACHE_FOLDER = Path(".cache/plugins/rss")
 DEFAULT_TEMPLATE_FOLDER = Path(__file__).parent / "templates"
 DEFAULT_TEMPLATE_FILENAME = DEFAULT_TEMPLATE_FOLDER / "rss.xml.jinja2"
 MKDOCS_LOGGER_NAME = "[RSS-plugin]"

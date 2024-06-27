@@ -196,6 +196,28 @@ Default: `<!-- more -->`
 
 ----
 
+### :material-recycle: `cache_dir`: folder where to store plugin's cached files { #cache_dir }
+
+The plugin implements a caching mechanism, ensuring that a remote media is only get once during its life-cycle on remote HTTP server (using [Cache Control](https://pypi.org/project/CacheControl/) under the hood). It is normally not necessary to specify this setting, except for when you want to change the path within your root directory where HTTP body and metadata files are cached.
+
+If you want to change it, use:
+
+``` yaml
+plugins:
+  - rss:
+      cache_dir: my/custom/dir
+```
+
+It's strongly recommended to add the path to your `.gitignore` file in the root of your project:
+
+``` title=".gitignore"
+.cache
+```
+
+Default: `.cache/plugins/rss`.
+
+----
+
 ### :material-tag-multiple: `categories`: item categories { #categories }
 
 `categories`: list of page metadata values to use as [RSS item categories](https://www.w3schools.com/xml/rss_tag_category_item.asp).
