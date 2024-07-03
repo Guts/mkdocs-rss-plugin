@@ -189,10 +189,6 @@ To customize the value of the RSS description per each page and override the val
 date: 2024-06-24
 description: >-
   This is the SEO description.
-social:
-  cards_layout_options:
-    description: >-
-      This is the social cards description.
 rss:
   feed_description: >-
     And I want to have customized RSS description.
