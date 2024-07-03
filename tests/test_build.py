@@ -679,6 +679,40 @@ class TestBuildRss(BaseTest):
             self.assertEqual(feed_parsed.feed.title, "My custom RSS title")
             self.assertEqual(feed_parsed.feed.description, "My custom RSS description")
 
+    def test_simple_build_override_per_page_rss_feed_description(self):
+        """
+        Test per-page rss.feed_description overrides the config  site_description and rss.feed_description
+
+        How to run this test:
+            pytest tests/test_build.py::TestBuildRss::test_simple_build_override_per_page_rss_feed_description
+        """
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_custom_title_description.yml"
+                ),
+                output_path=tmpdirname,
+            )
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED)
+            for feed_item in feed_parsed.entries:
+                if feed_item.title == "Page with overridden rss feed description":
+                    self.assertEqual(
+                        feed_item.description,
+                        "This is a custom override of the feed description",
+                    )
+                    break
+            else:
+                self.fail("Page with overridden rss feed description not found")
+
     def test_rss_feed_validation(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(

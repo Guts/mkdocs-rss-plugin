@@ -173,11 +173,31 @@ Default: `true`.
 Used, in combination with `abstract_delimiter`, to determine each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
 - If this value is set to `-1`, then the articles' full HTML content will be filled into the description element.
+- If you want to customize the description per each Markdown page, refer to the example below.
 - Otherwise, the plugin first tries to retrieve the value of the keyword `description` from the [page metadata].
 - If that fails and `abstract_delimiter` is found in the page, the article content up to (but not including) the delimiter is used.
 - If the above has failed, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted roughly into HTML.
 
 Be careful: if set to `0` and there is no description, the feed's compliance is broken (an item must have a description).
+
+#### Override feed description per page
+
+To customize the value of the RSS description per each page and override the value of `site_description` and `plugins.rss.feed_description`, you can modify the value per each page as you see in the example below:
+
+```markdown
+---
+date: 2024-06-24
+description: >-
+  This is the SEO description.
+social:
+  cards_layout_options:
+    description: >-
+      This is the social cards description.
+rss:
+  feed_description: >-
+    And I want to have customized RSS description.
+---
+```
 
 `abstract_chars_count`: number of characters to use as item description.
 

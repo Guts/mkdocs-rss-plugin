@@ -498,7 +498,10 @@ class Util:
         Returns:
             str: page description to use
         """
-        description = in_page.meta.get("description")
+        if in_page.meta.get("rss", {}).get("feed_description"):
+            description = in_page.meta["rss"]["feed_description"]
+        else:
+            description = in_page.meta.get("description")
 
         # If the full page is wanted (unlimited chars count)
         if chars_count == -1 and (in_page.content or in_page.markdown):
