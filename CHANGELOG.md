@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.15.0 - 2024-07-03
+
+### Features and enhancements 🎉
+
+* feat: allow per-page description customization by @meysam81 in <https://github.com/Guts/mkdocs-rss-plugin/pull/310>
+
+### New Contributors
+
+* @meysam81 made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/310>
+
 ## 1.14.0 - 2024-06-25
 
 ### Bugs fixes 🐛
