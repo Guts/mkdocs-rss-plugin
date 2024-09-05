@@ -275,7 +275,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             return
 
         # skip pages that don't match the config var match_path
-        if not self.match_path_pattern.match(page.file.src_path):
+        if not self.match_path_pattern.match(page.file.src_uri):
             return
 
         # skip pages with draft=true
