@@ -117,6 +117,23 @@ class TestRssPluginIntegrationsMaterialSocialCards(BaseTest):
         self.assertFalse(integration_social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED)
         self.assertFalse(integration_social_cards.IS_ENABLED)
 
+    def test_plugin_config_social_cards_enabled_with_blog_plugin(self):
+        # default reference
+        cfg_mkdocs = load_config(
+            str(
+                Path("tests/fixtures/mkdocs_item_image_social_cards_blog.yml").resolve()
+            )
+        )
+
+        integration_social_cards = IntegrationMaterialSocialCards(
+            mkdocs_config=cfg_mkdocs
+        )
+        self.assertTrue(integration_social_cards.IS_THEME_MATERIAL)
+        self.assertTrue(integration_social_cards.IS_SOCIAL_PLUGIN_ENABLED)
+        self.assertTrue(integration_social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED)
+        self.assertTrue(integration_social_cards.IS_BLOG_PLUGIN_ENABLED)
+        self.assertTrue(integration_social_cards.IS_ENABLED)
+
     def test_simple_build(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
