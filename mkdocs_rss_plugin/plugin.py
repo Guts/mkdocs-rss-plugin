@@ -11,7 +11,7 @@ from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from re import compile as re_compile
-from typing import List, Literal, Optional
+from typing import Literal, Optional
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -79,7 +79,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         # flag used command to disable some actions if serve is used
         self.cmd_is_serve = command == "serve"
 
-        self.pages_to_filter: List[PageInformation] = []
+        self.pages_to_filter: list[PageInformation] = []
         # prepare output feeds
         self.feed_created: dict = {}
         self.feed_updated: dict = {}
