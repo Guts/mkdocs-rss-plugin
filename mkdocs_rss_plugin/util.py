@@ -6,14 +6,13 @@
 
 # standard library
 import logging
-import sys
 from collections.abc import Iterable
 from datetime import date, datetime
 from email.utils import format_datetime
 from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Any, List, Tuple, Union
+from typing import Any, Union
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
@@ -46,12 +45,7 @@ from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
 from mkdocs_rss_plugin.models import PageInformation
-
-# conditional imports
-if sys.version_info < (3, 9):
-    from mkdocs_rss_plugin.timezoner_pre39 import set_datetime_zoneinfo
-else:
-    from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
+from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
 
 # ############################################################################
 # ########## Globals #############
@@ -202,7 +196,7 @@ class Util:
         meta_datetime_format: str,
         meta_default_time: datetime,
         meta_default_timezone: str,
-    ) -> Tuple[datetime, datetime]:
+    ) -> tuple[datetime, datetime]:
         """Extract creation and update dates from page metadata (yaml frontmatter) or
             git log for given file.
 
@@ -358,7 +352,7 @@ class Util:
                 get_build_datetime(),
             )
 
-    def get_authors_from_meta(self, in_page: Page) -> Optional[Tuple[str]]:
+    def get_authors_from_meta(self, in_page: Page) -> Optional[tuple[str]]:
         """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
         str and iterable as values types.
 
@@ -542,7 +536,7 @@ class Util:
             )
             return ""
 
-    def get_image(self, in_page: Page, base_url: str) -> Optional[Tuple[str, str, int]]:
+    def get_image(self, in_page: Page, base_url: str) -> Optional[tuple[str, str, int]]:
         """Get page's image from page meta or social cards and returns properties.
 
         Args:
@@ -782,7 +776,7 @@ class Util:
         return None
 
     @staticmethod
-    def filter_pages(pages: List[PageInformation], attribute: str, length: int) -> list:
+    def filter_pages(pages: list[PageInformation], attribute: str, length: int) -> list:
         """Filter and return pages into a friendly RSS structure.
 
         Args:
