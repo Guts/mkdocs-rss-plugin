@@ -427,7 +427,7 @@ class TestBuildRss(BaseTest):
 
             for feed_item in feed_parsed.entries:
                 if feed_item.title in ("Page without meta with early delimiter",):
-                    self.assertLess(len(feed_item.description), 50, feed_item.title)
+                    self.assertLess(len(feed_item.description), 100, feed_item.title)
 
     def test_simple_build_item_delimiter_empty(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
@@ -903,6 +903,41 @@ class TestBuildRss(BaseTest):
 
         # restore name
         git_dir_tmp.replace(git_dir)
+
+    def test_abstract_with_internal_links(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_minimal.yml"),
+                output_path=tmpdirname,
+                strict=True,
+            )
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            feed_rss_created = feedparser.parse(
+                Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED
+            )
+
+            feed_rss_updated = feedparser.parse(
+                Path(tmpdirname) / OUTPUT_RSS_FEED_UPDATED
+            )
+
+            ##print(json.dumps(feed_rss_created))
+
+            for page in feed_rss_created.entries + feed_rss_updated.entries:
+                if page.title == "Blog sample with internal links":
+                    self.assertIn(
+                        'href="https://guts.github.io/mkdocs-rss-plugin/blog/posts/sample_blog_post/"',
+                        page.summary,
+                    )
+                    self.assertIn(
+                        'href="https://guts.github.io/mkdocs-rss-plugin/"', page.summary
+                    )
+                    self.assertIn(
+                        'src="https://guts.github.io/mkdocs-rss-plugin/blog/posts/assets/example_image.webp"',
+                        page.summary,
+                    )
 
 
 # ##############################################################################
