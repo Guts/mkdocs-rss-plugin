@@ -17,6 +17,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.16.0 - 2024-10-24
+
+### Bugs fixes 🐛
+
+* Make match_path OS agnostic by @mvelikikh in <https://github.com/Guts/mkdocs-rss-plugin/pull/323>
+
+### Features and enhancements 🎉
+
+* feature(integration): support social cards for blog plugin posts by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/326>
+
+### Documentation 📖
+
+* Remove social options from example by @Andre601 in <https://github.com/Guts/mkdocs-rss-plugin/pull/316>
+
+### Other Changes
+
+* Packaging: drop python 3 8, add 3.13 support by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/327>
+
+## New Contributors
+
+* @Andre601 made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/316>
+* @mvelikikh made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/323>
+
 ## 1.15.0 - 2024-07-03
 
 ### Features and enhancements 🎉
