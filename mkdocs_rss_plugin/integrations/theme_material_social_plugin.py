@@ -91,7 +91,9 @@ class IntegrationMaterialSocialCards:
             self.social_cards_cache_dir = self.get_social_cards_cache_dir(
                 mkdocs_config=mkdocs_config
             )
-            self.is_blog_plugin_enabled_mkdocs(mkdocs_config=mkdocs_config)
+            self.IS_BLOG_PLUGIN_ENABLED = self.is_blog_plugin_enabled_mkdocs(
+                mkdocs_config=mkdocs_config
+            )
             if self.is_mkdocs_theme_material_insiders():
                 self.load_cache_cards_manifest()
 
@@ -145,6 +147,7 @@ class IntegrationMaterialSocialCards:
 
         if not mkdocs_config.plugins.get("material/blog"):
             logger.debug("Material blog plugin is not listed in configuration.")
+            self.IS_BLOG_PLUGIN_ENABLED = False
             return False
 
         self.blog_plugin_cfg: BlogPlugin | None = mkdocs_config.plugins.get(
@@ -157,7 +160,7 @@ class IntegrationMaterialSocialCards:
             return False
 
         logger.debug("Material blog plugin is enabled in Mkdocs configuration.")
-        self.IS_SOCIAL_PLUGIN_CARDS_ENABLED = True
+        self.IS_BLOG_PLUGIN_ENABLED = True
         return True
 
     def is_social_plugin_enabled_mkdocs(self, mkdocs_config: MkDocsConfig) -> bool:
