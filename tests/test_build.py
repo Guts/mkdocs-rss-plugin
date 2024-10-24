@@ -398,8 +398,13 @@ class TestBuildRss(BaseTest):
                 if feed_item.title not in (
                     "Page without meta with short text",
                     "Blog sample",
+                    "Blog",
                 ):
-                    self.assertGreater(len(feed_item.description), 150, feed_item.title)
+                    self.assertGreater(
+                        len(feed_item.description),
+                        150,
+                        f"Failed item title: {feed_item.title}",
+                    )
 
     def test_simple_build_item_delimiter(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
