@@ -41,7 +41,7 @@ class TestConfig(BaseTest):
     @classmethod
     def setUpClass(cls):
         """Executed when module is loaded before any test."""
-        cls.config_files = sorted(Path("tests/fixtures/").glob("**/*.yml"))
+        cls.config_files = sorted(Path("tests/fixtures/").glob("**/mkdocs_*.yml"))
         cls.feed_image = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png"
 
     def setUp(self):
