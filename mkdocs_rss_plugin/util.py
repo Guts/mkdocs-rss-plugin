@@ -6,18 +6,20 @@
 
 # standard library
 import logging
-import sys
 from collections.abc import Iterable
 from datetime import date, datetime
 from email.utils import format_datetime
 from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Any, List, Tuple, Union
+from typing import Any, Union
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
 import markdown
+import urllib3
+from cachecontrol import CacheControl
+from cachecontrol.caches.file_cache import SeparateBodyFileCache
 from git import (
     GitCommandError,
     GitCommandNotFound,
@@ -30,10 +32,14 @@ from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_datetime
 from requests import Session
-from requests.exceptions import HTTPError
+from requests.exceptions import ConnectionError, HTTPError
 
 # package
-from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME, REMOTE_REQUEST_HEADERS
+from mkdocs_rss_plugin.constants import (
+    DEFAULT_CACHE_FOLDER,
+    MKDOCS_LOGGER_NAME,
+    REMOTE_REQUEST_HEADERS,
+)
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
 from mkdocs_rss_plugin.hacky_fix_links import (
     relative_links_resolve_to_page,
@@ -43,18 +49,14 @@ from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
 from mkdocs_rss_plugin.models import PageInformation
-
-# conditional imports
-if sys.version_info < (3, 9):
-    from mkdocs_rss_plugin.timezoner_pre39 import set_datetime_zoneinfo
-else:
-    from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
+from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
 
 # ############################################################################
 # ########## Globals #############
 # ################################
 
 logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
+urllib3.disable_warnings()  # disable warnings for unverified requests
 
 # ############################################################################
 # ########## Classes #############
@@ -68,11 +70,13 @@ class Util:
 
     def __init__(
         self,
-        path: str = ".",
-        use_git: bool = True,
+        cache_dir: Path = DEFAULT_CACHE_FOLDER,
         integration_material_social_cards: Optional[
             IntegrationMaterialSocialCards
         ] = None,
+        mkdocs_command_is_on_serve: bool = False,
+        path: str = ".",
+        use_git: bool = True,
     ):
         """Class hosting the plugin logic.
 
@@ -82,6 +86,13 @@ class Util:
             integration_material_social_cards (bool, optional): option to enable
                 integration with Social Cards plugin from Material theme. Defaults to True.
         """
+        self.mkdocs_command_is_on_serve = mkdocs_command_is_on_serve
+        if self.mkdocs_command_is_on_serve:
+            logger.debug(
+                "Mkdocs serve - Fetching remote images length is disabled to avoid "
+                "HTTP errors."
+            )
+
         if use_git:
             logger.debug("Git use is enabled.")
             try:
@@ -124,8 +135,13 @@ class Util:
         self.social_cards = integration_material_social_cards
 
         # http/s session
-        self.req_session = Session()
-        self.req_session.headers.update(REMOTE_REQUEST_HEADERS)
+        session = Session()
+        session.headers.update(REMOTE_REQUEST_HEADERS)
+        self.req_session = CacheControl(
+            sess=session,
+            cache=SeparateBodyFileCache(directory=cache_dir),
+            cacheable_methods=("GET", "HEAD"),
+        )
 
     def build_url(
         self, base_url: str, path: str, args_dict: Optional[dict] = None
@@ -184,7 +200,7 @@ class Util:
         meta_datetime_format: str,
         meta_default_time: datetime,
         meta_default_timezone: str,
-    ) -> Tuple[datetime, datetime]:
+    ) -> tuple[datetime, datetime]:
         """Extract creation and update dates from page metadata (yaml frontmatter) or
             git log for given file.
 
@@ -340,7 +356,7 @@ class Util:
                 get_build_datetime(),
             )
 
-    def get_authors_from_meta(self, in_page: Page) -> Optional[Tuple[str]]:
+    def get_authors_from_meta(self, in_page: Page) -> Optional[tuple[str]]:
         """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
         str and iterable as values types.
 
@@ -481,7 +497,10 @@ class Util:
         Returns:
             str: page description to use
         """
-        description = in_page.meta.get("description")
+        if in_page.meta.get("rss", {}).get("feed_description"):
+            description = in_page.meta["rss"]["feed_description"]
+        else:
+            description = in_page.meta.get("description")
 
         # If the full page is wanted (unlimited chars count)
         if chars_count == -1 and (in_page.content or in_page.markdown):
@@ -519,7 +538,7 @@ class Util:
             )
             return ""
 
-    def get_image(self, in_page: Page, base_url: str) -> Optional[Tuple[str, str, int]]:
+    def get_image(self, in_page: Page, base_url: str) -> Optional[tuple[str, str, int]]:
         """Get page's image from page meta or social cards and returns properties.
 
         Args:
@@ -642,19 +661,26 @@ class Util:
         Returns:
             int | None: image length as int or None
         """
+        if self.mkdocs_command_is_on_serve:
+            return None
+
         # first, try HEAD request to avoid downloading the image
         try:
             attempt += 1
+            logger.debug(
+                f"Get remote image length (attempt {attempt}/2) - "
+                f"Sending {http_method} request to {image_url}"
+            )
             req_response = self.req_session.request(
                 method=http_method, url=image_url, verify=ssl_verify
             )
             req_response.raise_for_status()
             img_length = req_response.headers.get("content-length")
-        except HTTPError as err:
+        except (ConnectionError, HTTPError) as err:
             logger.debug(
                 f"Remote image could not been reached: {image_url}. "
-                f"Trying again with GET and disabling SSL verification. Attempt: {attempt}. "
-                f"Trace: {err}"
+                f"Trying again with {http_method} and disabling SSL verification. "
+                f"Attempt: {attempt}/2. Trace: {err}"
             )
             if attempt < 2:
                 return self.get_remote_image_length(
@@ -752,7 +778,7 @@ class Util:
         return None
 
     @staticmethod
-    def filter_pages(pages: List[PageInformation], attribute: str, length: int) -> list:
+    def filter_pages(pages: list[PageInformation], attribute: str, length: int) -> list:
         """Filter and return pages into a friendly RSS structure.
 
         Args:

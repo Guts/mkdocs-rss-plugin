@@ -11,7 +11,7 @@ from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from re import compile as re_compile
-from typing import List, Optional
+from typing import Literal, Optional
 
 # 3rd party
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -55,10 +55,31 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     # allow to set the plugin multiple times in the same mkdocs config
     supports_multiple_instances = True
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Instantiation."""
         # pages storage
-        self.pages_to_filter: List[PageInformation] = []
+        super().__init__(*args, **kwargs)
+
+        self.cmd_is_serve: bool = False
+
+    def on_startup(
+        self, *, command: Literal["build", "gh-deploy", "serve"], dirty: bool
+    ) -> None:
+        """The `startup` event runs once at the very beginning of an `mkdocs` invocation.
+        Note that for initializing variables, the __init__ method is still preferred.
+        For initializing per-build variables (and whenever in doubt), use the
+        on_config event.
+
+        See: https://www.mkdocs.org/user-guide/plugins/#on_startup
+
+        Args:
+            command: the command that MkDocs was invoked with, e.g. "serve" for `mkdocs serve`.
+            dirty: whether `--dirty` flag was passed.
+        """
+        # flag used command to disable some actions if serve is used
+        self.cmd_is_serve = command == "serve"
+
+        self.pages_to_filter: list[PageInformation] = []
         # prepare output feeds
         self.feed_created: dict = {}
         self.feed_updated: dict = {}
@@ -92,6 +113,11 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             self.config.enabled = False
             return config
 
+        # cache dir
+        self.cache_dir = Path(self.config.cache_dir)
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        logger.debug(f"Caching HTTP requests to: {self.cache_dir.resolve()}")
+
         # integrations - check if theme is Material and if social cards are enabled
         self.integration_material_social_cards = IntegrationMaterialSocialCards(
             mkdocs_config=config,
@@ -100,8 +126,10 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
 
         # instantiate plugin tooling
         self.util = Util(
+            cache_dir=self.cache_dir,
             use_git=self.config.use_git,
             integration_material_social_cards=self.integration_material_social_cards,
+            mkdocs_command_is_on_serve=self.cmd_is_serve,
         )
 
         # check template dirs
@@ -168,10 +196,6 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         try:
             self.config.date_from_meta.default_time = datetime.strptime(
                 self.config.date_from_meta.default_time, "%H:%M"
-            )
-            print(
-                self.config.date_from_meta.default_time,
-                type(self.config.date_from_meta.default_time),
             )
         except (TypeError, ValueError) as err:
             logger.warning(
@@ -251,7 +275,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             return
 
         # skip pages that don't match the config var match_path
-        if not self.match_path_pattern.match(page.file.src_path):
+        if not self.match_path_pattern.match(page.file.src_uri):
             return
 
         # skip pages with draft=true

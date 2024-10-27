@@ -1,0 +1,15 @@
+authors:
+  squidfunk:
+    name: Martin Donath
+    description: Creator
+    avatar: https://github.com/squidfunk.png
+  alexvoss:
+    name: Alex Voss
+    description: Weltenwanderer
+    avatar: https://github.com/alexvoss.png
+  guts:
+    avatar: https://cdn.geotribu.fr/img/internal/contributeurs/jmou.jfif
+    description: GIS Watchman
+    name: Julien Moura
+    slug: julien-moura
+    url: https://geotribu.fr/team/julien-moura/

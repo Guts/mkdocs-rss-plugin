@@ -22,11 +22,11 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
+          - "3.13"
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -61,7 +61,7 @@ jobs:
         run: python -m pytest
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.4.1
+        uses: codecov/codecov-action@v4.6.0
         with:
           env_vars: PYTHON
           flags: unittests

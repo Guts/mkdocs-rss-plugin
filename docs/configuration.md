@@ -173,11 +173,27 @@ Default: `true`.
 Used, in combination with `abstract_delimiter`, to determine each [item description element](https://www.w3schools.com/xml/rss_tag_title_link_description_item.asp):
 
 - If this value is set to `-1`, then the articles' full HTML content will be filled into the description element.
+- If you want to customize the description per each Markdown page, refer to the example below.
 - Otherwise, the plugin first tries to retrieve the value of the keyword `description` from the [page metadata].
 - If that fails and `abstract_delimiter` is found in the page, the article content up to (but not including) the delimiter is used.
 - If the above has failed, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted roughly into HTML.
 
 Be careful: if set to `0` and there is no description, the feed's compliance is broken (an item must have a description).
+
+#### Override feed description per page
+
+To customize the value of the RSS description per each page and override the value of `site_description` and `plugins.rss.feed_description`, you can modify the value per each page as you see in the example below:
+
+```markdown
+---
+date: 2024-06-24
+description: >-
+  This is the SEO description.
+rss:
+  feed_description: >-
+    And I want to have customized RSS description.
+---
+```
 
 `abstract_chars_count`: number of characters to use as item description.
 
@@ -192,6 +208,28 @@ Please see `abstract_chars_count` for how this setting is used. A value of `""` 
 `abstract_delimiter`: string to mark where the description ends.
 
 Default: `<!-- more -->`
+
+----
+
+### :material-recycle: `cache_dir`: folder where to store plugin's cached files { #cache_dir }
+
+The plugin implements a caching mechanism, ensuring that a remote media is only get once during its life-cycle on remote HTTP server (using [Cache Control](https://pypi.org/project/CacheControl/) under the hood). It is normally not necessary to specify this setting, except for when you want to change the path within your root directory where HTTP body and metadata files are cached.
+
+If you want to change it, use:
+
+``` yaml
+plugins:
+  - rss:
+      cache_dir: my/custom/dir
+```
+
+It's strongly recommended to add the path to your `.gitignore` file in the root of your project:
+
+``` title=".gitignore"
+.cache
+```
+
+Default: `.cache/plugins/rss`.
 
 ----
 
@@ -315,7 +353,7 @@ For example, in your `best_article.md` created in 2019, you can write the front-
       - rss:
           date_from_meta:
             as_creation: "date"
-            as_update: false
+            as_update: "git"
             datetime_format: "%Y-%m-%d %H:%M"
             default_timezone: Europe/Paris
     ```
@@ -343,7 +381,7 @@ For example, in your `best_article.md` created in 2019, you can write the front-
       - rss:
           date_from_meta:
             as_creation: "date.created"
-            as_update: false
+            as_update: "git"
             datetime_format: "%Y-%m-%d %H:%M"
             default_timezone: Europe/Paris
     ```

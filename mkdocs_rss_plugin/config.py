@@ -8,6 +8,9 @@
 from mkdocs.config import config_options
 from mkdocs.config.base import Config
 
+# package
+from mkdocs_rss_plugin.constants import DEFAULT_CACHE_FOLDER
+
 # ############################################################################
 # ########## Classes ###############
 # ##################################
@@ -16,7 +19,6 @@ from mkdocs.config.base import Config
 class _DateFromMeta(Config):
     """Sub configuration object for related date options."""
 
-    #  TODO: remove deprecated code in future version. Only str values will be accepted
     # for as_creation and as_update
     as_creation = config_options.Type(str, default="git")
     as_update = config_options.Type(str, default="git")
@@ -42,6 +44,7 @@ class RssPluginConfig(Config):
     categories = config_options.Optional(
         config_options.ListOfItems(config_options.Type(str))
     )
+    cache_dir = config_options.Type(str, default=f"{DEFAULT_CACHE_FOLDER.resolve()}")
     comments_path = config_options.Optional(config_options.Type(str))
     date_from_meta = config_options.SubConfig(_DateFromMeta)
     enabled = config_options.Type(bool, default=True)

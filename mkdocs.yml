@@ -22,8 +22,11 @@ extra:
       link: https://mapstodon.space/@geojulien
       name: "Follow me on Mastodon"
     - icon: "fontawesome/solid/piggy-bank"
-      link: /team/sponsoring/
-      name: "Sponsor development"
+      link: https://github.com/sponsors/Guts
+      name: "Sponsor development with Github"
+    - icon: "simple/liberapay"
+      link: https://liberapay.com/GeoJulien
+      name: "Sponsor development with Liberapay"
 
 # Extensions to enhance markdown
 markdown_extensions:

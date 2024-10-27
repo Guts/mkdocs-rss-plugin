@@ -16,6 +16,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 -->
+
+## 1.16.0 - 2024-10-24
+
+### Bugs fixes 🐛
+
+* Make match_path OS agnostic by @mvelikikh in <https://github.com/Guts/mkdocs-rss-plugin/pull/323>
+
+### Features and enhancements 🎉
+
+* feature(integration): support social cards for blog plugin posts by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/326>
+
+### Documentation 📖
+
+* Remove social options from example by @Andre601 in <https://github.com/Guts/mkdocs-rss-plugin/pull/316>
+
+### Other Changes
+
+* Packaging: drop python 3 8, add 3.13 support by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/327>
+
+## New Contributors
+
+* @Andre601 made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/316>
+* @mvelikikh made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/323>
+
+## 1.15.0 - 2024-07-03
+
+### Features and enhancements 🎉
+
+* feat: allow per-page description customization by @meysam81 in <https://github.com/Guts/mkdocs-rss-plugin/pull/310>
+
+### New Contributors
+
+* @meysam81 made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/310>
+
+## 1.14.0 - 2024-06-25
+
+### Bugs fixes 🐛
+
+* Update docs for `as_update` (boolean not supported anymore) by @brapoprod in <https://github.com/Guts/mkdocs-rss-plugin/pull/306>
+* improve(remote_images): handle connection error by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/307>
+* act depending on the used Mkdocs command and disable remote images length fetching to avoid HTTP errors by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/311>
+
+### Features and enhancements 🎉
+
+* Feature: add http caching mechanism by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/309>
+* improve(http): disable warnings for unverified requests by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/308>
+
+## New Contributors
+
+* @brapoprod made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/306>
+
 ## 1.13.4 - 2024-06-24
 
 ### Bugs fixes 🐛

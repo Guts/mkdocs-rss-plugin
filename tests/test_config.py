@@ -21,8 +21,10 @@ from pathlib import Path
 # 3rd party
 from mkdocs.config.base import Config
 
-# plugin target
 from mkdocs_rss_plugin.config import RssPluginConfig
+
+# plugin target
+from mkdocs_rss_plugin.constants import DEFAULT_CACHE_FOLDER
 from mkdocs_rss_plugin.plugin import GitRssPlugin
 
 # test suite
@@ -39,7 +41,7 @@ class TestConfig(BaseTest):
     @classmethod
     def setUpClass(cls):
         """Executed when module is loaded before any test."""
-        cls.config_files = sorted(Path("tests/fixtures/").glob("**/*.yml"))
+        cls.config_files = sorted(Path("tests/fixtures/").glob("**/mkdocs_*.yml"))
         cls.feed_image = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png"
 
     def setUp(self):
@@ -62,6 +64,7 @@ class TestConfig(BaseTest):
             "abstract_chars_count": 160,
             "abstract_delimiter": "<!-- more -->",
             "categories": None,
+            "cache_dir": f"{DEFAULT_CACHE_FOLDER.resolve()}",
             "comments_path": None,
             "date_from_meta": {
                 "as_creation": "git",
@@ -105,6 +108,7 @@ class TestConfig(BaseTest):
         expected = {
             "abstract_chars_count": 160,
             "abstract_delimiter": "<!-- more -->",
+            "cache_dir": f"{DEFAULT_CACHE_FOLDER.resolve()}",
             "categories": None,
             "comments_path": None,
             "date_from_meta": {
