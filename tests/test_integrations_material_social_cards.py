@@ -131,7 +131,9 @@ class TestRssPluginIntegrationsMaterialSocialCards(BaseTest):
         self.assertTrue(integration_social_cards.IS_THEME_MATERIAL)
         self.assertTrue(integration_social_cards.IS_SOCIAL_PLUGIN_ENABLED)
         self.assertTrue(integration_social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED)
-        self.assertTrue(integration_social_cards.IS_BLOG_PLUGIN_ENABLED)
+        self.assertTrue(
+            integration_social_cards.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
+        )
         self.assertTrue(integration_social_cards.IS_ENABLED)
 
     def test_simple_build(self):
