@@ -91,6 +91,7 @@ class TestConfig(BaseTest):
             "rss_feed_enabled": True,
             "url_parameters": None,
             "use_git": True,
+            "use_material_blog": True,
             "use_material_social_cards": True,
         }
 
@@ -136,6 +137,7 @@ class TestConfig(BaseTest):
             "rss_feed_enabled": True,
             "url_parameters": None,
             "use_git": True,
+            "use_material_blog": True,
             "use_material_social_cards": True,
         }
 

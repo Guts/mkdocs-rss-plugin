@@ -38,7 +38,7 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 class IntegrationMaterialThemeBase:
     # attributes
     IS_THEME_MATERIAL: bool = False
-    IS_INSIDERS: bool = False
+    IS_INSIDERS: Optional[bool] = False
 
     def __init__(self, mkdocs_config: MkDocsConfig) -> None:
         """Integration instantiation.

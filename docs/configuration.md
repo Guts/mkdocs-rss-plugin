@@ -596,6 +596,16 @@ Default: `true`.
 
 ----
 
+### :material-newspaper-variant-outline: `use_material_blog`: enable/disable integration with Material Blog plugin { #use_material_blog }
+
+If `false`, the integration with the Blog plugin is disabled.
+
+Default: `true`.
+
+> See [the related section in integrations page](./integrations.md#blog-plugin-from-material-theme).
+
+----
+
 ### :material-cards: `use_material_social_cards`: enable/disable integration with Material Social Cards plugin { #use_material_social_cards }
 
 If `false`, the integration with Social Cards is disabled.

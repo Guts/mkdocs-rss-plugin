@@ -41,6 +41,9 @@ from mkdocs_rss_plugin.constants import (
     REMOTE_REQUEST_HEADERS,
 )
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
+from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (
+    IntegrationMaterialBlog,
+)
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
@@ -67,6 +70,7 @@ class Util:
     def __init__(
         self,
         cache_dir: Path = DEFAULT_CACHE_FOLDER,
+        integration_material_blog: Optional[IntegrationMaterialBlog] = None,
         integration_material_social_cards: Optional[
             IntegrationMaterialSocialCards
         ] = None,
@@ -79,6 +83,8 @@ class Util:
         Args:
             path (str, optional): path to the git repository to use. Defaults to ".".
             use_git (bool, optional): flag to use git under the hood or not. Defaults to True.
+            integration_material_blog (bool, optional): option to enable
+                integration with Blog plugin from Material theme. Defaults to True.
             integration_material_social_cards (bool, optional): option to enable
                 integration with Social Cards plugin from Material theme. Defaults to True.
         """
@@ -128,6 +134,7 @@ class Util:
         self.use_git = use_git
 
         # save integrations
+        self.material_blog = integration_material_blog
         self.social_cards = integration_material_social_cards
 
         # http/s session
