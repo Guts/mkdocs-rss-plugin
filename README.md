@@ -73,6 +73,7 @@ plugins:
         utm_medium: "RSS"
         utm_campaign: "feed-syndication"
       use_git: true
+      use_material_blog: true
       use_material_social_cards: true
 ```
 

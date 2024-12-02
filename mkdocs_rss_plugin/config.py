@@ -60,4 +60,5 @@ class RssPluginConfig(Config):
     rss_feed_enabled = config_options.Type(bool, default=True)
     url_parameters = config_options.Optional(config_options.Type(dict))
     use_git = config_options.Type(bool, default=True)
+    use_material_blog = config_options.Type(bool, default=True)
     use_material_social_cards = config_options.Type(bool, default=True)

@@ -31,6 +31,9 @@ from mkdocs_rss_plugin.constants import (
     DEFAULT_TEMPLATE_FOLDER,
     MKDOCS_LOGGER_NAME,
 )
+from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (
+    IntegrationMaterialBlog,
+)
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
@@ -119,6 +122,12 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         logger.debug(f"Caching HTTP requests to: {self.cache_dir.resolve()}")
 
+        # integrations - check if theme is Material and if blog are enabled
+        self.integration_material_blog = IntegrationMaterialBlog(
+            mkdocs_config=config,
+            switch_force=self.config.use_material_blog,
+        )
+
         # integrations - check if theme is Material and if social cards are enabled
         self.integration_material_social_cards = IntegrationMaterialSocialCards(
             mkdocs_config=config,
@@ -129,6 +138,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         self.util = Util(
             cache_dir=self.cache_dir,
             use_git=self.config.use_git,
+            integration_material_blog=self.integration_material_blog,
             integration_material_social_cards=self.integration_material_social_cards,
             mkdocs_command_is_on_serve=self.cmd_is_serve,
         )
