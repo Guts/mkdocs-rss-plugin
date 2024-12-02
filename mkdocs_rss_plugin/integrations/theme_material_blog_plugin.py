@@ -5,11 +5,13 @@
 # ##################################
 
 # standard library
+from pathlib import Path
 from typing import Optional
 
 # 3rd party
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
+from mkdocs.structure.pages import Page
 
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
@@ -101,3 +103,16 @@ class IntegrationMaterialBlog(IntegrationMaterialThemeBase):
         logger.debug("Material blog plugin is enabled in Mkdocs configuration.")
         self.IS_BLOG_PLUGIN_ENABLED = True
         return True
+
+    def is_page_a_blog_post(self, mkdocs_page: Page) -> bool:
+        """Identifies if the given page is part of Material Blog.
+
+        Args:
+            mkdocs_page (Page): page to identify
+
+        Returns:
+            bool: True if the given page is a Material Blog post.
+        """
+        return Path(mkdocs_page.file.src_uri).is_relative_to(
+            self.blog_plugin_cfg.config.blog_dir
+        )
