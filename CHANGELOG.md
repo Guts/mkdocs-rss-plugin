@@ -17,6 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.17.0 - 2024-12-02
+
+### Features and enhancements 🎉
+
+* refacto(material_integrations): use POO to manage integrations with Material theme framework by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/335>
+* update(chore): use typed dataclasses instead of dict by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/337>
+* feature(integration): make the integration with Material Blog configurable through an option by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/339>
+* Feature: use author name and email from `.authors.yml` set up in Material Blog by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/340>
+
+### Tooling 🔧
+
+* update(ci): enable manual trigger for build/publish doc by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/338>
+
 ## 1.16.0 - 2024-10-24
 
 ### Bugs fixes 🐛
