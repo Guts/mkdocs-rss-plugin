@@ -41,6 +41,10 @@ from mkdocs_rss_plugin.constants import (
     REMOTE_REQUEST_HEADERS,
 )
 from mkdocs_rss_plugin.git_manager.ci import CiHandler
+from mkdocs_rss_plugin.hacky_fix_links import (
+    relative_links_resolve_to_page,
+    remove_wrappers,
+)
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
@@ -475,6 +479,7 @@ class Util:
     def get_description_or_abstract(
         self,
         in_page: Page,
+        html: str,
         chars_count: int = 160,
         abstract_delimiter: Optional[str] = None,
     ) -> str:
@@ -509,15 +514,12 @@ class Util:
         # If the abstract is cut by the delimiter
         elif (
             abstract_delimiter
-            and (
-                excerpt_separator_position := in_page.markdown.find(abstract_delimiter)
-            )
-            > -1
+            and (excerpt_separator_position := html.find(abstract_delimiter)) > -1
         ):
-            return markdown.markdown(
-                in_page.markdown[:excerpt_separator_position],
-                output_format="html5",
-            )
+            replaced_links = relative_links_resolve_to_page(html, in_page.canonical_url)
+            removed_wrappers = remove_wrappers(replaced_links)
+            return removed_wrappers[: removed_wrappers.find(abstract_delimiter)]
+
         # Use first chars_count from the markdown
         elif chars_count > 0 and in_page.markdown:
             if len(in_page.markdown) <= chars_count:

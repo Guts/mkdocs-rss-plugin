@@ -324,6 +324,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 created=page_dates[0],
                 description=self.util.get_description_or_abstract(
                     in_page=page,
+                    html=html,
                     chars_count=self.config.abstract_chars_count,
                     abstract_delimiter=self.config.abstract_delimiter,
                 ),
