@@ -17,11 +17,16 @@ from mkdocs.structure.pages import Page
 
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
+from mkdocs_rss_plugin.integrations.theme_material_base import (
+    IntegrationMaterialThemeBase,
+)
+from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (
+    IntegrationMaterialBlog,
+)
 
 # conditional
 try:
     from material import __version__ as material_version
-    from material.plugins.blog.plugin import BlogPlugin
     from pymdownx.slugs import slugify
 
 except ImportError:
@@ -39,14 +44,11 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 # ################################
 
 
-class IntegrationMaterialSocialCards:
+class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
     # attributes
     IS_ENABLED: bool = True
-    IS_BLOG_PLUGIN_ENABLED: bool = True
     IS_SOCIAL_PLUGIN_ENABLED: bool = True
     IS_SOCIAL_PLUGIN_CARDS_ENABLED: bool = True
-    IS_THEME_MATERIAL: bool = False
-    IS_INSIDERS: bool = False
     CARDS_MANIFEST: Optional[dict] = None
 
     def __init__(self, mkdocs_config: MkDocsConfig, switch_force: bool = True) -> None:
@@ -58,7 +60,10 @@ class IntegrationMaterialSocialCards:
                 it to False to disable it even if Social Cards are enabled in Mkdocs
                 configuration. Defaults to True.
         """
-        self.mkdocs_config = mkdocs_config
+        # support cards for blog posts
+        self.integration_material_blog = IntegrationMaterialBlog(
+            mkdocs_config=mkdocs_config
+        )
         # check if the integration can be enabled or not
         self.IS_SOCIAL_PLUGIN_CARDS_ENABLED = (
             self.is_social_plugin_and_cards_enabled_mkdocs(mkdocs_config=mkdocs_config)
@@ -91,9 +96,7 @@ class IntegrationMaterialSocialCards:
             self.social_cards_cache_dir = self.get_social_cards_cache_dir(
                 mkdocs_config=mkdocs_config
             )
-            self.IS_BLOG_PLUGIN_ENABLED = self.is_blog_plugin_enabled_mkdocs(
-                mkdocs_config=mkdocs_config
-            )
+
             if self.is_mkdocs_theme_material_insiders():
                 self.load_cache_cards_manifest()
 
@@ -101,77 +104,20 @@ class IntegrationMaterialSocialCards:
             self.site_name = mkdocs_config.site_name
             self.site_description = mkdocs_config.site_description or ""
 
-    def is_mkdocs_theme_material(self, mkdocs_config: MkDocsConfig) -> bool:
-        """Check if the theme set in mkdocs.yml is material or not.
-
-        Args:
-            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
-
-        Returns:
-            bool: True if the theme's name is 'material'. False if not.
-        """
-        self.IS_THEME_MATERIAL = mkdocs_config.theme.name == "material"
-        return self.IS_THEME_MATERIAL
-
-    def is_mkdocs_theme_material_insiders(self) -> Optional[bool]:
-        """Check if the material theme is community or insiders edition.
-
-        Returns:
-            bool: True if the theme is Insiders edition. False if community. None if
-                the Material theme is not installed.
-        """
-        if not self.IS_THEME_MATERIAL:
-            return None
-
-        if material_version is not None and "insiders" in material_version:
-            logger.debug("Material theme edition INSIDERS")
-            self.IS_INSIDERS = True
-            return True
-        else:
-            logger.debug("Material theme edition COMMUNITY")
-            self.IS_INSIDERS = False
-            return False
-
-    def is_blog_plugin_enabled_mkdocs(self, mkdocs_config: MkDocsConfig) -> bool:
-        """Check if blog plugin is installed and enabled.
-
-        Args:
-            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
-
-        Returns:
-            bool: True if the theme material and the plugin blog is enabled.
-        """
-        if not self.is_mkdocs_theme_material(mkdocs_config=mkdocs_config):
-            logger.debug("Installed theme is not 'material'. Integration disabled.")
-            return False
-
-        if not mkdocs_config.plugins.get("material/blog"):
-            logger.debug("Material blog plugin is not listed in configuration.")
-            self.IS_BLOG_PLUGIN_ENABLED = False
-            return False
-
-        self.blog_plugin_cfg: BlogPlugin | None = mkdocs_config.plugins.get(
-            "material/blog"
-        )
-
-        if not self.blog_plugin_cfg.config.enabled:
-            logger.debug("Material blog plugin is installed but disabled.")
-            self.IS_BLOG_PLUGIN_ENABLED = False
-            return False
-
-        logger.debug("Material blog plugin is enabled in Mkdocs configuration.")
-        self.IS_BLOG_PLUGIN_ENABLED = True
-        return True
-
-    def is_social_plugin_enabled_mkdocs(self, mkdocs_config: MkDocsConfig) -> bool:
+    def is_social_plugin_enabled_mkdocs(
+        self, mkdocs_config: Optional[MkDocsConfig] = None
+    ) -> bool:
         """Check if social plugin is installed and enabled.
 
         Args:
-            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
+            mkdocs_config (Optional[MkDocsConfig]): Mkdocs website configuration object.
 
         Returns:
             bool: True if the theme material and the plugin social cards is enabled.
         """
+        if mkdocs_config is None and isinstance(self.mkdocs_config, MkDocsConfig):
+            mkdocs_config = self.mkdocs_config
+
         if not self.is_mkdocs_theme_material(mkdocs_config=mkdocs_config):
             logger.debug("Installed theme is not 'material'. Integration disabled.")
             return False
@@ -315,9 +261,11 @@ class IntegrationMaterialSocialCards:
             mkdocs_site_dir = self.mkdocs_site_build_dir
 
         # if page is a blog post
-        if self.IS_BLOG_PLUGIN_ENABLED and Path(
+        if self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED and Path(
             mkdocs_page.file.src_uri
-        ).is_relative_to(self.blog_plugin_cfg.config.blog_dir):
+        ).is_relative_to(
+            self.integration_material_blog.blog_plugin_cfg.config.blog_dir
+        ):
             expected_built_card_path = Path(
                 f"{mkdocs_site_dir}/{self.social_cards_assets_dir}/"
                 f"{Path(mkdocs_page.file.dest_uri).parent}.png"
@@ -358,9 +306,11 @@ class IntegrationMaterialSocialCards:
         if self.IS_INSIDERS:
 
             # if page is a blog post
-            if self.IS_BLOG_PLUGIN_ENABLED and Path(
+            if self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED and Path(
                 mkdocs_page.file.src_uri
-            ).is_relative_to(self.blog_plugin_cfg.config.blog_dir):
+            ).is_relative_to(
+                self.integration_material_blog.blog_plugin_cfg.config.blog_dir
+            ):
                 expected_cached_card_path = self.social_cards_cache_dir.joinpath(
                     f"assets/images/social/{Path(mkdocs_page.file.dest_uri).parent}.png"
                 )
@@ -426,9 +376,11 @@ class IntegrationMaterialSocialCards:
             mkdocs_site_url = self.mkdocs_site_url
 
         # if page is a blog post
-        if self.IS_BLOG_PLUGIN_ENABLED and Path(
+        if self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED and Path(
             mkdocs_page.file.src_uri
-        ).is_relative_to(self.blog_plugin_cfg.config.blog_dir):
+        ).is_relative_to(
+            self.integration_material_blog.blog_plugin_cfg.config.blog_dir
+        ):
             page_social_card = (
                 f"{mkdocs_site_url}assets/images/social/"
                 f"{Path(mkdocs_page.file.dest_uri).parent}.png"

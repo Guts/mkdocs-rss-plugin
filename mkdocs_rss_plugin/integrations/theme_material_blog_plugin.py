@@ -1,0 +1,103 @@
+#! python3  # noqa: E265
+
+# ############################################################################
+# ########## Libraries #############
+# ##################################
+
+# standard library
+from typing import Optional
+
+# 3rd party
+from mkdocs.config.defaults import MkDocsConfig
+from mkdocs.plugins import get_plugin_logger
+
+# package
+from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
+from mkdocs_rss_plugin.integrations.theme_material_base import (
+    IntegrationMaterialThemeBase,
+)
+
+# conditional
+try:
+    from material import __version__ as material_version
+    from material.plugins.blog.plugin import BlogPlugin
+
+except ImportError:
+    material_version = None
+
+
+# ############################################################################
+# ########## Globals #############
+# ################################
+
+logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
+
+# ############################################################################
+# ########## Logic ###############
+# ################################
+
+
+class IntegrationMaterialBlog(IntegrationMaterialThemeBase):
+    # attributes
+    IS_ENABLED: bool = True
+    IS_BLOG_PLUGIN_ENABLED: bool = True
+
+    def __init__(self, mkdocs_config: MkDocsConfig, switch_force: bool = True) -> None:
+        """Integration instantiation.
+
+        Args:
+            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
+            switch_force (bool, optional): option to force integration disabling. Set
+                it to False to disable it even if Social Cards are enabled in Mkdocs
+                configuration. Defaults to True.
+        """
+        # check if the integration can be enabled or not
+        self.IS_BLOG_PLUGIN_ENABLED = self.is_blog_plugin_enabled_mkdocs(
+            mkdocs_config=mkdocs_config
+        )
+        # if every conditions are True, enable the integration
+        self.IS_ENABLED = all([self.IS_THEME_MATERIAL, self.IS_BLOG_PLUGIN_ENABLED])
+
+        # except if the end-user wants to disable it
+        if switch_force is False:
+            self.IS_ENABLED = False
+            logger.debug(
+                "Integration with Blog (Material theme) is "
+                "disabled in plugin's option in Mkdocs configuration."
+            )
+
+    def is_blog_plugin_enabled_mkdocs(
+        self, mkdocs_config: Optional[MkDocsConfig]
+    ) -> bool:
+        """Check if blog plugin is installed and enabled.
+
+        Args:
+            mkdocs_config (Optional[MkDocsConfig]): Mkdocs website configuration object.
+
+        Returns:
+            bool: True if the theme material and the plugin blog is enabled.
+        """
+        if mkdocs_config is None and isinstance(self.mkdocs_config, MkDocsConfig):
+            mkdocs_config = self.mkdocs_config
+
+        if not self.is_mkdocs_theme_material(mkdocs_config=mkdocs_config):
+            logger.debug("Installed theme is not 'material'. Integration disabled.")
+            return False
+
+        if not mkdocs_config.plugins.get("material/blog"):
+            logger.debug("Material blog plugin is not listed in configuration.")
+            self.IS_BLOG_PLUGIN_ENABLED = False
+            return False
+
+        self.blog_plugin_cfg: BlogPlugin | None = mkdocs_config.plugins.get(
+            "material/blog"
+        )
+
+        if not self.blog_plugin_cfg.config.enabled:
+            logger.debug("Material blog plugin is installed but disabled.")
+            self.IS_BLOG_PLUGIN_ENABLED = False
+            return False
+
+        logger.debug("Material blog plugin is enabled in Mkdocs configuration.")
+        self.IS_BLOG_PLUGIN_ENABLED = True
+        return True
