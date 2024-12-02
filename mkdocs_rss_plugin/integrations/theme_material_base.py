@@ -64,7 +64,7 @@ class IntegrationMaterialThemeBase:
             bool: True if the theme's name is 'material'. False if not.
         """
         if mkdocs_config is None and isinstance(self.mkdocs_config, MkDocsConfig):
-            mkdocs_config = self.mkdocs_config
+            mkdocs_config: MkDocsConfig = self.mkdocs_config
 
         self.IS_THEME_MATERIAL = mkdocs_config.theme.name == "material"
         return self.IS_THEME_MATERIAL
