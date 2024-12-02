@@ -1,6 +1,7 @@
 ---
 authors: 
   - alexvoss
+  - guts
 date: 2023-10-11
 categories:
   - meta
@@ -29,4 +30,3 @@ pharetra, pellentesque risus in, consectetur urna. Nulla id enim facilisis
 arcu tincidunt pulvinar. Vestibulum laoreet risus scelerisque porta congue.
 In velit purus, dictum quis neque nec, molestie viverra risus. Nam pellentesque
 tellus id elit ultricies, vel finibus erat cursus.
-

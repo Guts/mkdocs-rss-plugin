@@ -122,7 +122,11 @@ class IntegrationMaterialBlog(IntegrationMaterialThemeBase):
             and isinstance(self.blog_plugin_cfg.authors, dict)
         ):
             if author_id in self.blog_plugin_cfg.authors:
-                return self.blog_plugin_cfg.authors.get(author_id).get("name")
+                author_metadata = self.blog_plugin_cfg.authors.get(author_id)
+                if "email" in self.blog_plugin_cfg.authors.get(author_id):
+                    return f"{author_metadata.get('name')} ({author_metadata.get('email')})"
+                else:
+                    return author_metadata.get("name")
             else:
                 logger.error(
                     f"Author ID '{author_id}' is not part of known authors: "
