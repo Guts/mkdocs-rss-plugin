@@ -7,6 +7,7 @@
 # standard library
 import json
 from copy import deepcopy
+from dataclasses import asdict
 from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
@@ -33,7 +34,7 @@ from mkdocs_rss_plugin.constants import (
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
-from mkdocs_rss_plugin.models import PageInformation
+from mkdocs_rss_plugin.models import PageInformation, RssFeedBase
 from mkdocs_rss_plugin.util import Util
 
 # ############################################################################
@@ -81,8 +82,8 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
 
         self.pages_to_filter: list[PageInformation] = []
         # prepare output feeds
-        self.feed_created: dict = {}
-        self.feed_updated: dict = {}
+        self.feed_created: RssFeedBase = RssFeedBase()
+        self.feed_updated: RssFeedBase = RssFeedBase()
 
     def on_config(self, config: MkDocsConfig) -> MkDocsConfig:
         """The config event is the first event called on build and
@@ -139,30 +140,30 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         self.tpl_folder = DEFAULT_TEMPLATE_FOLDER
 
         # start a feed dictionary using global config vars
-        base_feed = {
-            "author": config.site_author or None,
-            "buildDate": formatdate(get_build_timestamp()),
-            "copyright": config.copyright,
-            "description": (
+        base_feed = RssFeedBase(
+            author=config.site_author or None,
+            buildDate=formatdate(get_build_timestamp()),
+            copyright=config.copyright,
+            description=(
                 self.config.feed_description
                 if self.config.feed_description
                 else config.site_description
             ),
-            "entries": [],
-            "generator": f"{__title__} - v{__version__}",
-            "html_url": self.util.get_site_url(mkdocs_config=config),
-            "language": self.util.guess_locale(mkdocs_config=config),
-            "pubDate": formatdate(get_build_timestamp()),
-            "repo_url": config.repo_url,
-            "title": (
+            entries=[],
+            generator=f"{__title__} - v{__version__}",
+            html_url=self.util.get_site_url(mkdocs_config=config),
+            language=self.util.guess_locale(mkdocs_config=config),
+            pubDate=formatdate(get_build_timestamp()),
+            repo_url=config.repo_url,
+            title=(
                 self.config.feed_title if self.config.feed_title else config.site_name
             ),
-            "ttl": self.config.feed_ttl,
-        }
+            ttl=self.config.feed_ttl,
+        )
 
         # feed image
         if self.config.image:
-            base_feed["logo_url"] = self.config.image
+            base_feed.logo_url = self.config.image
 
         # pattern to match pages included in output
         self.match_path_pattern = re_compile(self.config.match_path)
@@ -224,19 +225,19 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         self.feed_updated = deepcopy(base_feed)
 
         # final feed url
-        if base_feed.get("html_url"):
+        if base_feed.html_url:
             # concatenate both URLs
-            self.feed_created["rss_url"] = (
-                base_feed.get("html_url") + self.config.feeds_filenames.rss_created
+            self.feed_created.rss_url = (
+                base_feed.html_url + self.config.feeds_filenames.rss_created
             )
-            self.feed_updated["rss_url"] = (
-                base_feed.get("html_url") + self.config.feeds_filenames.rss_updated
+            self.feed_updated.rss_url = (
+                base_feed.html_url + self.config.feeds_filenames.rss_updated
             )
-            self.feed_created["json_url"] = (
-                base_feed.get("html_url") + self.config.feeds_filenames.json_created
+            self.feed_created.json_url = (
+                base_feed.html_url + self.config.feeds_filenames.json_created
             )
-            self.feed_updated["json_url"] = (
-                base_feed.get("html_url") + self.config.feeds_filenames.json_updated
+            self.feed_updated.json_url = (
+                base_feed.html_url + self.config.feeds_filenames.json_updated
             )
         else:
             logger.error(
@@ -244,9 +245,9 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 "configuration file whereas a URL is mandatory to publish. "
                 "See: https://validator.w3.org/feed/docs/rss2.html#requiredChannelElements"
             )
-            self.feed_created["rss_url"] = self.feed_updated["json_url"] = (
-                self.feed_updated["rss_url"]
-            ) = self.feed_updated["json_url"] = None
+            self.feed_created.rss_url = self.feed_updated.json_url = (
+                self.feed_updated.rss_url
+            ) = self.feed_updated.json_url = None
 
         # ending event
         return config
@@ -371,7 +372,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         )
 
         # created items
-        self.feed_created.get("entries").extend(
+        self.feed_created.entries.extend(
             self.util.filter_pages(
                 pages=self.pages_to_filter,
                 attribute="created",
@@ -380,7 +381,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         )
 
         # updated items
-        self.feed_updated.get("entries").extend(
+        self.feed_updated.entries.extend(
             self.util.filter_pages(
                 pages=self.pages_to_filter,
                 attribute="updated",
@@ -419,7 +420,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 # write feeds to files stripping out spaces and new lines
                 with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
                     prev_char = ""
-                    for char in template.render(feed=self.feed_created):
+                    for char in template.render(feed=asdict(self.feed_created)):
                         if char == "\n":
                             continue
                         if char == " " and prev_char == " ":
@@ -429,7 +430,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                         fifeed_created.write(char)
 
                 with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
-                    for char in template.render(feed=self.feed_updated):
+                    for char in template.render(feed=asdict(self.feed_updated)):
                         if char == "\n":
                             prev_char = char
                             continue
@@ -443,14 +444,14 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         if self.config.json_feed_enabled:
             with out_json_created.open(mode="w", encoding="UTF8") as fp:
                 json.dump(
-                    self.util.feed_to_json(self.feed_created),
+                    self.util.feed_to_json(asdict(self.feed_created)),
                     fp,
                     indent=4 if self.config.pretty_print else None,
                 )
 
             with out_json_updated.open(mode="w", encoding="UTF8") as fp:
                 json.dump(
-                    self.util.feed_to_json(self.feed_updated, updated=True),
+                    self.util.feed_to_json(asdict(self.feed_updated), updated=True),
                     fp,
                     indent=4 if self.config.pretty_print else None,
                 )
