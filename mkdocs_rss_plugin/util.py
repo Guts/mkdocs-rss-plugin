@@ -387,7 +387,16 @@ class Util:
             if isinstance(in_page.meta.get("authors"), str):
                 return (in_page.meta.get("authors"),)
             elif isinstance(in_page.meta.get("authors"), (list, tuple)):
-                return tuple(in_page.meta.get("authors"))
+                if (
+                    self.material_blog.IS_ENABLED
+                    and self.material_blog.is_page_a_blog_post(in_page)
+                ):
+                    return [
+                        self.material_blog.author_name_from_id(author_id)
+                        for author_id in in_page.meta.get("authors")
+                    ]
+                else:
+                    return tuple(in_page.meta.get("authors"))
             else:
                 logging.warning(
                     "Type of authors value in page.meta (%s) is not valid. "

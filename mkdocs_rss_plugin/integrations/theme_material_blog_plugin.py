@@ -5,6 +5,7 @@
 # ##################################
 
 # standard library
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
@@ -103,6 +104,31 @@ class IntegrationMaterialBlog(IntegrationMaterialThemeBase):
         logger.debug("Material blog plugin is enabled in Mkdocs configuration.")
         self.IS_BLOG_PLUGIN_ENABLED = True
         return True
+
+    @lru_cache
+    def author_name_from_id(self, author_id: str) -> str:
+        """Return author name from author_id used in Material blog plugin (.authors.yml).
+
+        Args:
+            author_id (str): author key in .authors.yml
+
+        Returns:
+            str: author name or passed author_id if not found within .authors.yml
+        """
+        if (
+            self.blog_plugin_cfg.config.authors
+            and isinstance(self.blog_plugin_cfg, BlogPlugin)
+            and hasattr(self.blog_plugin_cfg, "authors")
+            and isinstance(self.blog_plugin_cfg.authors, dict)
+        ):
+            if author_id in self.blog_plugin_cfg.authors:
+                return self.blog_plugin_cfg.authors.get(author_id).get("name")
+            else:
+                logger.error(
+                    f"Author ID '{author_id}' is not part of known authors: "
+                    f"{self.blog_plugin_cfg.authors}. Returning author_id."
+                )
+                return author_id
 
     def is_page_a_blog_post(self, mkdocs_page: Page) -> bool:
         """Identifies if the given page is part of Material Blog.
