@@ -17,8 +17,6 @@ from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
 # conditional
 try:
     from material import __version__ as material_version
-    from material.plugins.blog.plugin import BlogPlugin
-    from pymdownx.slugs import slugify
 
 except ImportError:
     material_version = None

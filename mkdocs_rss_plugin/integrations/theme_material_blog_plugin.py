@@ -5,11 +5,14 @@
 # ##################################
 
 # standard library
+from functools import lru_cache
+from pathlib import Path
 from typing import Optional
 
 # 3rd party
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
+from mkdocs.structure.pages import Page
 
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
@@ -101,3 +104,45 @@ class IntegrationMaterialBlog(IntegrationMaterialThemeBase):
         logger.debug("Material blog plugin is enabled in Mkdocs configuration.")
         self.IS_BLOG_PLUGIN_ENABLED = True
         return True
+
+    @lru_cache
+    def author_name_from_id(self, author_id: str) -> str:
+        """Return author name from author_id used in Material blog plugin (.authors.yml).
+
+        Args:
+            author_id (str): author key in .authors.yml
+
+        Returns:
+            str: author name or passed author_id if not found within .authors.yml
+        """
+        if (
+            self.blog_plugin_cfg.config.authors
+            and isinstance(self.blog_plugin_cfg, BlogPlugin)
+            and hasattr(self.blog_plugin_cfg, "authors")
+            and isinstance(self.blog_plugin_cfg.authors, dict)
+        ):
+            if author_id in self.blog_plugin_cfg.authors:
+                author_metadata = self.blog_plugin_cfg.authors.get(author_id)
+                if "email" in self.blog_plugin_cfg.authors.get(author_id):
+                    return f"{author_metadata.get('name')} ({author_metadata.get('email')})"
+                else:
+                    return author_metadata.get("name")
+            else:
+                logger.error(
+                    f"Author ID '{author_id}' is not part of known authors: "
+                    f"{self.blog_plugin_cfg.authors}. Returning author_id."
+                )
+                return author_id
+
+    def is_page_a_blog_post(self, mkdocs_page: Page) -> bool:
+        """Identifies if the given page is part of Material Blog.
+
+        Args:
+            mkdocs_page (Page): page to identify
+
+        Returns:
+            bool: True if the given page is a Material Blog post.
+        """
+        return Path(mkdocs_page.file.src_uri).is_relative_to(
+            self.blog_plugin_cfg.config.blog_dir
+        )

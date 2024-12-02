@@ -27,7 +27,6 @@ from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (
 # conditional
 try:
     from material import __version__ as material_version
-    from pymdownx.slugs import slugify
 
 except ImportError:
     material_version = None
@@ -261,10 +260,9 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             mkdocs_site_dir = self.mkdocs_site_build_dir
 
         # if page is a blog post
-        if self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED and Path(
-            mkdocs_page.file.src_uri
-        ).is_relative_to(
-            self.integration_material_blog.blog_plugin_cfg.config.blog_dir
+        if (
+            self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
+            and self.integration_material_blog.is_page_a_blog_post(mkdocs_page)
         ):
             expected_built_card_path = Path(
                 f"{mkdocs_site_dir}/{self.social_cards_assets_dir}/"
@@ -306,10 +304,9 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         if self.IS_INSIDERS:
 
             # if page is a blog post
-            if self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED and Path(
-                mkdocs_page.file.src_uri
-            ).is_relative_to(
-                self.integration_material_blog.blog_plugin_cfg.config.blog_dir
+            if (
+                self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
+                and self.integration_material_blog.is_page_a_blog_post(mkdocs_page)
             ):
                 expected_cached_card_path = self.social_cards_cache_dir.joinpath(
                     f"assets/images/social/{Path(mkdocs_page.file.dest_uri).parent}.png"
@@ -376,10 +373,9 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             mkdocs_site_url = self.mkdocs_site_url
 
         # if page is a blog post
-        if self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED and Path(
-            mkdocs_page.file.src_uri
-        ).is_relative_to(
-            self.integration_material_blog.blog_plugin_cfg.config.blog_dir
+        if (
+            self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
+            and self.integration_material_blog.is_page_a_blog_post(mkdocs_page)
         ):
             page_social_card = (
                 f"{mkdocs_site_url}assets/images/social/"

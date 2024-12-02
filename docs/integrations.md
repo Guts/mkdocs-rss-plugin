@@ -3,6 +3,66 @@ title: Integrations
 icon: octicons/plug-16
 ---
 
+## Blog plugin (from Material theme)
+
+Since version 1.17, the plugin integrates with the [Blog plugin (shipped with Material theme)](https://squidfunk.github.io/mkdocs-material/plugins/blog/) (see also [the tutorial about blog + RSS  plugins](https://squidfunk.github.io/mkdocs-material/tutorials/blogs/engage/)).
+
+In some cases, the RSS plugin needs to work with the Material Blog:
+
+- for blog posts, the structure of the path to social cards is depending on blog configuration
+- retrieve the author's name from the `.authors.yml` file
+- optionnaly retrieve the author's email from the `.authors.yml` file
+
+If you don't want this integration, you can disable it with the option: `use_material_blog=false`.
+
+> See [related section in settings](./configuration.md#use_material_blog).
+
+### Example of blog authors with email
+
+```yaml title="docs/blog/.authors.yml"
+authors:
+  alexvoss:
+    name: Alex Voss
+    description: Weltenwanderer
+    avatar: https://github.com/alexvoss.png
+  guts:
+    avatar: https://cdn.geotribu.fr/img/internal/contributeurs/jmou.jfif
+    description: GIS Watchman
+    name: Julien Moura
+    url: https://github.com/guts/
+    email: joe@biden.com
+```
+
+This given Markdown post:
+
+```markdown title="blog/posts/demo.md"
+---
+authors:
+  - alexvoss
+  - guts
+date: 2024-12-02
+categories:
+  - tutorial
+---
+
+# Demonstration blog post
+
+[...]
+```
+
+Will be rendered as:
+
+```xml title="/build/site/feed_rss_created.xml"
+[...]
+        <item>
+            <title>Demonstration blog post</title>
+            <author>Alex Voss</author>
+            <author>Julien Moura (joe@biden.com)</author>
+[...]
+```
+
+----
+
 ## Social Cards plugin (from Material theme)
 
 Since version 1.10, the plugin integrates with the [Social Cards plugin (shipped with Material theme)](https://squidfunk.github.io/mkdocs-material/setup/setting-up-social-cards/) (see also [the full plugin documentation here](https://squidfunk.github.io/mkdocs-material/plugins/social/)).
