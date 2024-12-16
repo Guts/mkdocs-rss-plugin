@@ -124,7 +124,7 @@ class IntegrationMaterialBlog(IntegrationMaterialThemeBase):
             if author_id in self.blog_plugin_cfg.authors:
                 author_metadata = self.blog_plugin_cfg.authors.get(author_id)
                 if "email" in self.blog_plugin_cfg.authors.get(author_id):
-                    return f"{author_metadata.get('name')} ({author_metadata.get('email')})"
+                    return f"{author_metadata.get('email')} ({author_metadata.get('name')})"
                 else:
                     return author_metadata.get("name")
             else:
