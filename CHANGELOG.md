@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.17.1 - 2024-12-16
+
+### Bugs fixes 🐛
+
+* fix(rss): email and name were inverted in output and so uncompliant by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/343>. Thanks @stefansli for the floow up in <https://github.com/Guts/mkdocs-rss-plugin/issues/250>.
+
+### Documentation 📖
+
+* update(docs): move integrations page as independant menu by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/344>
+
 ## 1.17.0 - 2024-12-02
 
 ### Features and enhancements 🎉
