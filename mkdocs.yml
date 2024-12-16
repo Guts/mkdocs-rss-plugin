@@ -59,9 +59,8 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Settings:
-      - configuration.md
-      - integrations.md
+  - Settings: configuration.md
+  - integrations.md
   - Contributing: contributing.md
   - API: api.md
   - Changelog: changelog.md
