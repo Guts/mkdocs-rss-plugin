@@ -12,6 +12,7 @@ on:
       - "*.md"
       - ".github/workflows/documentation.yml"
       - ./mkdocs_rss_plugin
+      - requirements/documentation.txt
     tags:
       - "*"
 
