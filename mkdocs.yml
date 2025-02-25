@@ -91,13 +91,17 @@ plugins:
       handlers:
         python:
           options:
+            docstring_options:
+              ignore_init_summary: false
+              trim_doctest_flags: true
             docstring_style: google
+            find_stubs_package: true
             heading_level: 3
-            ignore_init_summary: false
+            show_bases: true
+            show_inheritance_diagram: true
+            show_root_heading: true
             show_source: false
-          merge_init_into_class: true
-          paths: [.]
-          show_root_heading: true
+            merge_init_into_class: true
 
   - privacy:
       enabled: !ENV [MKDOCS_ENABLE_PLUGIN_PRIVACY, true]
