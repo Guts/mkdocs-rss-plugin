@@ -20,7 +20,7 @@ from mkdocs_rss_plugin.__about__ import __title__, __version__
 
 @dataclass
 class PageInformation:
-    """Data type to set and get page information in order to produce the RSS feed."""
+    """Object describing a page information gathered from Mkdocs and used as feed's item."""
 
     abs_path: Optional[Path] = None
     categories: Optional[list] = None
@@ -37,6 +37,8 @@ class PageInformation:
 
 @dataclass
 class RssFeedBase:
+    """Object describing a feed."""
+
     author: Optional[str] = None
     buildDate: Optional[str] = None
     copyright: Optional[str] = None
