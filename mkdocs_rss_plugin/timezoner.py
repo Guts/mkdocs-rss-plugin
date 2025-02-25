@@ -38,14 +38,13 @@ def set_datetime_zoneinfo(
 ) -> datetime:
     """Apply timezone to a naive datetime.
 
-    :param input_datetime: offset-naive datetime
-    :type input_datetime: datetime
-    :param config_timezone: name of timezone as registered in IANA database,
-    defaults to "UTC". Example : Europe/Paris.
-    :type config_timezone: str, optional
+    Args:
+        input_datetime (datetime): offset-naive datetime
+        config_timezone (str, optional): name of timezone as registered in IANA
+            database. Defaults to "UTC". Example : Europe/Paris.
 
-    :return: offset-aware datetime
-    :rtype: datetime
+    Returns:
+        datetime: offset-aware datetime
     """
     if input_datetime.tzinfo:
         return input_datetime

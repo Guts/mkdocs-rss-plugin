@@ -27,7 +27,14 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 
 
 class CiHandler:
-    def __init__(self, repo: Git):
+    """Helper class to handle CI specific warnings."""
+
+    def __init__(self, repo: Git) -> None:
+        """Initialize the CI handler.
+
+        Args:
+            repo (Git): Git repository object
+        """
         self.repo = repo
 
     def raise_ci_warnings(self) -> None:
