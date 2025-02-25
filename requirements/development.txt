@@ -8,4 +8,4 @@ flake8-bugbear>=24.10
 flake8-builtins>=2.5
 flake8-eradicate>=1.5
 flake8-isort>=6.1.1
-pre-commit>=3.7,<4
+pre-commit>=3.7,<5
