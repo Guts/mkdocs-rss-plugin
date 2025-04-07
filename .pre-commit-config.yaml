@@ -38,7 +38,7 @@ repos:
           - "--py39-plus"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.9.9"
+    rev: "v0.11.4"
     hooks:
       - id: ruff
         args:
@@ -62,7 +62,7 @@ repos:
           - --target-version=py39
 
   - repo: https://github.com/pycqa/flake8
-    rev: 7.1.2
+    rev: 7.2.0
     hooks:
       - id: flake8
         additional_dependencies:
