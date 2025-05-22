@@ -25,6 +25,7 @@ import feedparser
 from mkdocs.config import load_config
 
 # package
+from mkdocs_rss_plugin.__about__ import __title_clean__
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
@@ -135,6 +136,55 @@ class TestRssPluginIntegrationsMaterialSocialCards(BaseTest):
             integration_social_cards.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
         )
         self.assertTrue(integration_social_cards.IS_ENABLED)
+
+    def test_plugin_config_social_cards_enabled_with_directory_urls_disabled(self):
+        """Test case described in https://github.com/Guts/mkdocs-rss-plugin/issues/319."""
+        # default reference
+        cfg_mkdocs = load_config(
+            str(
+                Path(
+                    "tests/fixtures/mkdocs_item_image_social_cards_blog_directory_url_disabled.yml"
+                ).resolve()
+            )
+        )
+
+        integration_social_cards = IntegrationMaterialSocialCards(
+            mkdocs_config=cfg_mkdocs
+        )
+        self.assertTrue(integration_social_cards.IS_THEME_MATERIAL)
+        self.assertTrue(integration_social_cards.IS_SOCIAL_PLUGIN_ENABLED)
+        self.assertTrue(integration_social_cards.IS_SOCIAL_PLUGIN_CARDS_ENABLED)
+        self.assertIsInstance(integration_social_cards.social_cards_dir, str)
+        self.assertTrue(integration_social_cards.social_cards_cache_dir.is_dir())
+
+        with tempfile.TemporaryDirectory(
+            prefix=f"{__title_clean__.lower()}_", delete=False
+        ) as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_item_image_social_cards_blog_directory_url_disabled.yml"
+                ),
+                output_path=tmpdirname,
+                strict=False,
+            )
+            print(tmpdirname)
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
+            for feed_item in feed_parsed.entries:
+                self.assertTrue(hasattr(feed_item, "enclosures"))
+
+            # updated items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
 
     def test_simple_build(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
