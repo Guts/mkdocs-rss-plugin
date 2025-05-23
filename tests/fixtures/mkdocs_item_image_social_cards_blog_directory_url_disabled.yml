@@ -1,0 +1,18 @@
+site_name: Test RSS Plugin with social cards, blog plugin and directory URL disabled
+site_description: Test RSS with social and blog plugins enabled but directory URLS disabled. Related to https://github.com/Guts/mkdocs-rss-plugin/issues/319.
+site_url: https://guts.github.io/mkdocs-rss-plugin
+
+use_directory_urls: false
+
+plugins:
+    - blog:
+          blog_dir: blog
+          authors_profiles: true
+    - rss:
+          match_path: blog/posts/.*
+    - social:
+          enabled: true
+          cards: true
+
+theme:
+    name: material

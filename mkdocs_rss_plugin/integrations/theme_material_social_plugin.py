@@ -89,6 +89,9 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         if self.IS_ENABLED:
             self.mkdocs_site_url = mkdocs_config.site_url
             self.mkdocs_site_build_dir = mkdocs_config.site_dir
+            self.social_cards_dir = self.get_social_cards_dir(
+                mkdocs_config=mkdocs_config
+            )
             self.social_cards_assets_dir = self.get_social_cards_build_dir(
                 mkdocs_config=mkdocs_config
             )
@@ -205,15 +208,15 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
 
         return self.CARDS_MANIFEST
 
-    def get_social_cards_build_dir(self, mkdocs_config: MkDocsConfig) -> Path:
-        """Get Social Cards folder within Mkdocs site_dir.
+    def get_social_cards_dir(self, mkdocs_config: MkDocsConfig) -> str:
+        """Get Social Cards folder relative to Mkdocs site_dir.
         See: https://squidfunk.github.io/mkdocs-material/plugins/social/#config.cards_dir
 
         Args:
             mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
 
         Returns:
-            str: True if the theme material and the plugin social cards is enabled.
+            str: The cards_dir if the theme material and the plugin social cards is enabled.
         """
         social_plugin_cfg = mkdocs_config.plugins.get("material/social")
 
@@ -222,7 +225,22 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             f"{social_plugin_cfg.config.cards_dir}."
         )
 
-        return Path(social_plugin_cfg.config.cards_dir).resolve()
+        return social_plugin_cfg.config.cards_dir
+
+    def get_social_cards_build_dir(self, mkdocs_config: MkDocsConfig) -> Path:
+        """Get Social Cards folder within Mkdocs site_dir.
+        See: https://squidfunk.github.io/mkdocs-material/plugins/social/#config.cards_dir
+
+        Args:
+            mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
+
+        Returns:
+            Path: Absolute path of the assets dir if the theme material and the plugin
+                  social cards is enabled.
+        """
+        cards_dir = self.get_social_cards_dir(mkdocs_config=mkdocs_config)
+
+        return Path(cards_dir).resolve()
 
     def get_social_cards_cache_dir(self, mkdocs_config: MkDocsConfig) -> Path:
         """Get Social Cards folder within Mkdocs site_dir.
@@ -232,7 +250,7 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             mkdocs_config (MkDocsConfig): Mkdocs website configuration object.
 
         Returns:
-            str: True if the theme material and the plugin social cards is enabled.
+            Path: The cache dir if the theme material and the plugin social cards is enabled.
         """
         social_plugin_cfg = mkdocs_config.plugins.get("material/social")
         self.social_cards_cache_dir = Path(social_plugin_cfg.config.cache_dir).resolve()
@@ -372,19 +390,12 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         if mkdocs_site_url is None and self.mkdocs_site_url:
             mkdocs_site_url = self.mkdocs_site_url
 
-        # if page is a blog post
-        if (
-            self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
-            and self.integration_material_blog.is_page_a_blog_post(mkdocs_page)
-        ):
-            page_social_card = (
-                f"{mkdocs_site_url}assets/images/social/"
-                f"{Path(mkdocs_page.file.dest_uri).parent}.png"
-            )
-        else:
-            page_social_card = (
-                f"{mkdocs_site_url}assets/images/social/"
-                f"{Path(mkdocs_page.file.src_uri).with_suffix('.png')}"
-            )
+        # As of mkdocs-material 9.6.5, social cards are always stored in the
+        # matching src path in the build folder, regardless of the page type.
+        page_social_card = (
+            f"{mkdocs_site_url}{self.social_cards_dir}/"
+            f"{Path(mkdocs_page.file.src_uri).with_suffix('.png')}"
+        )
+        logger.debug(f"Use social card url: {page_social_card}")
 
         return page_social_card
