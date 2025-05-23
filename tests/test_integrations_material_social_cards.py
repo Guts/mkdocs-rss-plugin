@@ -158,7 +158,7 @@ class TestRssPluginIntegrationsMaterialSocialCards(BaseTest):
         # self.assertTrue(integration_social_cards.social_cards_cache_dir.is_dir())
 
         with tempfile.TemporaryDirectory(
-            prefix=f"{__title_clean__.lower()}_", delete=False
+            prefix=f"{__title_clean__.lower()}_"
         ) as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
