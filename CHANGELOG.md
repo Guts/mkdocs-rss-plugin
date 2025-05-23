@@ -17,6 +17,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.17.2 - 2025-05-23
+
+### Bugs fixes 🐛
+
+* fix(upstream): force jsonfeed-util version since it uses a non Python 3.9 syntax, breaking lint and tests by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/355>
+* Docs: fix mkdocstings config and improve api autodoc by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/357>
+* fix(material_social): use cards_dir to build cards url for page by @kanru in <https://github.com/Guts/mkdocs-rss-plugin/pull/354>
+
+### Other Changes
+
+* Revert 355: restore minimal JSON Feed minimal version by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/362>
+
+### New Contributors
+
+* @kanru made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/354>
+
 ## 1.17.1 - 2024-12-16
 
 ### Bugs fixes 🐛
