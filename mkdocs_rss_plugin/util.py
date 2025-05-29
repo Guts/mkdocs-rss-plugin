@@ -587,19 +587,13 @@ class Util:
             img_url = self.social_cards.get_social_card_url_for_page(
                 mkdocs_page=in_page
             )
-            if (
-                img_local_cache_path
-                := self.social_cards.get_social_card_cache_path_for_page(
-                    mkdocs_page=in_page
-                )
+            if img_local_cache_path := self.social_cards.get_social_card_cache_path_for_page(
+                mkdocs_page=in_page
             ):
                 img_length = img_local_cache_path.stat().st_size
                 img_type = guess_type(url=img_local_cache_path, strict=False)[0]
-            elif (
-                img_local_build_path
-                := self.social_cards.get_social_card_build_path_for_page(
-                    mkdocs_page=in_page
-                )
+            elif img_local_build_path := self.social_cards.get_social_card_build_path_for_page(
+                mkdocs_page=in_page
             ):
                 img_length = img_local_build_path.stat().st_size
                 img_type = guess_type(url=img_local_build_path, strict=False)[0]
