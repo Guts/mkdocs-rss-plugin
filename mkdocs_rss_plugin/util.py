@@ -126,8 +126,7 @@ class Util:
         else:
             self.git_is_valid = False
             logger.debug(
-                "Git use is disabled. "
-                "Only page.meta (YAML frontmatter will be used). "
+                "Git use is disabled. Only page.meta (YAML frontmatter will be used). "
             )
 
         # save git enable/disable status
@@ -588,13 +587,19 @@ class Util:
             img_url = self.social_cards.get_social_card_url_for_page(
                 mkdocs_page=in_page
             )
-            if img_local_cache_path := self.social_cards.get_social_card_cache_path_for_page(
-                mkdocs_page=in_page
+            if (
+                img_local_cache_path
+                := self.social_cards.get_social_card_cache_path_for_page(
+                    mkdocs_page=in_page
+                )
             ):
                 img_length = img_local_cache_path.stat().st_size
                 img_type = guess_type(url=img_local_cache_path, strict=False)[0]
-            elif img_local_build_path := self.social_cards.get_social_card_build_path_for_page(
-                mkdocs_page=in_page
+            elif (
+                img_local_build_path
+                := self.social_cards.get_social_card_build_path_for_page(
+                    mkdocs_page=in_page
+                )
             ):
                 img_length = img_local_build_path.stat().st_size
                 img_type = guess_type(url=img_local_build_path, strict=False)[0]
@@ -707,7 +712,7 @@ class Util:
                 )
                 return None
 
-        return int(img_length)
+        return int(img_length) if img_length else None
 
     @staticmethod
     def get_site_url(mkdocs_config: MkDocsConfig) -> Optional[str]:
