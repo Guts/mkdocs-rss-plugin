@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.17.3 - 2025-05-30
+
+### Bugs fixes 🐛
+
+* fix: return None if remote image length is unavailable by @lukehsiao in <https://github.com/Guts/mkdocs-rss-plugin/pull/370>
+
+### New Contributors
+
+* @lukehsiao made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/370>
+
 ## 1.17.2 - 2025-05-23
 
 ### Bugs fixes 🐛
