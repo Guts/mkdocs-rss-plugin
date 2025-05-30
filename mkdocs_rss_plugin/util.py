@@ -126,8 +126,7 @@ class Util:
         else:
             self.git_is_valid = False
             logger.debug(
-                "Git use is disabled. "
-                "Only page.meta (YAML frontmatter will be used). "
+                "Git use is disabled. Only page.meta (YAML frontmatter will be used). "
             )
 
         # save git enable/disable status
@@ -707,7 +706,7 @@ class Util:
                 )
                 return None
 
-        return int(img_length)
+        return int(img_length) if img_length else None
 
     @staticmethod
     def get_site_url(mkdocs_config: MkDocsConfig) -> Optional[str]:
