@@ -405,6 +405,12 @@ class TestBuildRss(BaseTest):
                         150,
                         f"Failed item title: {feed_item.title}",
                     )
+                # check sentences split across multiple lines retain spacing
+                if feed_item.title in ["My first blog post", "A second post"]:
+                    self.assertIn(
+                        "Pellentesque nec maximus ex.",
+                        feed_item.summary,
+                    )
 
     def test_simple_build_item_delimiter(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
