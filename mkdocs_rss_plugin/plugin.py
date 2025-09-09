@@ -432,7 +432,8 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                     prev_char = ""
                     for char in template.render(feed=asdict(self.feed_created)):
                         if char == "\n":
-                            continue
+                            # convert new lines to spaces to preserve sentence structure
+                            char = " "
                         if char == " " and prev_char == " ":
                             prev_char = char
                             continue
@@ -442,8 +443,8 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
                     for char in template.render(feed=asdict(self.feed_updated)):
                         if char == "\n":
-                            prev_char = char
-                            continue
+                            # convert new lines to spaces to preserve sentence structure
+                            char = " "
                         if char == " " and prev_char == " ":
                             prev_char = char
                             continue
