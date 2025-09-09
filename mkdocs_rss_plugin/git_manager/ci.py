@@ -52,7 +52,7 @@ class CiHandler:
                     Running on a gitlab runner might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
                     Make sure to set GIT_DEPTH to 1000 in your .gitlab-ci.yml file. \
-                    (see https://docs.gitlab.com/ee/user/project/pipelines/settings.html#git-shallow-clone).
+                    (see https://docs.gitlab.com/user/project/repository/monorepos/#use-shallow-clones-in-cicd-processes).
                     """
             )
 
@@ -64,7 +64,7 @@ class CiHandler:
                     Running on github actions might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
                     Try setting fetch-depth to 0 in your github action \
-                    (see https://github.com/actions/checkout).
+                    (see https://github.com/actions/checkout?tab=readme-ov-file#fetch-all-history-for-all-tags-and-branches).
                     """
             )
 
@@ -76,7 +76,7 @@ class CiHandler:
                     Running on bitbucket pipelines might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
                     Try setting "clone: depth" to "full" in your pipeline \
-                    (see https://support.atlassian.com/bitbucket-cloud/docs/configure-bitbucket-pipelinesyml/
+                    (see https://support.atlassian.com/bitbucket-cloud/docs/git-clone-behavior/#Depth
                     and search 'depth').
                     """
             )
