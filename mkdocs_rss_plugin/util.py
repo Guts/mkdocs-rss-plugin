@@ -656,6 +656,7 @@ class Util:
         image_url: str,
         http_method: str = "HEAD",
         attempt: int = 0,
+        req_timeout: tuple[float, float] = (5, 30),
         ssl_verify: bool = True,
     ) -> Optional[int]:
         """Retrieve length for remote images (starting with 'http').
@@ -668,6 +669,8 @@ class Util:
             http_method (str, optional): HTTP method to use for the request.
                 Defaults to "HEAD".
             attempt (int, optional): request tries counter. Defaults to 0.
+            req_timeout (tuple[float, float], optional): (connect, read) timeout in \
+                secondes. Defaults to (5, 30).
             ssl_verify (bool, optional): option to perform SSL verification or not.
                 Defaults to True.
 
@@ -686,7 +689,7 @@ class Util:
             )
             req_response = self.req_session.request(
                 method=http_method,
-                timeout=(3.05, 10),  # (connect, read) timeout in secondes
+                timeout=req_timeout,
                 url=image_url,
                 verify=ssl_verify,
             )
