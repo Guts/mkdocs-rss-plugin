@@ -37,7 +37,7 @@ from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
-from mkdocs_rss_plugin.models import PageInformation, RssFeedBase
+from mkdocs_rss_plugin.models import MkdocsPageSubset, PageInformation, RssFeedBase
 from mkdocs_rss_plugin.util import Util
 
 # ############################################################################
@@ -347,6 +347,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 updated=page_dates[1],
                 url_comments=page_url_comments,
                 url_full=page_url_full,
+                _mkdocs_page_ref=MkdocsPageSubset.from_page(page),
             )
         )
 
@@ -385,7 +386,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         self.feed_created.entries.extend(
             self.util.filter_pages(
                 pages=self.pages_to_filter,
-                attribute="created",
+                filter_attribute="created",
                 length=self.config.length,
             )
         )
@@ -394,7 +395,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         self.feed_updated.entries.extend(
             self.util.filter_pages(
                 pages=self.pages_to_filter,
-                attribute="updated",
+                filter_attribute="updated",
                 length=self.config.length,
             )
         )
