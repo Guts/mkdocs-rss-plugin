@@ -17,6 +17,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.17.4 - 2025-10-10
+
+### Bugs fixes 🐛
+
+* fix(logs): update references hyperlinks for git depth logs by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/384>
+* fix(material): mkdocs_config.plugins.get("material/blog") can be None by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/392>
+* fix: preserve sentence structure across newlines by @miketheman in <https://github.com/Guts/mkdocs-rss-plugin/pull/378>
+
+### Features and enhancements 🎉
+
+* improve(images): add timeout to remote images requests by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/391>
+
+### New Contributors
+
+* @miketheman made their first contribution in <https://github.com/Guts/mkdocs-rss-plugin/pull/378>
+
 ## 1.17.3 - 2025-05-30
 
 ### Bugs fixes 🐛
