@@ -9,7 +9,7 @@ import json
 from copy import deepcopy
 from dataclasses import asdict
 from datetime import datetime
-from email.utils import formatdate
+from email.utils import format_datetime, formatdate
 from pathlib import Path
 from re import compile as re_compile
 from typing import Literal, Optional
@@ -24,7 +24,7 @@ from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_timestamp
 
 # package modules
-from mkdocs_rss_plugin.__about__ import __title__, __uri__, __version__
+from mkdocs_rss_plugin.__about__ import __title__, __version__
 from mkdocs_rss_plugin.config import RssPluginConfig
 from mkdocs_rss_plugin.constants import (
     DEFAULT_TEMPLATE_FILENAME,
@@ -331,6 +331,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 categories=self.util.get_categories_from_meta(
                     in_page=page, categories_labels=self.config.categories
                 ),
+                comments_url=page_url_comments,
                 created=page_dates[0],
                 description=self.util.get_description_or_abstract(
                     in_page=page,
@@ -338,15 +339,10 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                     abstract_delimiter=self.config.abstract_delimiter,
                 ),
                 guid=page.canonical_url,
-                image=self.util.get_image(
-                    in_page=page,
-                    # below let it as old dict get method to handle custom fallback value
-                    base_url=config.get("site_url", __uri__),
-                ),
+                link=page_url_full,
                 title=page.title,
                 updated=page_dates[1],
-                url_comments=page_url_comments,
-                url_full=page_url_full,
+                # for later fetch
                 _mkdocs_page_ref=MkdocsPageSubset.from_page(page),
             )
         )
@@ -399,6 +395,32 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 length=self.config.length,
             )
         )
+
+        # load RSS items images (enclosures)
+        logger.debug(
+            f"Loading images for {len(self.feed_created.entries)} pages by creation "
+            f"and {len(self.feed_updated.entries)} pages by update"
+        )
+
+        for page in self.feed_created.entries:
+            # set pub date
+            page.pub_date = format_datetime(dt=page.created)
+            page.pub_date_3339 = page.created.isoformat("T")
+            # fetch image
+            if page.image is None:
+                page.image = self.util.get_image(
+                    in_page=page._mkdocs_page_ref, base_url=config.site_url
+                )
+
+        for page in self.feed_updated.entries:
+            # set pub date
+            page.pub_date = format_datetime(dt=page.updated)
+            page.pub_date_3339 = page.updated.isoformat("T")
+            # fetch image
+            if page.image is None:
+                page.image = self.util.get_image(
+                    in_page=page._mkdocs_page_ref, base_url=config.site_url
+                )
 
         # RSS
         if self.config.rss_feed_enabled:
@@ -456,14 +478,14 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         if self.config.json_feed_enabled:
             with out_json_created.open(mode="w", encoding="UTF8") as fp:
                 json.dump(
-                    self.util.feed_to_json(asdict(self.feed_created)),
+                    self.util.feed_to_json(self.feed_created),
                     fp,
                     indent=4 if self.config.pretty_print else None,
                 )
 
             with out_json_updated.open(mode="w", encoding="UTF8") as fp:
                 json.dump(
-                    self.util.feed_to_json(asdict(self.feed_updated), updated=True),
+                    self.util.feed_to_json(self.feed_updated, updated=True),
                     fp,
                     indent=4 if self.config.pretty_print else None,
                 )

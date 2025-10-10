@@ -23,6 +23,7 @@ from mkdocs_rss_plugin.integrations.theme_material_base import (
 from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (
     IntegrationMaterialBlog,
 )
+from mkdocs_rss_plugin.models import MkdocsPageSubset
 
 # conditional
 try:
@@ -167,18 +168,18 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         return True
 
     def is_social_plugin_enabled_page(
-        self, mkdocs_page: Page, fallback_value: bool = True
+        self, mkdocs_page: MkdocsPageSubset, fallback_value: bool = True
     ) -> bool:
         """Check if the social plugin is enabled or disabled for a specific page. Plugin
             has to be enabled in Mkdocs configuration before.
 
         Args:
-            mkdocs_page (Page): Mkdocs page object.
-            fallback_value (bool, optional): fallback value. It might be the
+            mkdocs_page: Mkdocs page object.
+            fallback_value: fallback value. It might be the
                 'plugins.social.cards.enabled' option in Mkdocs config. Defaults to True.
 
         Returns:
-            bool: True if the social cards are enabled for a page.
+            True if the social cards are enabled for a page.
         """
         return mkdocs_page.meta.get("social", {"cards": fallback_value}).get(
             "cards", fallback_value
@@ -374,18 +375,18 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
 
     def get_social_card_url_for_page(
         self,
-        mkdocs_page: Page,
+        mkdocs_page: MkdocsPageSubset,
         mkdocs_site_url: Optional[str] = None,
     ) -> str:
         """Get social card URL for a specific page in documentation.
 
         Args:
-            mkdocs_page (Page): Mkdocs page object.
-            mkdocs_site_url (Optional[str], optional): Mkdocs site URL. If None, the
+            mkdocs_page: subset of Mkdocs page object.
+            mkdocs_site_url: Mkdocs site URL. If None, the
                 'class.mkdocs_site_url' is used. is Defaults to None.
 
         Returns:
-            str: URL to the image once published
+            URL to the image once published
         """
         if mkdocs_site_url is None and self.mkdocs_site_url:
             mkdocs_site_url = self.mkdocs_site_url
@@ -394,7 +395,7 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         # matching src path in the build folder, regardless of the page type.
         page_social_card = (
             f"{mkdocs_site_url}{self.social_cards_dir}/"
-            f"{Path(mkdocs_page.file.src_uri).with_suffix('.png')}"
+            f"{Path(mkdocs_page.src_uri).with_suffix('.png')}"
         )
         logger.debug(f"Use social card url: {page_social_card}")
 
