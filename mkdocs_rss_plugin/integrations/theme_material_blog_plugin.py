@@ -87,7 +87,7 @@ class IntegrationMaterialBlog(IntegrationMaterialThemeBase):
             logger.debug("Installed theme is not 'material'. Integration disabled.")
             return False
 
-        if not mkdocs_config.plugins.get("material/blog"):
+        if mkdocs_config.plugins.get("material/blog") is None:
             logger.debug("Material blog plugin is not listed in configuration.")
             self.IS_BLOG_PLUGIN_ENABLED = False
             return False
