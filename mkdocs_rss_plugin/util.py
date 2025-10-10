@@ -8,11 +8,10 @@
 import logging
 from collections.abc import Iterable
 from datetime import date, datetime
-from email.utils import format_datetime
 from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, Literal, Union
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
@@ -797,36 +796,26 @@ class Util:
         return None
 
     @staticmethod
-    def filter_pages(pages: list[PageInformation], attribute: str, length: int) -> list:
+    def filter_pages(
+        pages: list[PageInformation],
+        filter_attribute: Literal["created", "updated"],
+        length: int,
+    ) -> list[dict]:
         """Filter and return pages into a friendly RSS structure.
 
         Args:
             pages (list): pages to filter
-            attribute (str): page attribute as filter variable
+            filter_attribute (str): page attribute to use as filter variable
             length (int): max number of pages to return
 
         Returns:
-            list: list of filtered pages
+            list[dict]: list of filtered pages as RSS item dict
         """
         filtered_pages = []
         for page in sorted(
-            pages, key=lambda page: getattr(page, attribute), reverse=True
+            pages, key=lambda page: getattr(page, filter_attribute), reverse=True
         )[:length]:
-            pub_date: datetime = getattr(page, attribute)
-            filtered_pages.append(
-                {
-                    "authors": page.authors,
-                    "categories": page.categories,
-                    "comments_url": page.url_comments,
-                    "description": page.description,
-                    "guid": page.guid,
-                    "image": page.image,
-                    "link": page.url_full,
-                    "pubDate": format_datetime(dt=pub_date),
-                    "pubDate3339": pub_date.isoformat("T"),
-                    "title": page.title,
-                }
-            )
+            filtered_pages.append(page.as_rss_item(date_type=filter_attribute))
 
         return filtered_pages
 

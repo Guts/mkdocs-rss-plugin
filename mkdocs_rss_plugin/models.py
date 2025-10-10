@@ -9,8 +9,9 @@
 from collections.abc import MutableMapping
 from dataclasses import dataclass, field
 from datetime import datetime
+from email.utils import format_datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 # 3rd party
 from mkdocs.structure.pages import Page
@@ -65,6 +66,22 @@ class PageInformation:
     _mkdocs_page_ref: Optional[MkdocsPageSubset] = field(
         default=None, repr=False, compare=False
     )
+
+    def as_rss_item(self, date_type: Literal["created", "updated"]) -> dict:
+        """Return the object as a dictionary formatted for RSS item."""
+        pub_date: datetime = getattr(self, date_type)
+        return {
+            "authors": self.authors,
+            "categories": self.categories,
+            "comments_url": self.url_comments,
+            "description": self.description,
+            "guid": self.guid,
+            "image": self.image,
+            "link": self.url_full,
+            "pubDate": format_datetime(dt=pub_date),
+            "pubDate3339": pub_date.isoformat("T"),
+            "title": self.title,
+        }
 
 
 @dataclass
