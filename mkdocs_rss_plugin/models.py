@@ -4,11 +4,16 @@
 # ########## Libraries #############
 # ##################################
 
+
 # standard
+from collections.abc import MutableMapping
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
+
+# 3rd party
+from mkdocs.structure.pages import Page
 
 # package modules
 from mkdocs_rss_plugin.__about__ import __title__, __version__
@@ -16,6 +21,30 @@ from mkdocs_rss_plugin.__about__ import __title__, __version__
 # ############################################################################
 # ########## Classes ###############
 # ##################################
+
+
+@dataclass
+class MkdocsPageSubset:
+    """Minimal subset of a Mkdocs Page with only necessary attributes for plugin needs."""
+
+    dest_uri: str
+    src_uri: str
+    title: Optional[str] = None
+    meta: Optional[MutableMapping[str, Any]] = None
+
+    @classmethod
+    def from_page(cls, page: Page) -> "MkdocsPageSubset":
+        """Create a PageSubset from a Mkdocs page.
+
+        Args:
+            page: MkDocs Page object
+        """
+        return cls(
+            meta=page.meta,
+            title=page.title,
+            src_uri=page.file.src_uri,
+            dest_uri=page.file.dest_uri,
+        )
 
 
 @dataclass
@@ -33,6 +62,9 @@ class PageInformation:
     updated: Optional[datetime] = None
     url_comments: Optional[str] = None
     url_full: Optional[str] = None
+    _mkdocs_page_ref: Optional[MkdocsPageSubset] = field(
+        default=None, repr=False, compare=False
+    )
 
 
 @dataclass
