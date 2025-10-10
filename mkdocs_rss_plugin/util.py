@@ -685,7 +685,10 @@ class Util:
                 f"Sending {http_method} request to {image_url}"
             )
             req_response = self.req_session.request(
-                method=http_method, url=image_url, verify=ssl_verify
+                method=http_method,
+                timeout=(3.05, 10),  # (connect, read) timeout in secondes
+                url=image_url,
+                verify=ssl_verify,
             )
             req_response.raise_for_status()
             img_length = req_response.headers.get("content-length")
