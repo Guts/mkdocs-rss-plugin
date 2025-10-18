@@ -844,21 +844,18 @@ class Util:
         )[:length]
 
     @staticmethod
-    def feed_to_json(feed: RssFeedBase, *, updated: bool = False) -> dict:
+    def feed_to_json(feed: RssFeedBase) -> dict:
         """Format internal feed representation as a JSON Feed compliant dict.
 
         Args:
             feed (dict): internal feed structure, i. e. GitRssPlugin.feed_created or
                 feed_updated value
-            updated (bool, optional): True if this is a feed_updated. Defaults to False.
 
         Returns:
             dict: dict that can be passed to json.dump
         """
-        entry_date_key = "date_modified" if updated else "date_published"
-
         return {
-            "version": "https://jsonfeed.org/version/1",
+            "version": "https://jsonfeed.org/version/1.1",
             "title": feed.title,
             "home_page_url": feed.html_url,
             "feed_url": feed.json_url,
@@ -873,7 +870,8 @@ class Util:
                     "title": item.title,
                     "content_html": item.description,
                     "image": (item.image or (None,))[0],
-                    entry_date_key: item.pub_date_3339,
+                    "date_modified": item.updated.isoformat("T"),
+                    "date_published": item.created.isoformat("T"),
                     "authors": [{"name": name} for name in (item.authors or ())],
                     "tags": item.categories,
                 }

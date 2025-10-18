@@ -433,7 +433,6 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             # set pub date as created
             for page in self.feed_created.entries:
                 page.pub_date = format_datetime(dt=page.created)
-                page.pub_date_3339 = page.created.isoformat("T")
 
             # write file
             with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
@@ -456,7 +455,6 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             # set pub date as updated
             for page in self.feed_updated.entries:
                 page.pub_date = format_datetime(dt=page.updated)
-                page.pub_date_3339 = page.updated.isoformat("T")
 
             # write file
             with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
@@ -485,7 +483,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
 
             with out_json_updated.open(mode="w", encoding="UTF8") as fp:
                 json.dump(
-                    self.util.feed_to_json(self.feed_updated, updated=True),
+                    self.util.feed_to_json(self.feed_updated),
                     fp,
                     indent=4 if self.config.pretty_print else None,
                 )
