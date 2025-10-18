@@ -402,25 +402,15 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             f"and {len(self.feed_updated.entries)} pages by update"
         )
 
-        for page in self.feed_created.entries:
-            # set pub date
-            page.pub_date = format_datetime(dt=page.created)
-            page.pub_date_3339 = page.created.isoformat("T")
-            # fetch image
-            if page.image is None:
-                page.image = self.util.get_image(
-                    in_page=page._mkdocs_page_ref, base_url=config.site_url
-                )
+        processed_refs = set()
+        self.util.load_images_for_pages(
+            self.feed_created.entries, config.site_url, processed_refs
+        )
+        self.util.load_images_for_pages(
+            self.feed_updated.entries, config.site_url, processed_refs
+        )
 
-        for page in self.feed_updated.entries:
-            # set pub date
-            page.pub_date = format_datetime(dt=page.updated)
-            page.pub_date_3339 = page.updated.isoformat("T")
-            # fetch image
-            if page.image is None:
-                page.image = self.util.get_image(
-                    in_page=page._mkdocs_page_ref, base_url=config.site_url
-                )
+        # Set updated and created dates
 
         # RSS
         if self.config.rss_feed_enabled:
@@ -435,9 +425,25 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 template = env.get_template(self.tpl_file.name)
 
                 # write feeds to files
+                logger.debug(
+                    "Fill creation dates and dump created feed into RSS template."
+                )
+                # set pub date as created
+                for page in self.feed_created.entries:
+                    page.pub_date = format_datetime(dt=page.created)
+                    page.pub_date_3339 = page.created.isoformat("T")
+                # write file
                 with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
                     fifeed_created.write(template.render(feed=self.feed_created))
 
+                logger.debug(
+                    "Fill update dates and dump udpated feed into RSS template."
+                )
+                # set pub date as updated
+                for page in self.feed_updated.entries:
+                    page.pub_date = format_datetime(dt=page.updated)
+                    page.pub_date_3339 = page.updated.isoformat("T")
+                # write file
                 with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
                     fifeed_updated.write(template.render(feed=self.feed_updated))
 
