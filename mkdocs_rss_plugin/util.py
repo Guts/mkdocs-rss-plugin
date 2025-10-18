@@ -556,12 +556,12 @@ class Util:
         base_url: str,
         processed_refs: Optional[set] = None,
     ) -> None:
-        """Charge les images pour une liste de pages (mutation in-place).
+        """Load images for a list of pages (mutation in-place).
 
         Args:
-            pages: Liste de PageInformation dont il faut charger les images
-            base_url: URL de base du site
-            processed_refs: Set des références déjà traitées (pour déduplication)
+            pages: list of PageInformation
+            base_url: final website base URL
+            processed_refs: deduplication set
         """
         if processed_refs is None:
             processed_refs = set()
@@ -571,8 +571,9 @@ class Util:
                 page_info._mkdocs_page_ref
                 and id(page_info._mkdocs_page_ref) not in processed_refs
             ):
-                page_info.image = self.get_image_from_page_subset(
-                    page_subset=page_info._mkdocs_page_ref, base_url=base_url
+                logger.debug(f"Get image for '{page_info.title}'")
+                page_info.image = self.get_image(
+                    in_page=page_info._mkdocs_page_ref, base_url=base_url
                 )
                 processed_refs.add(id(page_info._mkdocs_page_ref))
 
