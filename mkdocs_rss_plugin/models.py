@@ -65,32 +65,12 @@ class PageInformation:
     image: tuple[str, str, int] | None = None
     link: str | None = None
     pub_date: str | None = None
-    pub_date_3339: str | None = None
     title: str | None = None
     updated: datetime | None = None
     # private
     _mkdocs_page_ref: MkdocsPageSubset | None = field(
         default=None, repr=False, compare=False
     )
-
-    def as_rss_item(self) -> dict:
-        """Return the object as a dictionary formatted for RSS item.
-
-        Returns:
-            page as RSS item dict
-        """
-        return {
-            "authors": self.authors,
-            "categories": self.categories,
-            "comments_url": self.comments_url,
-            "description": self.description,
-            "guid": self.guid,
-            "image": self.image,
-            "link": self.link,
-            "pub_date": self.pub_date,
-            "pubd_date_3339": self.pub_date_3339,
-            "title": self.title,
-        }
 
 
 @dataclass
