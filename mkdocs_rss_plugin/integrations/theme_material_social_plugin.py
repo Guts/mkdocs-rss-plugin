@@ -13,7 +13,6 @@ from typing import Optional
 # 3rd party
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
-from mkdocs.structure.pages import Page
 
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
@@ -23,6 +22,7 @@ from mkdocs_rss_plugin.integrations.theme_material_base import (
 from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (
     IntegrationMaterialBlog,
 )
+from mkdocs_rss_plugin.models import MkdocsPageSubset
 
 # conditional
 try:
@@ -167,18 +167,18 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         return True
 
     def is_social_plugin_enabled_page(
-        self, mkdocs_page: Page, fallback_value: bool = True
+        self, mkdocs_page: MkdocsPageSubset, fallback_value: bool = True
     ) -> bool:
         """Check if the social plugin is enabled or disabled for a specific page. Plugin
             has to be enabled in Mkdocs configuration before.
 
         Args:
-            mkdocs_page (Page): Mkdocs page object.
-            fallback_value (bool, optional): fallback value. It might be the
+            mkdocs_page: Mkdocs page object.
+            fallback_value: fallback value. It might be the
                 'plugins.social.cards.enabled' option in Mkdocs config. Defaults to True.
 
         Returns:
-            bool: True if the social cards are enabled for a page.
+            True if the social cards are enabled for a page.
         """
         return mkdocs_page.meta.get("social", {"cards": fallback_value}).get(
             "cards", fallback_value
@@ -262,17 +262,17 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         return self.social_cards_cache_dir
 
     def get_social_card_build_path_for_page(
-        self, mkdocs_page: Page, mkdocs_site_dir: Optional[str] = None
+        self, mkdocs_page: MkdocsPageSubset, mkdocs_site_dir: Optional[str] = None
     ) -> Optional[Path]:
         """Get social card path in Mkdocs build dir for a specific page.
 
         Args:
-            mkdocs_page (Page): Mkdocs page object.
-            mkdocs_site_dir (Optional[str], optional): Mkdocs build site dir. If None, the
+            mkdocs_page: Mkdocs page object.
+            mkdocs_site_dir: Mkdocs build site dir. If None, the
                 'class.mkdocs_site_build_dir' is used. is Defaults to None.
 
         Returns:
-            Path: path to the image once published
+            path to the image once published
         """
         if mkdocs_site_dir is None and self.mkdocs_site_build_dir:
             mkdocs_site_dir = self.mkdocs_site_build_dir
@@ -284,12 +284,12 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         ):
             expected_built_card_path = Path(
                 f"{mkdocs_site_dir}/{self.social_cards_assets_dir}/"
-                f"{Path(mkdocs_page.file.dest_uri).parent}.png"
+                f"{Path(mkdocs_page.dest_uri).parent}.png"
             )
         else:
             expected_built_card_path = Path(
                 f"{mkdocs_site_dir}/{self.social_cards_assets_dir}/"
-                f"{Path(mkdocs_page.file.src_uri).with_suffix('.png')}"
+                f"{Path(mkdocs_page.src_uri).with_suffix('.png')}"
             )
 
         if expected_built_card_path.is_file():
@@ -303,7 +303,9 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             )
             return None
 
-    def get_social_card_cache_path_for_page(self, mkdocs_page: Page) -> Optional[Path]:
+    def get_social_card_cache_path_for_page(
+        self, mkdocs_page: MkdocsPageSubset
+    ) -> Optional[Path]:
         """Get social card path in social plugin cache folder for a specific page.
 
         Note:
@@ -314,10 +316,10 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             any exposed matching criteria.
 
         Args:
-            mkdocs_page (Page): Mkdocs page object.
+            mkdocs_page: Mkdocs page object.
 
         Returns:
-            Path: path to the image in local cache folder if it exists
+            path to the image in local cache folder if it exists
         """
         if self.IS_INSIDERS:
 
@@ -327,11 +329,11 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
                 and self.integration_material_blog.is_page_a_blog_post(mkdocs_page)
             ):
                 expected_cached_card_path = self.social_cards_cache_dir.joinpath(
-                    f"assets/images/social/{Path(mkdocs_page.file.dest_uri).parent}.png"
+                    f"assets/images/social/{Path(mkdocs_page.dest_uri).parent}.png"
                 )
             else:
                 expected_cached_card_path = self.social_cards_cache_dir.joinpath(
-                    f"assets/images/social/{Path(mkdocs_page.file.src_uri).with_suffix('.png')}"
+                    f"assets/images/social/{Path(mkdocs_page.src_uri).with_suffix('.png')}"
                 )
 
             if expected_cached_card_path.is_file():
@@ -374,18 +376,18 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
 
     def get_social_card_url_for_page(
         self,
-        mkdocs_page: Page,
+        mkdocs_page: MkdocsPageSubset,
         mkdocs_site_url: Optional[str] = None,
     ) -> str:
         """Get social card URL for a specific page in documentation.
 
         Args:
-            mkdocs_page (Page): Mkdocs page object.
-            mkdocs_site_url (Optional[str], optional): Mkdocs site URL. If None, the
+            mkdocs_page: subset of Mkdocs page object.
+            mkdocs_site_url: Mkdocs site URL. If None, the
                 'class.mkdocs_site_url' is used. is Defaults to None.
 
         Returns:
-            str: URL to the image once published
+            URL to the image once published
         """
         if mkdocs_site_url is None and self.mkdocs_site_url:
             mkdocs_site_url = self.mkdocs_site_url
@@ -394,7 +396,7 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         # matching src path in the build folder, regardless of the page type.
         page_social_card = (
             f"{mkdocs_site_url}{self.social_cards_dir}/"
-            f"{Path(mkdocs_page.file.src_uri).with_suffix('.png')}"
+            f"{Path(mkdocs_page.src_uri).with_suffix('.png')}"
         )
         logger.debug(f"Use social card url: {page_social_card}")
 

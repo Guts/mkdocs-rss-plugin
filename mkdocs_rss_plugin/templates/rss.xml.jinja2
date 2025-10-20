@@ -47,7 +47,7 @@
       {% endif %}
       <description>{{ item.description|e }}</description>
       {% if item.link is not none %}<link>{{ item.link|e }}</link>{% endif %}
-      <pubDate>{{ item.pubDate }}</pubDate>
+      <pubDate>{{ item.pub_date }}</pubDate>
       {% if item.link is not none %}<source url="{{ feed.rss_url }}">{{ feed.title }}</source>{% endif %}
       {% if item.comments_url is not none %}<comments>{{ item.comments_url|e }}</comments>{% endif %}
       {% if item.guid is not none %}<guid isPermaLink="true">{{ item.guid }}</guid>{% endif %}

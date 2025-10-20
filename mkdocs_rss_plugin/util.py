@@ -8,11 +8,10 @@
 import logging
 from collections.abc import Iterable
 from datetime import date, datetime
-from email.utils import format_datetime
 from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, Literal, Union
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
@@ -47,7 +46,7 @@ from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (
 from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
     IntegrationMaterialSocialCards,
 )
-from mkdocs_rss_plugin.models import PageInformation
+from mkdocs_rss_plugin.models import MkdocsPageSubset, PageInformation, RssFeedBase
 from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
 
 # ############################################################################
@@ -551,29 +550,57 @@ class Util:
             )
             return ""
 
-    def get_image(self, in_page: Page, base_url: str) -> Optional[tuple[str, str, int]]:
+    def load_images_for_pages(
+        self,
+        pages: list[PageInformation],
+        base_url: str,
+        processed_refs: Optional[set] = None,
+    ) -> None:
+        """Load images for a list of pages (mutation in-place).
+
+        Args:
+            pages: list of PageInformation
+            base_url: final website base URL
+            processed_refs: deduplication set
+        """
+        if processed_refs is None:
+            processed_refs = set()
+
+        for page_info in pages:
+            if (
+                page_info._mkdocs_page_ref
+                and id(page_info._mkdocs_page_ref) not in processed_refs
+            ):
+                logger.debug(f"Get image for '{page_info.title}'")
+                page_info.image = self.get_image(
+                    in_page=page_info._mkdocs_page_ref, base_url=base_url
+                )
+                processed_refs.add(id(page_info._mkdocs_page_ref))
+
+    def get_image(
+        self, in_page: MkdocsPageSubset, base_url: str
+    ) -> Optional[tuple[str, str, int]]:
         """Get page's image from page meta or social cards and returns properties.
 
         Args:
-            in_page (Page): page to parse
-            base_url (str): website URL to resolve absolute URLs for images referenced
+            in_page: page to parse
+            base_url: website URL to resolve absolute URLs for images referenced
                 with local path.
 
         Returns:
-            Optional[Tuple[str, str, int]]: (image url, mime type, image length) or None if
-                there is no image set
+            (image url, mime type, image length) or None if there is no image set
         """
         if in_page.meta.get("image"):
             img_url = in_page.meta.get("image").strip()
             logger.debug(
                 f"Image found ({img_url}) in page.meta.image for page: "
-                f"{in_page.file.src_uri}"
+                f"{in_page.src_uri}"
             )
         elif in_page.meta.get("illustration"):
             img_url = in_page.meta.get("illustration").strip()
             logger.debug(
                 f"Image found ({img_url}) in page.meta.illustration for page: "
-                f"{in_page.file.src_uri}"
+                f"{in_page.src_uri}"
             )
         elif (
             isinstance(self.social_cards, IntegrationMaterialSocialCards)
@@ -622,7 +649,7 @@ class Util:
         # if path, resolve absolute url
         if not img_url.startswith("http"):
             img_length = self.get_local_image_length(
-                page_path=in_page.file.abs_src_path, path_to_append=img_url
+                page_path=in_page.abs_src_path, path_to_append=img_url
             )
             img_url = self.build_url(base_url=base_url, path=img_url)
         else:
@@ -797,75 +824,57 @@ class Util:
         return None
 
     @staticmethod
-    def filter_pages(pages: list[PageInformation], attribute: str, length: int) -> list:
-        """Filter and return pages into a friendly RSS structure.
+    def filter_pages(
+        pages: list[PageInformation],
+        filter_attribute: Literal["created", "updated"],
+        length: int,
+    ) -> list[PageInformation]:
+        """Filter pages based on an attribute and a max number of items.
 
         Args:
-            pages (list): pages to filter
-            attribute (str): page attribute as filter variable
-            length (int): max number of pages to return
+            pages: pages to filter
+            filter_attribute: page attribute to use as filter variable
+            length: max number of pages to return
 
         Returns:
-            list: list of filtered pages
+            list of filtered pages
         """
-        filtered_pages = []
-        for page in sorted(
-            pages, key=lambda page: getattr(page, attribute), reverse=True
-        )[:length]:
-            pub_date: datetime = getattr(page, attribute)
-            filtered_pages.append(
-                {
-                    "authors": page.authors,
-                    "categories": page.categories,
-                    "comments_url": page.url_comments,
-                    "description": page.description,
-                    "guid": page.guid,
-                    "image": page.image,
-                    "link": page.url_full,
-                    "pubDate": format_datetime(dt=pub_date),
-                    "pubDate3339": pub_date.isoformat("T"),
-                    "title": page.title,
-                }
-            )
-
-        return filtered_pages
+        return sorted(
+            pages, key=lambda page: getattr(page, filter_attribute), reverse=True
+        )[:length]
 
     @staticmethod
-    def feed_to_json(feed: dict, *, updated: bool = False) -> dict:
+    def feed_to_json(feed: RssFeedBase) -> dict:
         """Format internal feed representation as a JSON Feed compliant dict.
 
         Args:
             feed (dict): internal feed structure, i. e. GitRssPlugin.feed_created or
                 feed_updated value
-            updated (bool, optional): True if this is a feed_updated. Defaults to False.
 
         Returns:
             dict: dict that can be passed to json.dump
         """
-        entry_date_key = "date_modified" if updated else "date_published"
-
         return {
-            "version": "https://jsonfeed.org/version/1",
-            "title": feed.get("title"),
-            "home_page_url": feed.get("html_url"),
-            "feed_url": feed.get("json_url"),
-            "description": feed.get("description"),
-            "icon": feed.get("logo_url"),
-            "authors": (
-                [{"name": feed.get("author")}] if feed.get("author") is not None else []
-            ),
-            "language": str(feed.get("language")),
+            "version": "https://jsonfeed.org/version/1.1",
+            "title": feed.title,
+            "home_page_url": feed.html_url,
+            "feed_url": feed.json_url,
+            "description": feed.description,
+            "icon": feed.logo_url,
+            "authors": ([{"name": feed.author}] if feed.author is not None else []),
+            "language": str(feed.language),
             "items": [
                 {
-                    "id": item.get("guid"),
-                    "url": item.get("link"),
-                    "title": item.get("title"),
-                    "content_html": item.get("description"),
-                    "image": (item.get("image") or (None,))[0],
-                    entry_date_key: item.get("pubDate3339"),
-                    "authors": [{"name": name} for name in (item.get("authors") or ())],
-                    "tags": item.get("categories"),
+                    "id": item.guid,
+                    "url": item.link,
+                    "title": item.title,
+                    "content_html": item.description,
+                    "image": (item.image or (None,))[0],
+                    "date_modified": item.updated.isoformat("T"),
+                    "date_published": item.created.isoformat("T"),
+                    "authors": [{"name": name} for name in (item.authors or ())],
+                    "tags": item.categories,
                 }
-                for item in feed.get("entries", ())
+                for item in feed.entries
             ],
         }
