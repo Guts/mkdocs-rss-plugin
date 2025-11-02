@@ -399,9 +399,7 @@ At the end, into the RSS you will get:
 ```
 
 !!! note "Timezone dependencies"
-    The timezones data depends on the Python version used to build:
-        - for Python >= 3.9, it uses the standard library and ships [tzdata](https://pypi.org/project/tzdata/) only on Windows which do not provide such data
-        - for Python < 3.9, [pytz](https://pypi.org/project/pytz/) is shipped.
+    The timezones data relies on the standard library and ships [tzdata](https://pypi.org/project/tzdata/) only on Windows which do not provide such data.
 
 ----
 
