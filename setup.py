@@ -6,7 +6,6 @@
 
 # standard library
 from pathlib import Path
-from typing import Union
 
 # 3rd party
 from setuptools import find_packages, setup
@@ -26,7 +25,7 @@ README = (HERE / "README.md").read_text()
 # ##################################
 
 
-def load_requirements(requirements_files: Union[Path, list[Path]]) -> list:
+def load_requirements(requirements_files: Path | list[Path]) -> list:
     """Helper to load requirements list from a path or a list of paths.
 
     Args:
@@ -79,7 +78,7 @@ setup(
     # run
     entry_points={"mkdocs.plugins": ["rss = mkdocs_rss_plugin.plugin:GitRssPlugin"]},
     # dependencies
-    python_requires=">=3.9, <4",
+    python_requires=">=3.10, <4",
     extras_require={
         # tooling
         "dev": load_requirements(HERE / "requirements/development.txt"),
@@ -93,11 +92,11 @@ setup(
         "Intended Audience :: Developers",
         "Intended Audience :: Information Technology",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         "Programming Language :: Python :: Implementation :: CPython",
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",

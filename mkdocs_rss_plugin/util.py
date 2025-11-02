@@ -11,7 +11,7 @@ from datetime import date, datetime
 from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Any, Literal, Union
+from typing import Any, Literal
 from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
@@ -172,7 +172,7 @@ class Util:
             url_parts[4] = urlencode(args_dict)
         return urlunparse(url_parts)
 
-    def get_value_from_dot_key(self, data: dict, dot_key: Union[str, bool]) -> Any:
+    def get_value_from_dot_key(self, data: dict, dot_key: str | bool) -> Any:
         """Retrieves a value from a dictionary using a dot notation key.
 
         Args:
