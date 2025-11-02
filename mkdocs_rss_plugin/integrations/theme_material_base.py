@@ -4,9 +4,6 @@
 # ########## Libraries #############
 # ##################################
 
-# standard library
-from typing import Optional
-
 # 3rd party
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
@@ -36,7 +33,7 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 class IntegrationMaterialThemeBase:
     # attributes
     IS_THEME_MATERIAL: bool = False
-    IS_INSIDERS: Optional[bool] = False
+    IS_INSIDERS: bool | None = False
 
     def __init__(self, mkdocs_config: MkDocsConfig) -> None:
         """Integration instantiation.
@@ -51,7 +48,7 @@ class IntegrationMaterialThemeBase:
         self.IS_INSIDERS = self.is_mkdocs_theme_material_insiders()
 
     def is_mkdocs_theme_material(
-        self, mkdocs_config: Optional[MkDocsConfig] = None
+        self, mkdocs_config: MkDocsConfig | None = None
     ) -> bool:
         """Check if the theme set in mkdocs.yml is material or not.
 
@@ -67,7 +64,7 @@ class IntegrationMaterialThemeBase:
         self.IS_THEME_MATERIAL = mkdocs_config.theme.name == "material"
         return self.IS_THEME_MATERIAL
 
-    def is_mkdocs_theme_material_insiders(self) -> Optional[bool]:
+    def is_mkdocs_theme_material_insiders(self) -> bool | None:
         """Check if the material theme is community or insiders edition.
 
         Returns:

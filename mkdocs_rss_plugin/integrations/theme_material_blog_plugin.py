@@ -7,7 +7,6 @@
 # standard library
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional
 
 # 3rd party
 from mkdocs.config.defaults import MkDocsConfig
@@ -69,9 +68,7 @@ class IntegrationMaterialBlog(IntegrationMaterialThemeBase):
                 "disabled in plugin's option in Mkdocs configuration."
             )
 
-    def is_blog_plugin_enabled_mkdocs(
-        self, mkdocs_config: Optional[MkDocsConfig]
-    ) -> bool:
+    def is_blog_plugin_enabled_mkdocs(self, mkdocs_config: MkDocsConfig | None) -> bool:
         """Check if blog plugin is installed and enabled.
 
         Args:
