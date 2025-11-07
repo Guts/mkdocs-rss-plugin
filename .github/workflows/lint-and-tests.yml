@@ -30,7 +30,6 @@ jobs:
           - "3.11"
           - "3.12"
           - "3.13"
-          - "3.14"
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
