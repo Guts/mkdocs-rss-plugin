@@ -15,6 +15,10 @@ on:
     paths-ignore:
       - "docs/**"
 
+# Sets permissions of the GITHUB_TOKEN
+permissions:
+  contents: read
+
 jobs:
   lintest:
     runs-on: ubuntu-latest
