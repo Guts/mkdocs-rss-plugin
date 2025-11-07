@@ -216,5 +216,6 @@ dmypy.json
 # ################################
 
 **/*.xml
+mkdocs_rss_plugin/_version.py
 site/
 tests/fixtures/docs/temp_page_not_in_git_log.md

@@ -4,11 +4,13 @@ name: "🐳 Docker Builder"
 # events but only for the master branch
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
     paths-ignore:
       - "docs/**"
   push:
-    branches: [main]
+    branches:
+      - main
     paths-ignore:
       - "docs/**"
 

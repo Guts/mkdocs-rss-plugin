@@ -16,8 +16,8 @@ jobs:
       url: https://pypi.org/project/mkdocs-rss-plugin/
     permissions:
       contents: write
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
       discussions: write
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
 
     steps:
       - uses: actions/checkout@v5
@@ -25,9 +25,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.x"
+          python-version: "3.13"
           cache: "pip"
-          cache-dependency-path: "requirements/base.txt"
+          cache-dependency-path: pyproject.toml
 
       - name: Install dependencies
         run: |

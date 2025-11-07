@@ -13,15 +13,13 @@ ci-cd:
 dependencies:
   - changed-files:
       - any-glob-to-any-file:
-          - requirements/*.txt
-          - requirements.txt
+          - pyproject.toml
 
 documentation:
   - changed-files:
       - any-glob-to-any-file:
           - "*.md"
           - docs/**
-          - requirements/documentation.txt
   - head-branch:
       - ^docs
       - documentation
@@ -37,7 +35,6 @@ packaging:
   - changed-files:
       - any-glob-to-any-file:
           - MANIFEST.in
-          - setup.py
   - head-branch:
       - ^packaging
       - packaging
@@ -52,7 +49,6 @@ tooling:
       - any-glob-to-any-file:
           - ".*"
           - codecov.yml
-          - setup.cfg
           - .vscode/**/*
   - head-branch:
       - ^tooling
