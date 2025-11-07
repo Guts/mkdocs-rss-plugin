@@ -18,9 +18,6 @@ repos:
       - id: detect-private-key
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
-      - id: name-tests-test
-        args:
-          - --pytest-test-first
       - id: trailing-whitespace
         args:
           - --markdown-linebreak-ext=md
