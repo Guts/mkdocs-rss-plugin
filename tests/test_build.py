@@ -910,6 +910,30 @@ class TestBuildRss(BaseTest):
         # restore name
         git_dir_tmp.replace(git_dir)
 
+    def test_xml_escaping_in_author(self):
+        """Test that XML special characters in author field are properly escaped."""
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_site_author_to_be_escaped.yml"
+                ),
+                output_path=tmpdirname,
+                strict=False,
+            )
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            feed_parsed = feedparser.parse(Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED)
+            self.assertEqual(feed_parsed.bozo, 0, "Feed should parse without errors")
+            feed_xml = (Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED).read_text(
+                encoding="utf-8"
+            )
+
+            # Verify the author field contains the escaped ampersand
+            self.assertIn("OpenSavvy &amp; contributors", feed_xml)
+            self.assertNotIn("OpenSavvy & contributors</managingEditor>", feed_xml)
+
 
 # ##############################################################################
 # ##### Stand alone program ########
