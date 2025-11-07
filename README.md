@@ -84,15 +84,23 @@ Following initiative from the author of Material for MkDocs, this plugin provide
 
 ## Development
 
-Clone the repository:
+Once you cloned the repository:
 
 ```sh
-# install development dependencies
-python -m pip install -U -r requirements/development.txt
-# alternatively: pip install -e .[dev]
-
 # install project as editable
 python -m pip install -e .
+
+# including development dependencies
+python -m pip install -e .[dev]
+
+# including documentation dependencies
+python -m pip install -e .[docs]
+
+# including testing dependencies
+python -m pip install -e .[test]
+
+# all inclusive
+python -m pip install -e .[dev,docs,test]
 
 # install git hooks
 pre-commit install
@@ -104,8 +112,7 @@ Then follow the [contribution guidelines](CONTRIBUTING.md).
 
 ```sh
 # install development dependencies
-python -m pip install -U -r requirements/testing.txt
-# alternatively: pip install -e .[test]
+python -m pip install -e .[test]
 
 # run tests
 pytest
@@ -115,8 +122,7 @@ pytest
 
 ```sh
 # install dependencies for documentation
-python -m pip install -U -r requirements/documentation.txt
-# alternatively: pip install -e .[doc]
+python -m pip install -e .[docs]
 
 # build the documentation
 mkdocs build

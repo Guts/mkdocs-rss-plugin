@@ -18,6 +18,9 @@ repos:
       - id: detect-private-key
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
+      - id: name-tests-test
+        args:
+          - --pytest-test-first
       - id: trailing-whitespace
         args:
           - --markdown-linebreak-ext=md
@@ -37,7 +40,7 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.14.3"
     hooks:
-      - id: ruff
+      - id: ruff-check
         args:
           - --fix-only
           - --target-version=py310
@@ -66,7 +69,6 @@ repos:
           - flake8-docstrings<2
         language: python
         args:
-          - --config=setup.cfg
           - --select=E9,F63,F7,F82
           - --docstring-convention=google
 

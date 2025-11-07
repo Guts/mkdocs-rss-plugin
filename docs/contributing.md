@@ -12,15 +12,23 @@ These are mostly guidelines, not rules. Use your best judgment, and feel free to
 
 ## Development
 
-Clone the repository:
+Once you cloned the repository:
 
 ```sh
-# install development dependencies
-python -m pip install -U -r requirements/development.txt
-# alternatively: pip install -e .[dev]
-
 # install project as editable
 python -m pip install -e .
+
+# including development dependencies
+python -m pip install -e .[dev]
+
+# including documentation dependencies
+python -m pip install -e .[docs]
+
+# including testing dependencies
+python -m pip install -e .[test]
+
+# all inclusive
+python -m pip install -e .[dev,docs,test]
 
 # install git hooks
 pre-commit install
@@ -32,8 +40,7 @@ Then follow the [contribution guidelines](#guidelines).
 
 ```sh
 # install development dependencies
-python -m pip install -U -r requirements/testing.txt
-# alternatively: pip install -e .[test]
+python -m pip install -e .[test]
 
 # run tests
 pytest
@@ -43,8 +50,7 @@ pytest
 
 ```sh
 # install dependencies for documentation
-python -m pip install -U -r requirements/documentation.txt
-# alternatively: pip install -e .[doc]
+python -m pip install -e .[docs]
 
 # build the documentation
 mkdocs build
@@ -90,10 +96,15 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
 
 ```jsonc
 {
-    // Editor
-    "files.associations": {
-        "./requirements/*.txt": "pip-requirements"
+    // JSON
+    "[json]": {
+        "editor.bracketPairColorization.enabled": true,
+        "editor.defaultFormatter": "vscode.json-language-features",
+        "editor.formatOnSave": true,
+        "editor.guides.bracketPairs": "active"
     },
+    "json.format.enable": true,
+    "json.schemaDownload.enable": true,
     // Markdown
     "markdown.updateLinksOnFileMove.enabled": "prompt",
     "markdown.updateLinksOnFileMove.enableForDirectories": true,
@@ -104,9 +115,16 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
         "editor.bracketPairColorization.enabled": true,
         "editor.formatOnSave": true,
         "editor.guides.bracketPairs": "active",
-        "files.trimTrailingWhitespace": false,
+        "files.trimTrailingWhitespace": false
     },
     // Python
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.terminal.activateEnvironment": true,
+    "python.testing.unittestEnabled": true,
+    "python.testing.pytestEnabled": true,  
     "[python]": {
         "editor.codeActionsOnSave": {
             "source.organizeImports": "explicit"
@@ -119,9 +137,24 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
         ],
         "editor.wordWrapColumn": 88,
     },
-    // Extensions
+    // YAML
+    "[yaml]": {
+        "editor.autoIndent": "keep",
+        "editor.formatOnSave": true,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": true
+        }
+    },
+    // extensions
+    "autoDocstring.guessTypes": true,
+    "autoDocstring.docstringFormat": "google-notypes",
+    "autoDocstring.generateDocstringOnEnter": false,
     "flake8.args": [
-        "--config=setup.cfg",
         "--verbose"
     ],
     "isort.args": [
@@ -129,15 +162,13 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
         "black"
     ],
     "isort.check": true,
-    "autoDocstring.guessTypes": true,
-    "autoDocstring.docstringFormat": "google",
-    "autoDocstring.generateDocstringOnEnter": false,
     "yaml.customTags": [
         "!ENV scalar",
         "!ENV sequence",
-        "tag:yaml.org,2002:python/name:materialx.emoji.to_svg",
-        "tag:yaml.org,2002:python/name:materialx.emoji.twemoji",
+        "!relative scalar",
+        "tag:yaml.org,2002:python/name:material.extensions.emoji.to_svg",
+        "tag:yaml.org,2002:python/name:material.extensions.emoji.twemoji",
         "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format"
-    ],
+    ]
 }
 ```
