@@ -17,6 +17,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.17.5 - 2025-11-07
+
+### Bugs fixes 🐛
+
+* fix(xml): escape special chars from site_author (`<managingEditor>`) by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/401>
+
+### Features and enhancements 🎉
+
+* improve(performances): run RSS item image fetching only on filtered pages list by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/394>
+
+### Tooling 🔧
+
+* Packaging: switch to pyproject by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/399>
+* update(security): set GH token permissions scopes in CI workflows by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/400>
+
+### Other Changes
+
+* Packaging/remove-python-3_9-add-3_14 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/397>
+* fix(packaging): rollback support for Python 3.14 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/402>
+
 ## 1.17.4 - 2025-10-10
 
 ### Bugs fixes 🐛
