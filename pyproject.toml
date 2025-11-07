@@ -171,7 +171,9 @@ include-package-data = true
 mkdocs_rss_plugin = ["templates/*.jinja2"]
 
 [tool.setuptools.packages.find]
-where = ["mkdocs_rss_plugin"]
+include = ["mkdocs_rss_plugin"]
+namespaces = false
+where = ["."]
 
 # setuptools-scm configuration
 [tool.setuptools_scm]
