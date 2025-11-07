@@ -165,10 +165,13 @@ testpaths = ["tests"]
 
 # Setuptools configuration
 [tool.setuptools]
-packages = ["mkdocs_rss_plugin"]
+include-package-data = true
 
 [tool.setuptools.package-data]
-mkdocs_rss_plugin = ["templates/*.jinja2", "templates/**/*.jinja2"]
+mkdocs_rss_plugin = ["templates/*.jinja2"]
+
+[tool.setuptools.packages.find]
+where = ["mkdocs_rss_plugin"]
 
 # setuptools-scm configuration
 [tool.setuptools_scm]
