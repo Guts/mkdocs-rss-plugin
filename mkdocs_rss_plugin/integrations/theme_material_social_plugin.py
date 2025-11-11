@@ -6,7 +6,6 @@
 
 # standard library
 import json
-from hashlib import md5
 from pathlib import Path
 
 # 3rd party
@@ -98,8 +97,7 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
                 mkdocs_config=mkdocs_config
             )
 
-            if self.is_mkdocs_theme_material_insiders():
-                self.load_cache_cards_manifest()
+            self.load_cache_cards_manifest()
 
             # store some attributes used to compute social card hash
             self.site_name = mkdocs_config.site_name
@@ -307,12 +305,9 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
     ) -> Path | None:
         """Get social card path in social plugin cache folder for a specific page.
 
-        Note:
-            As we write this code (June 2024), the cache mechanism in Insiders edition
-            has stores images directly with the corresponding Page's path and name and
-            keep a correspondance matrix with hashes in a manifest.json;
-            the cache mechanism in Community edition uses the hash as file names without
-            any exposed matching criteria.
+        The cache mechanism in stores images directly with the
+        corresponding Page's path and name and keep a correspondance matrix with hashes
+        in a manifest.json.
 
         Args:
             mkdocs_page: Mkdocs page object.
@@ -320,48 +315,27 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         Returns:
             path to the image in local cache folder if it exists
         """
-        if self.IS_INSIDERS:
-
-            # if page is a blog post
-            if (
-                self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
-                and self.integration_material_blog.is_page_a_blog_post(mkdocs_page)
-            ):
-                expected_cached_card_path = self.social_cards_cache_dir.joinpath(
-                    f"assets/images/social/{Path(mkdocs_page.dest_uri).parent}.png"
-                )
-            else:
-                expected_cached_card_path = self.social_cards_cache_dir.joinpath(
-                    f"assets/images/social/{Path(mkdocs_page.src_uri).with_suffix('.png')}"
-                )
-
-            if expected_cached_card_path.is_file():
-                logger.debug(
-                    f"Social card file found in cache folder: {expected_cached_card_path}"
-                )
-                return expected_cached_card_path
-            else:
-                logger.debug(
-                    f"Social card not found in cache folder: {expected_cached_card_path}"
-                )
-
-        else:
-            if "description" in mkdocs_page.meta:
-                description = mkdocs_page.meta["description"]
-            else:
-                description = self.site_description
-
-            page_hash = md5(
-                "".join(
-                    [
-                        self.site_name,
-                        str(mkdocs_page.meta.get("title", mkdocs_page.title)),
-                        description,
-                    ]
-                ).encode("utf-8")
-            )
+        # if page is a blog post
+        if (
+            self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
+            and self.integration_material_blog.is_page_a_blog_post(mkdocs_page)
+        ):
             expected_cached_card_path = self.social_cards_cache_dir.joinpath(
-                f"{page_hash.hexdigest()}.png"
+                f"assets/images/social/{Path(mkdocs_page.dest_uri).parent}.png"
+            )
+        else:
+            expected_cached_card_path = self.social_cards_cache_dir.joinpath(
+                f"assets/images/social/{Path(mkdocs_page.src_uri).with_suffix('.png')}"
+            )
+
+        if expected_cached_card_path.is_file():
+            logger.debug(
+                f"Social card file found in cache folder: {expected_cached_card_path}"
+            )
+            return expected_cached_card_path
+        else:
+            logger.debug(
+                f"Social card not found in cache folder: {expected_cached_card_path}"
             )
 
         if expected_cached_card_path.is_file():
