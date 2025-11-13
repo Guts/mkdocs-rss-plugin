@@ -5,14 +5,15 @@ site_url: https://guts.github.io/mkdocs-rss-plugin
 use_directory_urls: false
 
 plugins:
-    - blog:
-          blog_dir: blog
-          authors_profiles: true
-    - rss:
-          match_path: blog/posts/.*
-    - social:
-          enabled: true
-          cards: true
+  - blog:
+      blog_dir: blog
+      authors_profiles: true
+  - rss:
+      match_path: blog/posts/.*
+      pretty_print: true
+  - social:
+      enabled: true
+      cards: true
 
 theme:
-    name: material
+  name: material
