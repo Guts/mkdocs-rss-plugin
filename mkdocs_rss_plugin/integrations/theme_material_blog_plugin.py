@@ -142,14 +142,14 @@ class IntegrationMaterialBlog(IntegrationMaterialThemeBase):
             bool: True if the given page is a Material Blog post.
         """
         if self.IS_ENABLED and isinstance(mkdocs_page, Post):
-            logger.info(
+            logger.debug(
                 f"page '{mkdocs_page.file.src_uri}' identified as Material Blog post."
             )
             return True
         elif isinstance(mkdocs_page, MkdocsPageSubset) and Path(
             mkdocs_page.src_uri
         ).is_relative_to(self.blog_plugin_cfg.config.blog_dir):
-            logger.info(
+            logger.debug(
                 f"page '{mkdocs_page.src_uri}' identified as Material Blog post "
                 f"by src_uri matching."
             )

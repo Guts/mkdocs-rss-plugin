@@ -571,7 +571,9 @@ class Util:
                 page_info._mkdocs_page_ref
                 and id(page_info._mkdocs_page_ref) not in processed_refs
             ):
-                logger.debug(f"Get image for '{page_info.title}'")
+                logger.debug(
+                    f"Get image for '{page_info.title}' ({page_info.abs_path})"
+                )
                 page_info.image = self.get_image(
                     in_page=page_info._mkdocs_page_ref, base_url=base_url
                 )

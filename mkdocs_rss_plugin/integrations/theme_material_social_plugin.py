@@ -336,10 +336,16 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
             and self.integration_material_blog.is_page_a_blog_post(mkdocs_page)
         ):
+            logger.debug(
+                f"Looking for social card in cache for blog post: {mkdocs_page.src_uri}"
+            )
             expected_cached_card_path = self.social_cards_cache_dir.joinpath(
                 f"assets/images/social/{Path(mkdocs_page.dest_uri).parent}.png"
             )
         else:
+            logger.debug(
+                f"Looking for social card in cache for page: {mkdocs_page.src_uri}"
+            )
             expected_cached_card_path = self.social_cards_cache_dir.joinpath(
                 f"assets/images/social/{Path(mkdocs_page.src_uri).with_suffix('.png')}"
             )
