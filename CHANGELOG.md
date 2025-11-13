@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.17.6 - 2025-11-13
+
+### Bugs fixes 🐛
+
+* update(chore): bump minimal version of Material for Mkdocs since 9.7.x and fix related bugs by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/405>
+* improve(integrations): refine some  logs about Material integrations by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/406>
+
 ## 1.17.5 - 2025-11-07
 
 ### Bugs fixes 🐛
