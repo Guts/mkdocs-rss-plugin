@@ -33,7 +33,6 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 class IntegrationMaterialThemeBase:
     # attributes
     IS_THEME_MATERIAL: bool = False
-    IS_INSIDERS: bool | None = False
 
     def __init__(self, mkdocs_config: MkDocsConfig) -> None:
         """Integration instantiation.
@@ -45,7 +44,6 @@ class IntegrationMaterialThemeBase:
         self.mkdocs_config = mkdocs_config
 
         self.IS_THEME_MATERIAL = self.is_mkdocs_theme_material()
-        self.IS_INSIDERS = self.is_mkdocs_theme_material_insiders()
 
     def is_mkdocs_theme_material(
         self, mkdocs_config: MkDocsConfig | None = None
@@ -63,22 +61,3 @@ class IntegrationMaterialThemeBase:
 
         self.IS_THEME_MATERIAL = mkdocs_config.theme.name == "material"
         return self.IS_THEME_MATERIAL
-
-    def is_mkdocs_theme_material_insiders(self) -> bool | None:
-        """Check if the material theme is community or insiders edition.
-
-        Returns:
-            bool: True if the theme is Insiders edition. False if community. None if
-                the Material theme is not installed.
-        """
-        if not self.IS_THEME_MATERIAL:
-            return None
-
-        if material_version is not None and "insiders" in material_version:
-            logger.debug("Material theme edition INSIDERS")
-            self.IS_INSIDERS = True
-            return True
-        else:
-            logger.debug("Material theme edition COMMUNITY")
-            self.IS_INSIDERS = False
-            return False
