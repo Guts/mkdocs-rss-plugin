@@ -250,10 +250,26 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             Path: The cache dir if the theme material and the plugin social cards is enabled.
         """
         social_plugin_cfg = mkdocs_config.plugins.get("material/social")
-        self.social_cards_cache_dir = Path(social_plugin_cfg.config.cache_dir).resolve()
+
+        if (
+            Path(social_plugin_cfg.config.cache_dir)
+            .resolve()
+            .is_relative_to(Path(mkdocs_config.config_file_path).parent.resolve())
+        ):
+            self.social_cards_cache_dir = Path(
+                social_plugin_cfg.config.cache_dir
+            ).resolve()
+        else:
+            self.social_cards_cache_dir = (
+                Path(mkdocs_config.config_file_path)
+                .parent.resolve()
+                .joinpath(social_plugin_cfg.config.cache_dir)
+            )
 
         logger.debug(
-            "Material Social cards cache folder: " f"{self.social_cards_cache_dir}."
+            "Material Social cards cache folder: "
+            f"{self.social_cards_cache_dir}. "
+            f"Already exists: {self.social_cards_cache_dir.is_dir()}"
         )
 
         return self.social_cards_cache_dir
