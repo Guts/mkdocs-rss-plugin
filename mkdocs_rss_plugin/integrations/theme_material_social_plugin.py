@@ -354,15 +354,6 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
                 f"Social card not found in cache folder: {expected_cached_card_path}"
             )
 
-        if expected_cached_card_path.is_file():
-            logger.debug(
-                f"Social card file found in cache folder: {expected_cached_card_path}"
-            )
-            return expected_cached_card_path
-        else:
-            logger.debug(f"Not found: {expected_cached_card_path}")
-            return None
-
     def get_social_card_url_for_page(
         self,
         mkdocs_page: MkdocsPageSubset,
