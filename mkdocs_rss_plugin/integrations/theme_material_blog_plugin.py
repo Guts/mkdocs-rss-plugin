@@ -7,6 +7,7 @@
 # standard library
 from functools import lru_cache
 from pathlib import Path
+from typing import Union
 
 # 3rd party
 from mkdocs.config.defaults import MkDocsConfig
@@ -26,7 +27,7 @@ try:
     from material.plugins.blog.structure import Post
 
 except ImportError:
-    material_version = None
+    material_version = BlogPlugin = Post = None
 
 
 # ############################################################################
@@ -132,16 +133,16 @@ class IntegrationMaterialBlog(IntegrationMaterialThemeBase):
                 )
                 return author_id
 
-    def is_page_a_blog_post(self, mkdocs_page: Post | MkdocsPageSubset) -> bool:
+    def is_page_a_blog_post(self, mkdocs_page: Union["Post", MkdocsPageSubset]) -> bool:
         """Identifies if the given page is part of Material Blog.
 
         Args:
-            mkdocs_page (Page): page to identify
+            mkdocs_page: page to identify
 
         Returns:
-            bool: True if the given page is a Material Blog post.
+            True if the given page is a Material Blog post.
         """
-        if self.IS_ENABLED and isinstance(mkdocs_page, Post):
+        if self.IS_ENABLED and Post is not None and isinstance(mkdocs_page, Post):
             logger.debug(
                 f"page '{mkdocs_page.file.src_uri}' identified as Material Blog post."
             )
