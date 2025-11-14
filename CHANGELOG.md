@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.17.7 - 2025-11-14
+
+### Bugs fixes 🐛
+
+* fix(integration): imports from Material for Mkdocs blog plugin for type hint was breaking the build when using another theme by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/409>
+
 ## 1.17.6 - 2025-11-13
 
 ### Bugs fixes 🐛
