@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.17.8 - 2026-01-05
+
+### Bugs fixes 🐛
+
+* fix(tests): use icon from GH repository since Wikimedia returns HTTP 429 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/419>
+* fix(integration): Material Social Card URI was wrong for Material blog posts by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/418>
+
 ## 1.17.7 - 2025-11-14
 
 ### Bugs fixes 🐛
