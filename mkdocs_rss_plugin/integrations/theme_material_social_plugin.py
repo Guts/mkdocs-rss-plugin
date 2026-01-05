@@ -85,6 +85,7 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
 
         # if enabled, save some config elements
         if self.IS_ENABLED:
+            self.mkdocs_use_directory_urls = mkdocs_config.use_directory_urls
             self.mkdocs_site_url = mkdocs_config.site_url
             self.mkdocs_site_build_dir = mkdocs_config.site_dir
             self.social_cards_dir = self.get_social_cards_dir(
@@ -98,10 +99,6 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             )
 
             self.load_cache_cards_manifest()
-
-            # store some attributes used to compute social card hash
-            self.site_name = mkdocs_config.site_name
-            self.site_description = mkdocs_config.site_description or ""
 
     def is_social_plugin_enabled_mkdocs(
         self, mkdocs_config: MkDocsConfig | None = None
@@ -383,10 +380,17 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
             and self.integration_material_blog.is_page_a_blog_post(mkdocs_page)
         ):
-            page_social_card = (
-                f"{mkdocs_site_url}assets/images/social/"
-                f"{Path(mkdocs_page.dest_uri).with_suffix('.png')}"
-            )
+            if self.mkdocs_use_directory_urls:
+                # see: https://github.com/Guts/mkdocs-rss-plugin/issues/319
+                page_social_card = (
+                    f"{mkdocs_site_url}{self.social_cards_dir}/"
+                    f"{Path(mkdocs_page.dest_uri).parent.with_suffix('.png')}"
+                )
+            else:
+                page_social_card = (
+                    f"{mkdocs_site_url}{self.social_cards_dir}/"
+                    f"{Path(mkdocs_page.dest_uri).with_suffix('.png')}"
+                )
         else:
             page_social_card = (
                 f"{mkdocs_site_url}{self.social_cards_dir}/"
