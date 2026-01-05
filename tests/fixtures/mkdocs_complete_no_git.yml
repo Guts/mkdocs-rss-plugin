@@ -24,7 +24,7 @@ plugins:
         default_time: "09:30"
       enabled: true
       feed_ttl: 1440
-      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+      image: https://github.com/Guts/mkdocs-rss-plugin/blob/main/docs/assets/logo_rss_plugin_mkdocs.png?raw=true
       length: 20
       pretty_print: false
       match_path: ".*"

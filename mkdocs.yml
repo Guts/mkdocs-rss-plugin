@@ -116,7 +116,7 @@ plugins:
         default_timezone: "Europe/Paris"
         default_time: "22:00"
       enabled: !ENV [MKDOCS_ENABLE_PLUGIN_RSS, true]
-      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+      image: https://github.com/Guts/mkdocs-rss-plugin/blob/main/docs/assets/logo_rss_plugin_mkdocs.png?raw=true
       json_feed_enabled: true
       match_path: ".*"
       pretty_print: true
