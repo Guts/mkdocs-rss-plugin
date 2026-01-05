@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.17.9 - 2026-01-05
+
+### Bugs fixes 🐛
+
+* fix(integration): Material Social Card URI was wrong for Material blog posts when diretcory URL are disabled at Mkdocs level by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/420>
+
 ## 1.17.8 - 2026-01-05
 
 ### Bugs fixes 🐛
