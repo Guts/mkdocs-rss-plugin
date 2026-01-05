@@ -21,7 +21,7 @@ plugins:
         default_time: "22:00"
       abstract_chars_count: 160
       abstract_delimiter: <!-- more -->
-      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+      image: https://github.com/Guts/mkdocs-rss-plugin/blob/main/docs/assets/logo_rss_plugin_mkdocs.png?raw=true
       match_path: ".*"
       pretty_print: false
       url_parameters:

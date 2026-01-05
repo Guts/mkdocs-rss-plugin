@@ -489,7 +489,7 @@ Default: `None`.
 ```yaml
 plugins:
   - rss:
-      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+      image: https://github.com/Guts/mkdocs-rss-plugin/blob/main/docs/assets/logo_rss_plugin_mkdocs.png?raw=true
 ```
 
 Output:
@@ -497,7 +497,7 @@ Output:
 ```xml
 <image>
   <url>
-    https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+    https://github.com/Guts/mkdocs-rss-plugin/blob/main/docs/assets/logo_rss_plugin_mkdocs.png?raw=true
   </url>
   <title>MkDocs RSS Plugin</title>
   <link>https://guts.github.io/mkdocs-rss-plugin/</link>

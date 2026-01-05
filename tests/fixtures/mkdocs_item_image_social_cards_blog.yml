@@ -5,7 +5,9 @@ site_url: https://guts.github.io/mkdocs-rss-plugin
 plugins:
     - blog:
           blog_dir: blog
-    - rss
+    - rss:
+          match_path: blog/posts/.*
+          pretty_print: true
     - social:
           enabled: true
           cards: true

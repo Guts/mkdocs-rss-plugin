@@ -51,7 +51,7 @@ class TestBuildWithoutMaterial(BaseTest):
     @classmethod
     def setUpClass(cls):
         """Executed when module is loaded before any test."""
-        cls.feed_image = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png"
+        cls.feed_image = "https://github.com/Guts/mkdocs-rss-plugin/blob/main/docs/assets/logo_rss_plugin_mkdocs.png?raw=true"
 
     def setUp(self):
         """Executed before each test."""

@@ -63,7 +63,7 @@ plugins:
         rss_updated: feed_rss_updated.xml
       feed_title: "My custom feed title"  # MkDocs site_name: will be used if this key is not present
       feed_ttl: 1440
-      image: https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png
+      image: https://github.com/Guts/mkdocs-rss-plugin/blob/main/docs/assets/logo_rss_plugin_mkdocs.png?raw=true
       json_feed_enabled: true
       length: 20
       match_path: ".*"
