@@ -378,12 +378,21 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         if mkdocs_site_url is None and self.mkdocs_site_url:
             mkdocs_site_url = self.mkdocs_site_url
 
-        # As of mkdocs-material 9.6.5, social cards are always stored in the
-        # matching src path in the build folder, regardless of the page type.
-        page_social_card = (
-            f"{mkdocs_site_url}{self.social_cards_dir}/"
-            f"{Path(mkdocs_page.src_uri).with_suffix('.png')}"
-        )
+        # if page is a blog post
+        if (
+            self.integration_material_blog.IS_BLOG_PLUGIN_ENABLED
+            and self.integration_material_blog.is_page_a_blog_post(mkdocs_page)
+        ):
+            page_social_card = (
+                f"{mkdocs_site_url}assets/images/social/"
+                f"{Path(mkdocs_page.dest_uri).with_suffix('.png')}"
+            )
+        else:
+            page_social_card = (
+                f"{mkdocs_site_url}{self.social_cards_dir}/"
+                f"{Path(mkdocs_page.src_uri).with_suffix('.png')}"
+            )
+
         logger.debug(f"Use social card url: {page_social_card}")
 
         return page_social_card
