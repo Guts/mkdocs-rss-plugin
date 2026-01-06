@@ -202,160 +202,111 @@ class Util:
         meta_default_time: datetime,
         meta_default_timezone: str,
     ) -> tuple[datetime, datetime]:
-        """Extract creation and update dates from page metadata (yaml frontmatter) or
-            git log for given file.
-
-        Args:
-            in_page (Page): input page
-            source_date_creation (str): which source to use (git or meta tag) for
-                creation date
-            source_date_update (str): which source to use (git or meta tag) for update
-                date
-            meta_datetime_format (str): datetime string format
-            meta_default_time (datetime): fallback time to set if not specified
-            meta_default_timezone (str): timezone to use
-
-        Returns:
-            tuple[datetime, datetime]: tuple of timestamps (creation date, last commit date)
-        """
+        """Extract creation and update dates from page metadata or git log."""
         logger.debug(f"Extracting dates for {in_page.file.src_uri}")
-        # empty vars
-        dt_created = dt_updated = None
-        if meta_default_time is None:
-            meta_default_time = self.meta_default_time = datetime.min
+        dt_created = self._get_date_from_meta_or_none(
+            in_page,
+            source_date_creation,
+            meta_datetime_format,
+            meta_default_time,
+            meta_default_timezone,
+        )
+        dt_updated = self._get_date_from_meta_or_none(
+            in_page,
+            source_date_update,
+            meta_datetime_format,
+            meta_default_time,
+            meta_default_timezone,
+        )
 
-        # if enabled, try to retrieve dates from page metadata
-        if not self.use_git or (
-            source_date_creation != "git"
-            and self.get_value_from_dot_key(in_page.meta, source_date_creation)
-        ):
-            dt_created = self.get_date_from_meta(
-                date_metatag_value=self.get_value_from_dot_key(
-                    in_page.meta, source_date_creation
-                ),
-                meta_datetime_format=meta_datetime_format,
-                meta_datetime_timezone=meta_default_timezone,
-                meta_default_time=meta_default_time,
-            )
-            if isinstance(dt_created, str):
-                logger.info(
-                    f"Creation date of {in_page.file.abs_src_path} is an "
-                    f"a character string: {dt_created} ({type(dt_created)})"
-                )
-
-            elif dt_created is None:
-                logger.info(
-                    f"Creation date of {in_page.file.abs_src_path} has not "
-                    "been recognized."
-                )
-
-        if not self.use_git or (
-            source_date_update != "git"
-            and self.get_value_from_dot_key(in_page.meta, source_date_update)
-        ):
-            dt_updated = self.get_date_from_meta(
-                date_metatag_value=self.get_value_from_dot_key(
-                    in_page.meta, source_date_update
-                ),
-                meta_datetime_format=meta_datetime_format,
-                meta_datetime_timezone=meta_default_timezone,
-                meta_default_time=meta_default_time,
-            )
-
-            if isinstance(dt_updated, str):
-                logger.debug(
-                    f"Update date of {in_page.file.abs_src_path} is a "
-                    f"character string: {dt_updated} ({type(dt_updated)})"
-                )
-
-            elif dt_updated is None:
-                logger.debug(
-                    f"Update date of {in_page.file.abs_src_path} is an "
-                    f"unrecognized type: {dt_updated} ({type(dt_updated)})"
-                )
-
-        # explore git log
+        # If git is enabled and dates are missing, try git log
         if self.git_is_valid:
-            try:
-                # only if dates have not been retrieved from page meta
-                if not dt_created:
-                    dt_created = self.repo.log(
-                        in_page.file.abs_src_path,
-                        n=1,
-                        date="short",
-                        format="%at",
-                        diff_filter="AR",
-                    )
-                if not dt_updated:
-                    dt_updated = self.repo.log(
-                        in_page.file.abs_src_path,
-                        n=1,
-                        date="short",
-                        format="%at",
-                    )
-            except GitCommandError as err:
-                logging.warning(
-                    f"Unable to read git logs of '{in_page.file.abs_src_path}'. "
-                    "Is git log readable? Falling back to build date. "
-                    "To disable this warning, set 'use_git: false' in plugin options. "
-                    f"Trace: {err}"
-                )
-            except GitCommandNotFound as err:
-                logging.error(
-                    "Unable to perform command 'git log'. Is git installed? "
-                    "Falling back to build date. "
-                    "To disable this warning, set 'use_git: false' in plugin options. "
-                    f"Trace: {err}"
-                )
-                self.git_is_valid = 0
-            # convert timestamps into datetimes
-            if isinstance(dt_created, (str, float, int)) and dt_created:
-                dt_created = set_datetime_zoneinfo(
-                    datetime.fromtimestamp(float(dt_created)), meta_default_timezone
-                )
-            if isinstance(dt_updated, (str, float, int)) and dt_updated:
-                dt_updated = set_datetime_zoneinfo(
-                    datetime.fromtimestamp(float(dt_updated)), meta_default_timezone
-                )
+            dt_created = dt_created or self._get_date_from_git(
+                in_page, meta_default_timezone, creation=True
+            )
+            dt_updated = dt_updated or self._get_date_from_git(
+                in_page, meta_default_timezone, creation=False
+            )
 
-        # results
-        if all([dt_created, dt_updated]):
-            return (
-                dt_created,
-                dt_updated,
-            )
+        # Fallbacks
+        build_dt = get_build_datetime()
+        if dt_created and dt_updated:
+            return dt_created, dt_updated
         elif dt_created:
-            log_msg = (
-                "Updated date could not be retrieved for page: "
-                f"{in_page.file.abs_src_path}. Fallback to build date."
+            logger.debug(
+                f"Updated date missing for {in_page.file.abs_src_path}, fallback to build date."
             )
-            if self.use_git:
-                log_msg += "Maybe it has never been committed yet?"
-            logger.debug(log_msg)
-            return (
-                dt_created,
-                get_build_datetime(),
-            )
+            return dt_created, build_dt
         elif dt_updated:
-            log_msg = (
-                "Creation date could not be retrieved for page: "
-                f"{in_page.file.abs_src_path}. Fallback to build date."
+            logger.debug(
+                f"Creation date missing for {in_page.file.abs_src_path}, fallback to build date."
             )
-            if self.use_git:
-                log_msg += "Maybe it has never been committed yet?"
-            logger.debug(log_msg)
-            return (
-                get_build_datetime(),
-                dt_updated,
-            )
+            return build_dt, dt_updated
         else:
             logger.info(
-                f"Dates could not be retrieved for page: {in_page.file.abs_src_path}."
+                f"Dates missing for {in_page.file.abs_src_path}, fallback to build date."
             )
-            return (
-                get_build_datetime(),
-                get_build_datetime(),
+            return build_dt, build_dt
+
+    def _get_date_from_meta_or_none(
+        self,
+        in_page: Page,
+        source_key: str,
+        meta_datetime_format: str,
+        meta_default_time: datetime,
+        meta_default_timezone: str,
+    ) -> datetime | None:
+        """Try to get date from page meta, return None if not found or not using git."""
+        if not self.use_git or (
+            source_key != "git"
+            and self.get_value_from_dot_key(in_page.meta, source_key)
+        ):
+            dt = self.get_date_from_meta(
+                date_metatag_value=self.get_value_from_dot_key(
+                    in_page.meta, source_key
+                ),
+                meta_datetime_format=meta_datetime_format,
+                meta_datetime_timezone=meta_default_timezone,
+                meta_default_time=meta_default_time,
             )
+            if isinstance(dt, str) or dt is None:
+                logger.info(
+                    f"Date for {in_page.file.abs_src_path} not recognized: {dt} ({type(dt)})"
+                )
+                return None
+            return dt
+        return None
+
+    def _get_date_from_git(
+        self,
+        in_page: Page,
+        meta_default_timezone: str,
+        creation: bool = False,
+    ) -> datetime | None:
+        """Get date from git log."""
+        try:
+            log_args = dict(
+                n=1,
+                date="short",
+                format="%at",
+            )
+            if creation:
+                log_args["diff_filter"] = "AR"
+            timestamp = self.repo.log(in_page.file.abs_src_path, **log_args)
+            if isinstance(timestamp, (str, float, int)) and timestamp:
+                return set_datetime_zoneinfo(
+                    datetime.fromtimestamp(float(timestamp)), meta_default_timezone
+                )
+        except GitCommandError as err:
+            logging.warning(
+                f"Unable to read git logs of '{in_page.file.abs_src_path}'. Fallback to build date. Trace: {err}"
+            )
+        except GitCommandNotFound as err:
+            logging.error(
+                f"Unable to perform command 'git log'. Is git installed? Fallback to build date. Trace: {err}"
+            )
+            self.git_is_valid = False
+        return None
 
     def get_authors_from_meta(self, in_page: Page) -> Optional[tuple[str]]:
         """Returns authors from page meta. It handles 'author' and 'authors' for keys, \
