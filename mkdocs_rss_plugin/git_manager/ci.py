@@ -47,52 +47,44 @@ class CiHandler:
         # Gitlab Runners
         if environ.get("GITLAB_CI") and n_commits < 50:
             # Default is GIT_DEPTH of 50 for gitlab
-            logger.info(
-                """
+            logger.info("""
                     Running on a gitlab runner might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
                     Make sure to set GIT_DEPTH to 1000 in your .gitlab-ci.yml file. \
                     (see https://docs.gitlab.com/user/project/repository/monorepos/#use-shallow-clones-in-cicd-processes).
-                    """
-            )
+                    """)
 
         # Github Actions
         if environ.get("GITHUB_ACTIONS") and n_commits == 1:
             # Default is fetch-depth of 1 for github actions
-            logger.info(
-                """
+            logger.info("""
                     Running on github actions might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
                     Try setting fetch-depth to 0 in your github action \
                     (see https://github.com/actions/checkout?tab=readme-ov-file#fetch-all-history-for-all-tags-and-branches).
-                    """
-            )
+                    """)
 
         # Bitbucket pipelines
         if environ.get("CI") and n_commits < 50:
             # Default is fetch-depth of 50 for bitbucket pipelines
-            logger.info(
-                """
+            logger.info("""
                     Running on bitbucket pipelines might lead to wrong \
                     git revision dates due to a shallow git fetch depth. \
                     Try setting "clone: depth" to "full" in your pipeline \
                     (see https://support.atlassian.com/bitbucket-cloud/docs/git-clone-behavior/#Depth
                     and search 'depth').
-                    """
-            )
+                    """)
 
         # Azure Devops Pipeline
         # Does not limit fetch-depth by default
         if environ.get("Agent.Source.Git.ShallowFetchDepth", 10e99) < n_commits:
-            logger.info(
-                """
+            logger.info("""
                     Running on Azure pipelines \
                     with limited fetch-depth might lead to wrong git revision dates \
                     due to a shallow git fetch depth. \
                     Remove any Shallow Fetch settings \
                     (see https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/pipeline-options-for-git?view=azure-devops#shallow-fetch).
-                    """
-            )
+                    """)
 
     def commit_count(self) -> int:
         """Helper function to determine the number of commits in a repository.
