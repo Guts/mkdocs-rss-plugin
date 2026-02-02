@@ -131,10 +131,8 @@ class BaseTest(unittest.TestCase):
 
         # Create empty 'testproject' folder
         if testproject_path.exists():
-            logging.warning(
-                """This command does not work on windows.
-            Refactor your test to use setup_clean_mkdocs_folder() only once"""
-            )
+            logging.warning("""This command does not work on windows.
+            Refactor your test to use setup_clean_mkdocs_folder() only once""")
             shutil.rmtree(testproject_path)
 
         # Copy correct mkdocs.yml file and our test 'docs/'
