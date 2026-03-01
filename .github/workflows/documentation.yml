@@ -75,7 +75,7 @@ jobs:
         run: mkdocs build --verbose
 
       - name: Save build doc as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: documentation
           path: site/
