@@ -111,7 +111,13 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             return config
 
         # Fail if any export option is enabled
-        if not any([self.config.json_feed_enabled, self.config.rss_feed_enabled]):
+        if not any(
+            [
+                self.config.atom_feed_enabled,
+                self.config.json_feed_enabled,
+                self.config.rss_feed_enabled,
+            ]
+        ):
             logger.error(
                 "At least one export option has to be enabled. Plugin is disabled."
             )
@@ -255,17 +261,23 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         # final feed url
         if base_feed.html_url:
             # concatenate both URLs
-            self.feed_created.rss_url = (
-                base_feed.html_url + self.config.feeds_filenames.rss_created
+            self.feed_created.atom_url = (
+                base_feed.html_url + self.config.feeds_filenames.atom_created
             )
-            self.feed_updated.rss_url = (
-                base_feed.html_url + self.config.feeds_filenames.rss_updated
+            self.feed_updated.atom_url = (
+                base_feed.html_url + self.config.feeds_filenames.atom_updated
             )
             self.feed_created.json_url = (
                 base_feed.html_url + self.config.feeds_filenames.json_created
             )
             self.feed_updated.json_url = (
                 base_feed.html_url + self.config.feeds_filenames.json_updated
+            )
+            self.feed_created.rss_url = (
+                base_feed.html_url + self.config.feeds_filenames.rss_created
+            )
+            self.feed_updated.rss_url = (
+                base_feed.html_url + self.config.feeds_filenames.rss_updated
             )
         else:
             logger.error(
@@ -275,7 +287,9 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             )
             self.feed_created.rss_url = self.feed_updated.json_url = (
                 self.feed_updated.rss_url
-            ) = self.feed_updated.json_url = None
+            ) = self.feed_updated.json_url = self.feed_created.atom_url = (
+                self.feed_updated.atom_url
+            ) = None
 
         # ending event
         return config
@@ -341,6 +355,11 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         else:
             page_url_comments = None
 
+        # Store full HTML content if needed for Atom feed
+        page_content: str | None = None
+        if self.config.abstract_chars_count == -1:
+            page_content = html
+
         # append to list to be filtered later
         self.pages_to_filter.append(
             PageInformation(
@@ -350,6 +369,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                     in_page=page, categories_labels=self.config.categories
                 ),
                 comments_url=page_url_comments,
+                html_content=page_content,
                 created=page_dates[0],
                 description=self.util.get_description_or_abstract(
                     in_page=page,
@@ -380,13 +400,13 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             return
 
         # pretty print or not
-        pretty_print = self.config.pretty_print
+        pretty_print: bool = self.config.pretty_print
 
         # output filepaths
-        out_feed_created = Path(config.site_dir).joinpath(
+        out_rss_created = Path(config.site_dir).joinpath(
             self.config.feeds_filenames.rss_created
         )
-        out_feed_updated = Path(config.site_dir).joinpath(
+        out_rss_updated = Path(config.site_dir).joinpath(
             self.config.feeds_filenames.rss_updated
         )
         out_json_created = Path(config.site_dir).joinpath(
@@ -394,6 +414,12 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         )
         out_json_updated = Path(config.site_dir).joinpath(
             self.config.feeds_filenames.json_updated
+        )
+        out_atom_created: Path = Path(config.site_dir).joinpath(
+            self.config.feeds_filenames.atom_created
+        )
+        out_atom_updated: Path = Path(config.site_dir).joinpath(
+            self.config.feeds_filenames.atom_updated
         )
 
         # stylesheet for RSS feed
@@ -459,7 +485,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 page.pub_date = format_datetime(dt=page.created)
 
             # write file
-            with out_feed_created.open(mode="w", encoding="UTF8") as fifeed_created:
+            with out_rss_created.open(mode="w", encoding="UTF8") as fifeed_created:
                 if pretty_print:
                     fifeed_created.write(template.render(feed=self.feed_created))
                 else:
@@ -481,7 +507,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 page.pub_date = format_datetime(dt=page.updated)
 
             # write file
-            with out_feed_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
+            with out_rss_updated.open(mode="w", encoding="UTF8") as fifeed_updated:
                 if pretty_print:
                     fifeed_updated.write(template.render(feed=self.feed_updated))
                 else:
@@ -511,3 +537,88 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                     fp,
                     indent=4 if self.config.pretty_print else None,
                 )
+
+        # ATOM FEED
+        if self.config.atom_feed_enabled:
+            # Jinja environment depending on the pretty print option
+            if pretty_print:
+                env = Environment(
+                    autoescape=select_autoescape(["html", "xml"]),
+                    loader=FileSystemLoader(self.tpl_folder),
+                )
+            else:
+                env = Environment(
+                    autoescape=select_autoescape(["html", "xml"]),
+                    loader=FileSystemLoader(self.tpl_folder),
+                    lstrip_blocks=True,
+                    trim_blocks=True,
+                )
+
+            template = env.get_template("atom.xml.jinja2")
+
+            # -- Feed sorted by creation date
+            logger.debug(
+                "Fill creation dates and dump created feed into Atom template."
+            )
+
+            # Format dates for Atom (ISO 8601)
+            for page in self.feed_created.entries:
+                page.atom_published = page.created.isoformat()
+                page.atom_updated = page.updated.isoformat()
+
+            # Format feed buildDate for Atom (ISO 8601)
+            build_date_atom: str = datetime.fromtimestamp(
+                get_build_timestamp()
+            ).isoformat()
+
+            # Temporarily store the ISO format
+            original_build_date: str = self.feed_created.buildDate
+            self.feed_created.buildDate = build_date_atom
+
+            # write file
+            with out_atom_created.open(mode="w", encoding="UTF8") as fiatom_created:
+                if pretty_print:
+                    fiatom_created.write(template.render(feed=self.feed_created))
+                else:
+                    prev_char = ""
+                    for char in template.render(feed=asdict(self.feed_created)):
+                        if char == "\n":
+                            # convert new lines to spaces to preserve sentence structure
+                            char = " "
+                        if char == " " and prev_char == " ":
+                            prev_char = char
+                            continue
+                        prev_char = char
+                        fiatom_created.write(char)
+
+            # Restore original buildDate
+            self.feed_created.buildDate = original_build_date
+
+            # -- Feed sorted by update date
+            logger.debug("Fill update dates and dump updated feed into Atom template.")
+
+            for page in self.feed_updated.entries:
+                page.atom_published = page.created.isoformat()
+                page.atom_updated = page.updated.isoformat()
+
+            original_build_date = self.feed_updated.buildDate
+            self.feed_updated.buildDate = build_date_atom
+
+        # write file
+        with out_atom_updated.open(mode="w", encoding="UTF8") as fiatom_updated:
+            if pretty_print:
+                fiatom_updated.write(template.render(feed=self.feed_updated))
+            else:
+                prev_char = ""
+                for char in template.render(feed=asdict(self.feed_updated)):
+                    if char == "\n":
+                        # convert new lines to spaces to preserve sentence structure
+                        char = " "
+                    if char == " " and prev_char == " ":
+                        prev_char = char
+                        continue
+                    prev_char = char
+                    fiatom_updated.write(char)
+
+        # Restore original buildDate
+        self.feed_updated.buildDate = original_build_date

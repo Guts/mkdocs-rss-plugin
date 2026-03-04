@@ -62,6 +62,7 @@ class PageInformation:
     created: datetime | None = None
     description: str | None = None
     guid: str | None = None
+    html_content: str | None = None
     image: tuple[str, str, int] | None = None
     link: str | None = None
     pub_date: str | None = None
@@ -77,6 +78,7 @@ class PageInformation:
 class RssFeedBase:
     """Object describing a feed."""
 
+    atom_url: str | None = None
     author: str | None = None
     buildDate: str | None = None
     copyright: str | None = None
