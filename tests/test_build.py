@@ -934,6 +934,38 @@ class TestBuildRss(BaseTest):
             self.assertIn("OpenSavvy &amp; contributors", feed_xml)
             self.assertNotIn("OpenSavvy & contributors</managingEditor>", feed_xml)
 
+    def test_simple_build_custom_atom_filenames(self):
+        """Test build with custom Atom feed filenames."""
+        config = self.get_plugin_config_from_mkdocs(
+            mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_custom_atom_filenames.yml"),
+            plugin_name="rss",
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_custom_atom_filenames.yml"
+                ),
+                output_path=tmpdirname,
+                strict=True,
+            )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # Check custom Atom filenames
+            self.assertTrue(
+                Path(tmpdirname).joinpath(config.feeds_filenames.atom_created).exists()
+            )
+            self.assertTrue(
+                Path(tmpdirname).joinpath(config.feeds_filenames.atom_updated).exists()
+            )
+
 
 # ##############################################################################
 # ##### Stand alone program ########
