@@ -79,6 +79,7 @@ class TestConfig(BaseTest):
             "feed_ttl": 1440,
             "image": None,
             "json_feed_enabled": True,
+            "atom_feed_enabled": True,  # Add this line
             "length": 20,
             "match_path": ".*",
             "feeds_filenames": {
@@ -86,6 +87,8 @@ class TestConfig(BaseTest):
                 "json_updated": "feed_json_updated.json",
                 "rss_created": "feed_rss_created.xml",
                 "rss_updated": "feed_rss_updated.xml",
+                "atom_created": "feed_atom_created.xml",  # Add this line
+                "atom_updated": "feed_atom_updated.xml",  # Add this line
             },
             "pretty_print": False,
             "rss_feed_enabled": True,
