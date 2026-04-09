@@ -90,5 +90,6 @@ class RssFeedBase:
     pubDate: str | None = None
     repo_url: str | None = None
     rss_url: str | None = None
+    stylesheet: str | None = None
     title: str | None = None
     ttl: int | None = None

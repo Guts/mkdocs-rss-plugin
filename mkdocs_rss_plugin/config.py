@@ -58,6 +58,7 @@ class RssPluginConfig(Config):
     match_path = config_options.Type(str, default=".*")
     pretty_print = config_options.Type(bool, default=False)
     rss_feed_enabled = config_options.Type(bool, default=True)
+    stylesheet = config_options.Type(str, default="auto")
     url_parameters = config_options.Optional(config_options.Type(dict))
     use_git = config_options.Type(bool, default=True)
     use_material_blog = config_options.Type(bool, default=True)

@@ -121,6 +121,7 @@ plugins:
       match_path: ".*"
       pretty_print: true
       rss_feed_enabled: true
+      stylesheet: auto
       url_parameters:
         utm_source: "documentation"
         utm_medium: "RSS"
