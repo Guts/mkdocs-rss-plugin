@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.18.0 - 2026-04-09
+
+### Features and enhancements 🎉
+
+* feature(rss): add option to set a stylesheet by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/432>
+* update(packaging): declare plugin compatible with ProperDocs by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/431>
+* update(packaging): support Python 3.14 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/433>
+
 ## 1.17.9 - 2026-01-05
 
 ### Bugs fixes 🐛
