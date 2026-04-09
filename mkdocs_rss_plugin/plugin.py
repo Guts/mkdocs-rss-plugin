@@ -12,6 +12,7 @@ from datetime import datetime
 from email.utils import format_datetime, formatdate
 from pathlib import Path
 from re import compile as re_compile
+from shutil import copyfile
 from typing import Literal
 
 # 3rd party
@@ -174,6 +175,23 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         # feed image
         if self.config.image:
             base_feed.logo_url = self.config.image
+
+        # feed stylesheet (XSL)
+        print(f"Config stylesheet: {self.config.stylesheet}")
+        if self.config.stylesheet:
+            if self.config.stylesheet == "auto":
+                base_feed.stylesheet = "rss.xsl"
+                logger.debug(
+                    f"Shipped stylesheet will be referenced in RSS feeds: {self.config.stylesheet}"
+                )
+            else:
+
+                base_feed.stylesheet = self.config.stylesheet
+                logger.debug(
+                    f"Stylesheet will be referenced in RSS feeds: {self.config.stylesheet}"
+                )
+        else:
+            logger.debug("No stylesheet will be referenced in RSS feeds.")
 
         # pattern to match pages included in output
         self.match_path_pattern = re_compile(self.config.match_path)
@@ -377,6 +395,12 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
         out_json_updated = Path(config.site_dir).joinpath(
             self.config.feeds_filenames.json_updated
         )
+
+        # stylesheet for RSS feed
+        if self.config.stylesheet == "auto":
+            xsl_source = self.tpl_folder.joinpath("default.xsl")
+            xsl_dest = Path(config.site_dir).joinpath("rss.xsl")
+            copyfile(xsl_source, xsl_dest)
 
         # created items
         self.feed_created.entries.extend(

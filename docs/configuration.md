@@ -550,6 +550,38 @@ Default: `False`.
 
 ----
 
+### :material-brush-variant: `stylesheet`: define a XSL stylesheet { #stylesheet }
+
+Use a XSL stylesheet to customize how the RSS feed looks like. `auto` is a special value to use the stylesheet shipped with the plugin.
+
+```yaml
+plugins:
+  - rss:
+      stylesheet: auto
+```
+
+If you're willing to work on your own stylesheet, set the URL or relative path:
+
+```yaml
+plugins:
+  - rss:
+      stylesheet: https://docs.example.org/rss_stylesheet.xsl
+```
+
+Note that it's recommended to host the stylesheet on the same website / domain to make CORS happy.
+
+If you prefer to disable the stylesheet, you set it to `""`:
+
+```yaml
+plugins:
+  - rss:
+      stylesheet: ""
+```
+
+Default: `auto`.
+
+----
+
 ### :material-track-light: `url_parameters`: additional URL parameters { #url_parameters }
 
 This option allows you to add parameters to the URLs of the RSS feed items. It works as a dictionary of keys/values that is passed to [Python *urllib.parse.urlencode*](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlencode).
