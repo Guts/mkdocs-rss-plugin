@@ -177,7 +177,6 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
             base_feed.logo_url = self.config.image
 
         # feed stylesheet (XSL)
-        print(f"Config stylesheet: {self.config.stylesheet}")
         if self.config.stylesheet:
             if self.config.stylesheet == "auto":
                 base_feed.stylesheet = "rss.xsl"
