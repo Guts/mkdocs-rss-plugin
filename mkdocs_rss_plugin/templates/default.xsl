@@ -10,15 +10,21 @@
         <html>
             <head>
                 <meta charset="UTF-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                 <title>
                     <xsl:value-of select="rss/channel/title"/>
                 </title>
                 <style>
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   max-width: 900px;
-  margin: 40px auto;
-  padding: 0 20px;
+  margin: 0 auto;
+  padding: 20px 16px;
   background: #f9fafb;
   color: #111827;
 }
@@ -41,6 +47,8 @@ header .meta {
 
 h1 {
   margin: 0;
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  word-break: break-word;
 }
 
 .item {
@@ -53,6 +61,8 @@ h1 {
 
 .item h2 {
   margin-top: 0;
+  font-size: clamp(1rem, 4vw, 1.3rem);
+  word-break: break-word;
 }
 
 .meta {
@@ -63,22 +73,26 @@ h1 {
 
 .categories span {
   background: #eef2ff;
-  color: #3730a3;
-  padding: 3px 8px;
-  margin-right: 5px;
   border-radius: 6px;
+  color: #3730a3;
+  display: inline-block;
   font-size: 0.75em;
+  margin-right: 5px;
+  padding: 3px 8px;
 }
 
 .item img {
-  max-width: 100%;
-  margin: 15px 0;
   border-radius: 8px;
+  display: block;
+  height: auto;
+  margin: 15px 0;
+  width: 100%;
 }
 
 a {
   color: #2563eb;
   text-decoration: none;
+  word-break: break-word;
 }
 
 a:hover {
