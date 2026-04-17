@@ -5,7 +5,6 @@
 # ##################################
 
 # standard library
-import logging
 from collections.abc import Iterable
 from datetime import date, datetime
 from functools import lru_cache
@@ -76,16 +75,21 @@ class Util:
         mkdocs_command_is_on_serve: bool = False,
         path: str = ".",
         use_git: bool = True,
-    ):
+    ) -> None:
         """Class hosting the plugin logic.
 
         Args:
-            path (str, optional): path to the git repository to use. Defaults to ".".
-            use_git (bool, optional): flag to use git under the hood or not. Defaults to True.
+            cache_dir: _description_. Defaults to DEFAULT_CACHE_FOLDER.
             integration_material_blog (bool, optional): option to enable
-                integration with Blog plugin from Material theme. Defaults to True.
+                integration with Blog plugin from Material theme. \
+                Defaults to None.
             integration_material_social_cards (bool, optional): option to enable
-                integration with Social Cards plugin from Material theme. Defaults to True.
+                integration with Social Cards plugin from Material theme. \
+                Defaults to None.
+            mkdocs_command_is_on_serve: _description_. Defaults to False.
+            path (str, optional): path to the git repository to use. Defaults to ".".
+            use_git (bool, optional): flag to use git under the hood or not. \
+                Defaults to True.
         """
         self.mkdocs_command_is_on_serve = mkdocs_command_is_on_serve
         if self.mkdocs_command_is_on_serve:
@@ -294,20 +298,20 @@ class Util:
                         format="%at",
                     )
             except GitCommandError as err:
-                logging.warning(
+                logger.info(
                     f"Unable to read git logs of '{in_page.file.abs_src_path}'. "
                     "Is git log readable? Falling back to build date. "
                     "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
             except GitCommandNotFound as err:
-                logging.error(
+                logger.warning(
                     "Unable to perform command 'git log'. Is git installed? "
                     "Falling back to build date. "
                     "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
-                self.git_is_valid = 0
+                self.git_is_valid = False
             # convert timestamps into datetimes
             if isinstance(dt_created, (str, float, int)) and dt_created:
                 dt_created = set_datetime_zoneinfo(
@@ -374,7 +378,7 @@ class Util:
             elif isinstance(in_page.meta.get("author"), (list, tuple)):
                 return tuple(in_page.meta.get("author"))
             else:
-                logging.warning(
+                logger.warning(
                     "Type of author value in page.meta "
                     f"({in_page.file.abs_src_path}) is not valid. "
                     "It should be str, list or tuple, "
@@ -396,7 +400,7 @@ class Util:
                 else:
                     return tuple(in_page.meta.get("authors"))
             else:
-                logging.warning(
+                logger.warning(
                     "Type of authors value in page.meta (%s) is not valid. "
                     "It should be str, list or tuple, not: %s."
                     % in_page.file.abs_src_path,
@@ -754,8 +758,8 @@ class Util:
         Returns:
             str | None: site url
         """
-        # this method exists because the following line returns an empty string instead of \
-        # None (because the key always exists)
+        # this method exists because the following line returns an empty string instead
+        # of None (because the key always exists)
         defined_site_url = mkdocs_config.site_url
 
         # cases
