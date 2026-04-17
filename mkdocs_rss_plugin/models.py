@@ -8,17 +8,18 @@
 from __future__ import annotations
 
 # standard
-from collections.abc import MutableMapping
 from dataclasses import dataclass, field
-from datetime import datetime
-from pathlib import Path
-from typing import Any
-
-# 3rd party
-from mkdocs.structure.pages import Page
+from typing import TYPE_CHECKING, Any
 
 # package modules
 from mkdocs_rss_plugin.__about__ import __title__, __version__
+
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+    from datetime import datetime
+    from pathlib import Path
+
+    from mkdocs.structure.pages import Page
 
 # ############################################################################
 # ########## Classes ###############
