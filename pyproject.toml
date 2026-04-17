@@ -148,6 +148,57 @@ line_length = 88
 multi_line_output = 3
 use_parentheses = true
 
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+exclude = [".git", "__pycache__", "old", "build", "dist", "tests/dev", ".venv*"]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+indent-style = "space"
+line-ending = "auto"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint]
+select = [
+    "A",   # flake8-builtins
+    "ANN", # flake8-annotations
+    "B",   # flake8-bugbear
+    "C90", # mccabe complexity
+    "E",   # pycodestyle errors
+    "ERA", # eradicate (commented code)
+    "F",   # pyflakes
+    "I",   # isort
+    "LOG", # flake8-logging
+    "N",   # pep8-naming
+    "PTH", # flake8-pathlib
+    "S",   # bandit security
+    "TC",  # flake8-type-checking
+    "T20", # flake8-print
+    "W",   # pycodestyle warnings
+]
+
+ignore = [
+    "ANN201", # Missing return type annotation for public function
+    "ANN204", #  Missing return type annotation for special method `__init__`
+    "ANN401", # Dynamically typed expressions (typing.Any) are disallowed in `**kwargs`
+    "E501",   # line too long (handled by black)
+    # "E203", # whitespace before ':'
+    # "E226", # missing whitespace around arithmetic operator
+    # "E24",  # multiple spaces after ','
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore `E402` (import violations) in all `__init__.py` files
+"__init__.py" = ["E402"]
+# Ignore rules in tests
+"tests/test_*.py" = ["ANN001", "ANN2", "S101", "T20"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
 # Pytest configuration
 [tool.pytest.ini_options]
 addopts = [
