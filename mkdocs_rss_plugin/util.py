@@ -5,7 +5,6 @@
 # ##################################
 
 # standard library
-import logging
 from collections.abc import Iterable
 from datetime import date, datetime
 from functools import lru_cache
@@ -294,20 +293,20 @@ class Util:
                         format="%at",
                     )
             except GitCommandError as err:
-                logging.warning(
+                logger.info(
                     f"Unable to read git logs of '{in_page.file.abs_src_path}'. "
                     "Is git log readable? Falling back to build date. "
                     "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
             except GitCommandNotFound as err:
-                logging.error(
+                logger.warning(
                     "Unable to perform command 'git log'. Is git installed? "
                     "Falling back to build date. "
                     "To disable this warning, set 'use_git: false' in plugin options. "
                     f"Trace: {err}"
                 )
-                self.git_is_valid = 0
+                self.git_is_valid = False
             # convert timestamps into datetimes
             if isinstance(dt_created, (str, float, int)) and dt_created:
                 dt_created = set_datetime_zoneinfo(
@@ -374,7 +373,7 @@ class Util:
             elif isinstance(in_page.meta.get("author"), (list, tuple)):
                 return tuple(in_page.meta.get("author"))
             else:
-                logging.warning(
+                logger.warning(
                     "Type of author value in page.meta "
                     f"({in_page.file.abs_src_path}) is not valid. "
                     "It should be str, list or tuple, "
@@ -396,7 +395,7 @@ class Util:
                 else:
                     return tuple(in_page.meta.get("authors"))
             else:
-                logging.warning(
+                logger.warning(
                     "Type of authors value in page.meta (%s) is not valid. "
                     "It should be str, list or tuple, not: %s."
                     % in_page.file.abs_src_path,
