@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.19.0 - 2026-04-17
+
+### Features and enhancements 🎉
+
+* add(integrations): support integrations with MaterialX theme, fork of Material for Mkdocs by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/437>
+
+### Other Changes
+
+* Quality: customize ruff config, extend git hooks and apply changes by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/438>
+
 ## 1.18.1 - 2026-04-10
 
 ### Features and enhancements 🎉
