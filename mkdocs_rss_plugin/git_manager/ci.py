@@ -5,7 +5,8 @@
 # ##################################
 
 # standard library
-from os import environ, path
+from os import environ
+from pathlib import Path
 
 # 3rd party
 from git import Git
@@ -111,4 +112,4 @@ class CiHandler:
         Returns:
             bool: True if a repo is shallow clone
         """
-        return path.exists(".git/shallow")
+        return Path(".git/shallow").exists()
