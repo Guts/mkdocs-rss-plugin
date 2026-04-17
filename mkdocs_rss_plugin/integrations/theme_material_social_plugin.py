@@ -118,11 +118,11 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
             logger.debug("Installed theme is not 'material'. Integration disabled.")
             return False
 
-        if not mkdocs_config.plugins.get("material/social"):
+        if not mkdocs_config.plugins.get(f"{self.THEME_NAME}/social"):
             logger.debug("Material Social plugin not listed in configuration.")
             return False
 
-        social_plugin_cfg = mkdocs_config.plugins.get("material/social")
+        social_plugin_cfg = mkdocs_config.plugins.get(f"{self.THEME_NAME}/social")
 
         if not social_plugin_cfg.config.enabled:
             logger.debug("Material Social plugin is installed but disabled.")
@@ -147,7 +147,7 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         if not self.is_social_plugin_enabled_mkdocs(mkdocs_config=mkdocs_config):
             return False
 
-        social_plugin_cfg = mkdocs_config.plugins.get("material/social")
+        social_plugin_cfg = mkdocs_config.plugins.get(f"{self.THEME_NAME}/social")
 
         if not social_plugin_cfg.config.cards:
             logger.debug(
@@ -212,7 +212,7 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         Returns:
             str: The cards_dir if the theme material and the plugin social cards is enabled.
         """
-        social_plugin_cfg = mkdocs_config.plugins.get("material/social")
+        social_plugin_cfg = mkdocs_config.plugins.get(f"{self.THEME_NAME}/social")
 
         logger.debug(
             "Material Social cards folder in Mkdocs build directory: "
@@ -246,7 +246,7 @@ class IntegrationMaterialSocialCards(IntegrationMaterialThemeBase):
         Returns:
             Path: The cache dir if the theme material and the plugin social cards is enabled.
         """
-        social_plugin_cfg = mkdocs_config.plugins.get("material/social")
+        social_plugin_cfg = mkdocs_config.plugins.get(f"{self.THEME_NAME}/social")
 
         if (
             Path(social_plugin_cfg.config.cache_dir)

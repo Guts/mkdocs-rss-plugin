@@ -157,8 +157,8 @@ class TestConfig(BaseTest):
 
     def test_plugin_config_through_mkdocs(self):
         for config_filepath in self.config_files:
-            plg_cfg = self.get_plugin_config_from_mkdocs(config_filepath, "rss")
             print(config_filepath)
+            plg_cfg = self.get_plugin_config_from_mkdocs(config_filepath, "rss")
             self.assertIsInstance(plg_cfg, Config)
 
 
