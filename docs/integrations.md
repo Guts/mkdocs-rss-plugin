@@ -3,6 +3,8 @@ title: Integrations
 icon: octicons/plug-16
 ---
 
+Since version 1.19, the plugin supports both [Material for Mkdocs](https://squidfunk.github.io/mkdocs-material/) (which is in maintenance mode since Nov 11, 2025 and until November 2026) and its fork [MaterialX](https://jaywhj.github.io/mkdocs-materialx/).
+
 ## Blog plugin (from Material theme)
 
 Since version 1.17, the plugin integrates with the [Blog plugin (shipped with Material theme)](https://squidfunk.github.io/mkdocs-material/plugins/blog/) (see also [the tutorial about blog + RSS  plugins](https://squidfunk.github.io/mkdocs-material/tutorials/blogs/engage/)).

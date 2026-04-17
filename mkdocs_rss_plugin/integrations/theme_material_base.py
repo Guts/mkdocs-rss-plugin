@@ -33,6 +33,7 @@ logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
 class IntegrationMaterialThemeBase:
     # attributes
     IS_THEME_MATERIAL: bool = False
+    THEME_NAME: str = "mkdocs"
 
     def __init__(self, mkdocs_config: MkDocsConfig) -> None:
         """Integration instantiation.
@@ -54,10 +55,23 @@ class IntegrationMaterialThemeBase:
             mkdocs_config (Optional[MkDocsConfig]): Mkdocs website configuration object.
 
         Returns:
-            bool: True if the theme's name is 'material'. False if not.
+            bool: True if the theme's name is 'material' or 'materialx'. False if not.
         """
         if mkdocs_config is None and isinstance(self.mkdocs_config, MkDocsConfig):
             mkdocs_config: MkDocsConfig = self.mkdocs_config
 
-        self.IS_THEME_MATERIAL = mkdocs_config.theme.name == "material"
-        return self.IS_THEME_MATERIAL
+        if isinstance(mkdocs_config, MkDocsConfig):
+            self.THEME_NAME = (
+                mkdocs_config.theme.name if mkdocs_config.theme else "mkdocs"
+            )
+            self.IS_THEME_MATERIAL = mkdocs_config.theme.name in (
+                "material",
+                "materialx",
+            )
+            return self.IS_THEME_MATERIAL
+
+        logger.warning(
+            "Cannot check if the theme is Material or not because the MkDocs "
+            "configuration object is not available."
+        )
+        return False
