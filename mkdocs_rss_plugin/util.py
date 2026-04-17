@@ -75,16 +75,21 @@ class Util:
         mkdocs_command_is_on_serve: bool = False,
         path: str = ".",
         use_git: bool = True,
-    ):
+    ) -> None:
         """Class hosting the plugin logic.
 
         Args:
-            path (str, optional): path to the git repository to use. Defaults to ".".
-            use_git (bool, optional): flag to use git under the hood or not. Defaults to True.
+            cache_dir: _description_. Defaults to DEFAULT_CACHE_FOLDER.
             integration_material_blog (bool, optional): option to enable
-                integration with Blog plugin from Material theme. Defaults to True.
+                integration with Blog plugin from Material theme. \
+                Defaults to None.
             integration_material_social_cards (bool, optional): option to enable
-                integration with Social Cards plugin from Material theme. Defaults to True.
+                integration with Social Cards plugin from Material theme. \
+                Defaults to None.
+            mkdocs_command_is_on_serve: _description_. Defaults to False.
+            path (str, optional): path to the git repository to use. Defaults to ".".
+            use_git (bool, optional): flag to use git under the hood or not. \
+                Defaults to True.
         """
         self.mkdocs_command_is_on_serve = mkdocs_command_is_on_serve
         if self.mkdocs_command_is_on_serve:
@@ -753,8 +758,8 @@ class Util:
         Returns:
             str | None: site url
         """
-        # this method exists because the following line returns an empty string instead of \
-        # None (because the key always exists)
+        # this method exists because the following line returns an empty string instead
+        # of None (because the key always exists)
         defined_site_url = mkdocs_config.site_url
 
         # cases

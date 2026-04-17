@@ -60,7 +60,7 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
     # allow to set the plugin multiple times in the same mkdocs config
     supports_multiple_instances = True
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """Instantiation."""
         # pages storage
         super().__init__(*args, **kwargs)
