@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" {% if feed.language is not none %} xml:lang="{{ feed.language }}"{% endif %}>
+  {# Mandatory elements #}
+  {% if feed.title is not none %}<title>{{ feed.title|e }}</title>{% endif %}
+  {% if feed.html_url is not none %}<link href="{{ feed.html_url }}" rel="alternate" type="text/html"/>{% endif %}
+  {% if feed.atom_url is not none %}<link href="{{ feed.atom_url }}" rel="self" type="application/atom+xml"/>{% endif %}
+  {% if feed.atom_url is not none %}<id>{{ feed.atom_url }}</id>{% endif %}
+
+  {# Optional elements #}
+  {% if feed.description is not none %}<subtitle>{{ feed.description|e }}</subtitle>{% endif %}
+  {% if feed.author is not none %}
+  <author>
+    <name>{{ feed.author|e }}</name>
+  </author>
+  {% endif %}
+
+  {# Timestamps #}
+  <updated>{{ feed.buildDate }}</updated>
+
+  {# Credits #}
+  <generator>{{ feed.generator }}</generator>
+
+  {# Feed illustration #}
+  {% if feed.logo_url is defined %}
+  <logo>{{ feed.logo_url }}</logo>
+  {% endif %}
+
+  {# Entries #}
+  {% for item in feed.entries %}
+  <entry>
+    <title>{{ item.title|e }}</title>
+    {% if item.link is not none %}<link href="{{ item.link|e }}" rel="alternate" type="text/html"/>{% endif %}
+    {% if item.guid is not none %}<id>{{ item.guid }}</id>{% endif %}
+    <updated>{{ item.atom_updated }}</updated>
+    <published>{{ item.atom_published }}</published>
+
+    {# Authors loop #}
+    {% if item.authors is not none %}
+      {% for author in item.authors %}
+    <author>
+      <name>{{ author }}</name>
+    </author>
+      {% endfor %}
+    {% endif %}
+
+    {# Categories loop #}
+    {% if item.categories is not none %}
+      {% for category in item.categories %}
+    <category term="{{ category }}"/>
+      {% endfor %}
+    {% endif %}
+
+    <summary type="html">{{ item.description|e }}</summary>
+
+    {# Full content if available - only include if not empty #}
+    {% if item.content is not none and item.content|trim != "" %}
+    <content type="html">{{ item.content|e }}</content>
+    {% endif %}
+
+
+    {# Image enclosure #}
+    {% if item.image is not none %}
+    <link rel="enclosure" href="{{ item.image[0] }}" type="{{ item.image[1] }}" length="{{ item.image[2] }}"/>
+    {% endif %}
+  </entry>
+  {% endfor %}
+</feed>

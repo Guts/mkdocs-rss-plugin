@@ -30,6 +30,8 @@ class _DateFromMeta(Config):
 class _FeedsFilenamesConfig(Config):
     """Sub configuration for feeds filenames."""
 
+    atom_created = config_options.Type(str, default="feed_atom_created.xml")
+    atom_updated = config_options.Type(str, default="feed_atom_updated.xml")
     json_created = config_options.Type(str, default="feed_json_created.json")
     json_updated = config_options.Type(str, default="feed_json_updated.json")
     rss_created = config_options.Type(str, default="feed_rss_created.xml")
@@ -41,6 +43,7 @@ class RssPluginConfig(Config):
 
     abstract_chars_count = config_options.Type(int, default=160)
     abstract_delimiter = config_options.Type(str, default="<!-- more -->")
+    atom_feed_enabled = config_options.Type(bool, default=True)
     categories = config_options.Optional(
         config_options.ListOfItems(config_options.Type(str))
     )

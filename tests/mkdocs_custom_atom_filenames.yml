@@ -1,0 +1,12 @@
+site_name: Test RSS Plugin with custom Atom filenames
+site_description: Test Atom with custom filenames
+site_url: https://guts.github.io/mkdocs-rss-plugin
+
+plugins:
+  - rss:
+      feeds_filenames:
+        atom_created: atom.xml
+        atom_updated: atom-updated.xml
+
+theme:
+  name: mkdocs
