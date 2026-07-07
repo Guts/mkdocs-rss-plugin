@@ -10,6 +10,8 @@ from datetime import date, datetime
 from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
+from re import DOTALL
+from re import sub as re_sub
 from typing import Any, Literal
 from urllib.parse import urlencode, urlparse, urlunparse
 
@@ -490,6 +492,18 @@ class Util:
 
         return out_date
 
+    @staticmethod
+    def strip_html_comments(html_content: str) -> str:
+        """Remove HTML comments from content.
+
+        Args:
+            html_content (str): HTML content potentially containing comments
+
+        Returns:
+            str: HTML content with comments removed
+        """
+        return re_sub(r"<!--.*?-->", "", html_content, flags=DOTALL)
+
     def get_description_or_abstract(
         self,
         in_page: Page,
@@ -518,12 +532,14 @@ class Util:
         # If the full page is wanted (unlimited chars count)
         if chars_count == -1 and (in_page.content or in_page.markdown):
             if in_page.content:
-                return in_page.content
+                return self.strip_html_comments(in_page.content)
             else:
-                return markdown.markdown(in_page.markdown, output_format="html5")
+                return self.strip_html_comments(
+                    markdown.markdown(in_page.markdown, output_format="html5")
+                )
         # If the description is explicitly given
         elif description:
-            return description
+            return self.strip_html_comments(description)
         # If the abstract is cut by the delimiter
         elif (
             abstract_delimiter
@@ -532,18 +548,24 @@ class Util:
             )
             > -1
         ):
-            return markdown.markdown(
-                in_page.markdown[:excerpt_separator_position],
-                output_format="html5",
+            return self.strip_html_comments(
+                markdown.markdown(
+                    in_page.markdown[:excerpt_separator_position],
+                    output_format="html5",
+                )
             )
         # Use first chars_count from the markdown
         elif chars_count > 0 and in_page.markdown:
             if len(in_page.markdown) <= chars_count:
-                return markdown.markdown(in_page.markdown, output_format="html5")
+                return self.strip_html_comments(
+                    markdown.markdown(in_page.markdown, output_format="html5")
+                )
             else:
-                return markdown.markdown(
-                    f"{in_page.markdown[: chars_count - 3]}...",
-                    output_format="html5",
+                return self.strip_html_comments(
+                    markdown.markdown(
+                        f"{in_page.markdown[: chars_count - 3]}...",
+                        output_format="html5",
+                    )
                 )
         # No explicit description and no (or empty) abstract found
         else:
