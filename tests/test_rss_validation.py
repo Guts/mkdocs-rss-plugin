@@ -75,7 +75,7 @@ class TestRssValidation(BaseTest):
 
             # Find all item elements
             items = root.findall(".//item")
-            self.assertTrue(len(items) > 0, "Expected at least one item in feed")
+            self.assertGreater(len(items), 0, "Expected at least one item in feed")
 
             for item in items:
                 # Check that <author> is NOT used for item authors
@@ -92,8 +92,9 @@ class TestRssValidation(BaseTest):
                 # Items with authors should have dc:creator elements
                 # Items without authors may not have any
                 if item.find("title").text == "Page With Explicit Metadata":
-                    self.assertTrue(
-                        len(dc_creators) > 0,
+                    self.assertGreater(
+                        len(dc_creators),
+                        0,
                         "Expected <dc:creator> elements for item with authors.",
                     )
 
