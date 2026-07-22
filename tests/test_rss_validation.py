@@ -91,6 +91,11 @@ class TestRssValidation(BaseTest):
                 dc_creators = item.findall("dc:creator", ns)
                 # Items with authors should have dc:creator elements
                 # Items without authors may not have any
+                if item.find("title").text == "Page With Explicit Metadata":
+                    self.assertTrue(
+                        len(dc_creators) > 0,
+                        "Expected <dc:creator> elements for item with authors.",
+                    )
 
     def test_no_double_encoded_entities(self):
         """Verify that title and description don't contain double-encoded HTML entities.
