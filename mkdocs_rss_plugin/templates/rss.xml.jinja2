@@ -33,11 +33,11 @@
     {# Entries #}
     {% for item in feed.entries %}
     <item>
-      <title>{{ item.title|e }}</title>
-      {# Authors loop #}
+      <title>{{ item.title|e|replace('&amp;amp;', '&amp;')|replace('&amp;lt;', '&lt;')|replace('&amp;gt;', '&gt;') }}</title>
+      {# Authors loop - use dc:creator for names (RSS <author> requires email) #}
       {% if item.authors is not none %}
         {% for author in item.authors %}
-      <author>{{ author }}</author>
+      <dc:creator>{{ author }}</dc:creator>
         {% endfor %}
       {% endif %}
       {# Categories loop #}
@@ -46,13 +46,13 @@
       <category>{{ categorie }}</category>
         {% endfor %}
       {% endif %}
-      <description>{{ item.description|e }}</description>
+      <description>{{ item.description|e|replace('&amp;amp;', '&amp;')|replace('&amp;lt;', '&lt;')|replace('&amp;gt;', '&gt;') }}</description>
       {% if item.link is not none %}<link>{{ item.link|e }}</link>{% endif %}
       <pubDate>{{ item.pub_date }}</pubDate>
       {% if item.link is not none %}<source url="{{ feed.rss_url }}">{{ feed.title }}</source>{% endif %}
       {% if item.comments_url is not none %}<comments>{{ item.comments_url|e }}</comments>{% endif %}
       {% if item.guid is not none %}<guid isPermaLink="true">{{ item.guid }}</guid>{% endif %}
-      {% if item.image is not none %}
+      {% if item.image is not none and item.image[2] is not none and item.image[2] > 0 %}
       <enclosure url="{{ item.image[0] }}" type="{{ item.image[1] }}" length="{{ item.image[2] }}" />
       {% endif %}
     </item>
