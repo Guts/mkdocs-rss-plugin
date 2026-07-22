@@ -33,7 +33,7 @@
     {# Entries #}
     {% for item in feed.entries %}
     <item>
-      <title>{{ item.title|e|replace('&amp;amp;', '&amp;')|replace('&amp;lt;', '&lt;')|replace('&amp;gt;', '&gt;') }}</title>
+      <title>{{ item.title|e }}</title>
       {# Authors loop - use dc:creator for names (RSS <author> requires email) #}
       {% if item.authors is not none %}
         {% for author in item.authors %}
@@ -46,7 +46,7 @@
       <category>{{ categorie }}</category>
         {% endfor %}
       {% endif %}
-      <description>{{ item.description|e|replace('&amp;amp;', '&amp;')|replace('&amp;lt;', '&lt;')|replace('&amp;gt;', '&gt;') }}</description>
+      <description>{{ item.description|e }}</description>
       {% if item.link is not none %}<link>{{ item.link|e }}</link>{% endif %}
       <pubDate>{{ item.pub_date }}</pubDate>
       {% if item.link is not none %}<source url="{{ feed.rss_url }}">{{ feed.title }}</source>{% endif %}
