@@ -20,11 +20,15 @@ import tempfile
 import unittest
 from pathlib import Path
 from traceback import format_exception
+from unittest.mock import patch
 from xml.etree import ElementTree
 
 # 3rd party
 import feedparser
 import jsonfeed
+
+# plugin target
+from mkdocs_rss_plugin.util import Util
 
 # test suite
 from tests.base import BaseTest
@@ -128,6 +132,26 @@ class TestBuildRss(BaseTest):
             self.assertIn(
                 "Page with complete meta", {e.title for e in feed_parsed.entries}
             )
+
+    def test_simple_build_enclosure_unknown_length(self):
+        """Enclosures with an unknown length are kept with length 0 (RSS Profile)."""
+        with (
+            tempfile.TemporaryDirectory() as tmpdirname,
+            patch.object(Util, "get_remote_image_length", return_value=None),
+        ):
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path("tests/fixtures/mkdocs_minimal.yml"),
+                output_path=tmpdirname,
+            )
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            feed_xml = (Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED).read_text(
+                encoding="utf-8"
+            )
+            self.assertNotIn('length="None"', feed_xml)
+            self.assertIn('length="0"', feed_xml)
 
     def test_simple_build_complete(self):
         with tempfile.TemporaryDirectory() as tmpdirname:

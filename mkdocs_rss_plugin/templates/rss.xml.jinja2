@@ -53,7 +53,7 @@
       {% if item.comments_url is not none %}<comments>{{ item.comments_url|e }}</comments>{% endif %}
       {% if item.guid is not none %}<guid isPermaLink="true">{{ item.guid }}</guid>{% endif %}
       {% if item.image is not none %}
-      <enclosure url="{{ item.image[0] }}" type="{{ item.image[1] }}" length="{{ item.image[2] }}" />
+      <enclosure url="{{ item.image[0] }}" type="{{ item.image[1] }}" length="{{ item.image[2] or 0 }}" />
       {% endif %}
     </item>
     {% endfor %}
