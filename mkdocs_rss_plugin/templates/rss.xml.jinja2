@@ -34,10 +34,10 @@
     {% for item in feed.entries %}
     <item>
       <title>{{ item.title|e }}</title>
-      {# Authors loop #}
+      {# Authors loop - use dc:creator for names (RSS <author> requires email) #}
       {% if item.authors is not none %}
         {% for author in item.authors %}
-      <author>{{ author }}</author>
+      <dc:creator>{{ author }}</dc:creator>
         {% endfor %}
       {% endif %}
       {# Categories loop #}
