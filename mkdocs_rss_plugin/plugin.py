@@ -5,6 +5,7 @@
 # ##################################
 
 # standard library
+import html as html_module
 import json
 from copy import deepcopy
 from dataclasses import asdict
@@ -350,14 +351,17 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 ),
                 comments_url=page_url_comments,
                 created=page_dates[0],
-                description=self.util.get_description_or_abstract(
-                    in_page=page,
-                    chars_count=self.config.abstract_chars_count,
-                    abstract_delimiter=self.config.abstract_delimiter,
+                description=html_module.unescape(
+                    self.util.get_description_or_abstract(
+                        in_page=page,
+                        chars_count=self.config.abstract_chars_count,
+                        abstract_delimiter=self.config.abstract_delimiter,
+                    )
+                    or ""
                 ),
                 guid=page.canonical_url,
                 link=page_url_full,
-                title=page.title,
+                title=html_module.unescape(page.title) if page.title else None,
                 updated=page_dates[1],
                 # for later fetch
                 _mkdocs_page_ref=MkdocsPageSubset.from_page(page),
