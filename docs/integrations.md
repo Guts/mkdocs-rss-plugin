@@ -166,3 +166,171 @@ And include it in `main.html`:
 ```jinja title="docs/theme/overrides/main.html"
 {% include "partials/json_feed.html.jinja2" %}
 ```
+
+----
+
+## Display a recent updates page from the JSON feed
+
+The updated JSON feed can also be used inside your documentation site to render a
+small "recently updated pages" index. This is useful for documentation portals or
+digital gardens where readers may want to see what changed recently without using
+a feed reader.
+
+First, keep the updated JSON feed enabled and expose enough entries for the page:
+
+```yaml title="mkdocs.yml"
+plugins:
+  - rss:
+      length: 100
+      match_path: "^(?!updates\\.md$)(?!.*(?:^|/)(README|index)\\.md$).+\\.md$"
+      feeds_filenames:
+        json_updated: feed_json_updated.json
+
+extra_javascript:
+  - javascripts/recent-updates.js
+
+nav:
+  - Recently updated: updates.md
+```
+
+The page can only show entries that are present in the generated JSON feed. Set
+`length` to at least the maximum number of updates you want readers to browse.
+
+Then create a page that contains the target container and optional direct feed
+links:
+
+```markdown title="docs/updates.md"
+# Recently updated
+
+<p class="updates-note">
+  Sorted by Git last-modified time from the updated feed. Index pages and this
+  page are excluded.
+</p>
+
+<p class="updates-feeds">
+  <a href="../feed_json_updated.json">JSON feed</a>
+</p>
+
+<div data-recent-updates data-page-size="20">
+  Loading updates...
+</div>
+```
+
+Finally, add a small script that fetches the JSON feed and progressively renders
+entries:
+
+```javascript title="docs/javascripts/recent-updates.js"
+(function () {
+  var root = document.querySelector("[data-recent-updates]");
+
+  if (!root) {
+    return;
+  }
+
+  function feedUrl() {
+    return new URL("../feed_json_updated.json", window.location.href).toString();
+  }
+
+  function itemDate(item) {
+    return item.date_modified || item.date_published || item.date_created || "";
+  }
+
+  function formatDate(value) {
+    var date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    return date.toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function itemSummary(item) {
+    var container = document.createElement("div");
+    var text = "";
+
+    container.innerHTML = item.content_html || item.summary || "";
+    text = (container.textContent || "").replace(/\s+/g, " ").trim();
+
+    return text.length > 160 ? text.slice(0, 160) + "..." : text;
+  }
+
+  function render(items) {
+    var pageSize = parseInt(root.getAttribute("data-page-size") || "20", 10);
+    var visibleCount = Math.min(pageSize, items.length);
+    var list = document.createElement("ol");
+    var button = document.createElement("button");
+
+    function renderVisibleItems() {
+      list.innerHTML = "";
+
+      items.slice(0, visibleCount).forEach(function (item) {
+        var entry = document.createElement("li");
+        var link = document.createElement("a");
+        var summary = document.createElement("p");
+        var time = document.createElement("time");
+        var date = itemDate(item);
+
+        link.href = item.url || item.id || "#";
+        link.textContent = item.title || link.href;
+        summary.textContent = itemSummary(item);
+        time.dateTime = date;
+        time.textContent = formatDate(date);
+
+        entry.appendChild(link);
+        entry.appendChild(summary);
+        entry.appendChild(time);
+        list.appendChild(entry);
+      });
+
+      button.hidden = visibleCount >= items.length;
+    }
+
+    button.type = "button";
+    button.textContent = "Show more updates";
+    button.addEventListener("click", function () {
+      visibleCount = Math.min(visibleCount + pageSize, items.length);
+      renderVisibleItems();
+    });
+
+    root.replaceChildren(list, button);
+    renderVisibleItems();
+  }
+
+  fetch(feedUrl(), { cache: "no-store" })
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("Unable to load updates feed");
+      }
+
+      return response.json();
+    })
+    .then(function (feed) {
+      var items = Array.isArray(feed.items) ? feed.items : [];
+
+      if (!items.length) {
+        root.textContent = "No recent updates found.";
+        return;
+      }
+
+      render(items);
+    })
+    .catch(function () {
+      root.textContent = "Unable to load recent updates.";
+    });
+})();
+```
+
+The example intentionally uses the updated feed (`feed_json_updated.json`) rather
+than the created feed, because the page is meant to answer "what changed
+recently?". You can adapt `match_path` to include only blog posts, release notes,
+or any other section of your documentation.
+
+This is a client-side enhancement. Readers without JavaScript can still use the
+direct feed link, but the list itself is rendered in the browser.
