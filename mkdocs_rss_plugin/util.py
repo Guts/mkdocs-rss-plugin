@@ -223,6 +223,18 @@ class Util:
             tuple[datetime, datetime]: tuple of timestamps (creation date, last commit date)
         """
         logger.debug(f"Extracting dates for {in_page.file.src_uri}")
+
+        # handle temporary pages (e.g. archive pages of blog plugin of Material for Mkdocs)
+        if in_page.file.abs_src_path.startswith("/tmp"):
+            logger.debug(
+                f"Temporary page detected ({in_page.file.abs_src_path}). "
+                "Falling back to build date for both creation and update dates."
+            )
+            return (
+                get_build_datetime(),
+                get_build_datetime(),
+            )
+
         # empty vars
         dt_created = dt_updated = None
         if meta_default_time is None:
@@ -623,6 +635,7 @@ class Util:
             if img_local_cache_path := self.social_cards.get_social_card_cache_path_for_page(
                 mkdocs_page=in_page
             ):
+                print("HA", img_local_cache_path, img_url)
                 img_length = img_local_cache_path.stat().st_size
                 img_type = guess_type(url=img_local_cache_path, strict=False)[0]
             elif img_local_build_path := self.social_cards.get_social_card_build_path_for_page(
