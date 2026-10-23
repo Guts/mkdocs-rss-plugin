@@ -16,8 +16,10 @@
 # Standard library
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 # 3rd party
+from requests.exceptions import SSLError
 from validator_collection import checkers
 
 # plugin target
@@ -94,6 +96,19 @@ class TestRssUtil(unittest.TestCase):
             image_url="https://guts.github.io/mkdocs-rss-plugin/inexisting.svg"
         )
         self.assertIsNone(img_length)
+
+    def test_remote_image_ssl_error_not_retried(self):
+        """TLS failures must not be retried, especially without verification."""
+        with patch.object(
+            self.plg_utils.req_session, "request", side_effect=SSLError("bad cert")
+        ) as mock_request:
+            img_length = self.plg_utils.get_remote_image_length(
+                image_url="https://self-signed.example.org/image.png"
+            )
+
+        self.assertIsNone(img_length)
+        mock_request.assert_called_once()
+        self.assertNotIn("verify", mock_request.call_args.kwargs)
 
     def test_get_value_from_dot_key(self):
         param_list = [
