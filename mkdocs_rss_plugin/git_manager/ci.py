@@ -93,11 +93,16 @@ class CiHandler:
         Returns:
             int: Number of commits
         """
-        refs = self.repo.for_each_ref().split("\n")
-        refs = [x.split()[0] for x in refs]
+        refs = [
+            fields[0]
+            for line in self.repo.for_each_ref().splitlines()
+            if (fields := line.split())
+        ]
+        if not refs:
+            return 0
 
         counts = [
-            int(self.repo.rev_list(x, count=True, first_parent=True)) for x in refs
+            int(self.repo.rev_list(ref, count=True, first_parent=True)) for ref in refs
         ]
         return max(counts)
 
