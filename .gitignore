@@ -215,6 +215,7 @@ dmypy.json
 # ## Custom ######################
 # ################################
 
+*.patch
 **/*.xml
 mkdocs_rss_plugin/_version.py
 site/
