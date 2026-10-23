@@ -1,0 +1,10 @@
+site_name: Test RSS Plugin
+site_description: Test with Atom disabled
+site_url: https://guts.github.io/mkdocs-rss-plugin
+
+plugins:
+  - rss:
+      atom_feed_enabled: false
+
+theme:
+  name: mkdocs
