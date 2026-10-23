@@ -118,10 +118,15 @@ class TestBuildRss(BaseTest):
                 # optional - following should not be present in the feed by default
                 self.assertTrue("category" not in feed_item)
                 self.assertTrue("comments" not in feed_item)
-                self.assertTrue("enclosure" not in feed_item)
 
-                if feed_item.title in ("Test page with meta",):
+                if feed_item.title == "Page with complete meta":
                     self.assertTrue("author" in feed_item)
+                    self.assertTrue(feed_item.enclosures)
+
+            # make sure the conditional assertions above actually ran
+            self.assertIn(
+                "Page with complete meta", {e.title for e in feed_parsed.entries}
+            )
 
     def test_simple_build_complete(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
@@ -152,17 +157,20 @@ class TestBuildRss(BaseTest):
 
                 # optional - following should not be present in the feed by default
                 if (
-                    "without_meta" in feed_item.title
+                    feed_item.title.startswith("Page without meta")
                     or feed_item.title == "Test home page"
                 ):
                     self.assertTrue("category" not in feed_item)
                     self.assertTrue("comments" in feed_item)
-                elif "with_meta" in feed_item.title:
+                elif feed_item.title == "Page with complete meta":
                     self.assertTrue("author" in feed_item)
                     self.assertTrue("category" in feed_item)
-                    self.assertTrue("enclosure" in feed_item)
-                else:
-                    pass
+                    self.assertTrue(feed_item.enclosures)
+
+            # make sure the conditional assertions above actually ran
+            self.assertIn(
+                "Page with complete meta", {e.title for e in feed_parsed.entries}
+            )
 
     def test_simple_build_disabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
@@ -326,8 +334,13 @@ class TestBuildRss(BaseTest):
             feed_parsed = feedparser.parse(Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED)
 
             for feed_item in feed_parsed.entries:
-                if feed_item.title in ("Test page with meta",):
+                if feed_item.title == "Page with complete meta":
                     self.assertTrue("category" in feed_item)
+
+            # make sure the conditional assertion above actually ran
+            self.assertIn(
+                "Page with complete meta", {e.title for e in feed_parsed.entries}
+            )
 
     def test_simple_build_item_comments_enabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
