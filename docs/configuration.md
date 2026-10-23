@@ -127,6 +127,20 @@ Output:
 </item>
 ```
 
+<!-- markdownlint-disable MD046 -->
+!!! note "Remote images served over HTTPS"
+    Since version 1.20, TLS certificates are always verified when retrieving a remote image length. If verification fails, the build goes on but the image length cannot be determined, just as for an unreachable image.
+
+    To trust a custom certificate authority (corporate proxy, self-signed internal server...), point `REQUESTS_CA_BUNDLE` to a bundle that includes it. This variable **replaces** the default bundle, so append your certificate to it rather than using it alone:
+
+    ```sh
+    cat "$(python -c 'import certifi; print(certifi.where())')" my-ca.pem > ca-bundle.pem
+    REQUESTS_CA_BUNDLE="$PWD/ca-bundle.pem" mkdocs build
+    ```
+
+    Responses are cached in [`cache_dir`](#cache_dir): clear it to force new requests.
+<!-- markdownlint-enable MD046 -->
+
 ----
 
 ## Plugin options

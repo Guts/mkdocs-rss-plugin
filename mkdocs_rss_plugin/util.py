@@ -15,7 +15,6 @@ from urllib.parse import urlencode, urlparse, urlunparse
 
 # 3rd party
 import markdown
-import urllib3
 from cachecontrol import CacheControl
 from cachecontrol.caches.file_cache import SeparateBodyFileCache
 from git import (
@@ -30,7 +29,8 @@ from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_datetime
 from requests import Session
-from requests.exceptions import ConnectionError, HTTPError
+from requests.exceptions import ConnectionError as RequestsConnectionError
+from requests.exceptions import HTTPError, SSLError
 
 # package
 from mkdocs_rss_plugin.constants import (
@@ -53,7 +53,6 @@ from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
 # ################################
 
 logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
-urllib3.disable_warnings()  # disable warnings for unverified requests
 
 # ############################################################################
 # ########## Classes #############
@@ -690,12 +689,12 @@ class Util:
         http_method: str = "HEAD",
         attempt: int = 0,
         req_timeout: tuple[float, float] = (5, 30),
-        ssl_verify: bool = True,
     ) -> Optional[int]:
         """Retrieve length for remote images (starting with 'http').
 
         Firstly, it tries to perform a HEAD request and get the length from the headers. \
-        If it fails, it tries again with a GET and disabling SSL verification.
+        If it fails, it tries again with a GET. TLS certificate verification is always \
+        enforced: a TLS error is never retried.
 
         Args:
             image_url (str): image URL
@@ -704,8 +703,6 @@ class Util:
             attempt (int, optional): request tries counter. Defaults to 0.
             req_timeout (tuple[float, float], optional): (connect, read) timeout in \
                 secondes. Defaults to (5, 30).
-            ssl_verify (bool, optional): option to perform SSL verification or not.
-                Defaults to True.
 
         Returns:
             int | None: image length as int or None
@@ -724,19 +721,25 @@ class Util:
                 method=http_method,
                 timeout=req_timeout,
                 url=image_url,
-                verify=ssl_verify,
             )
             req_response.raise_for_status()
             img_length = req_response.headers.get("content-length")
-        except (ConnectionError, HTTPError) as err:
+        except SSLError as err:
+            # SSLError subclasses RequestsConnectionError: catch it first and never
+            # retry, a failed certificate check must not be worked around.
+            logger.info(
+                f"Remote image skipped: TLS verification failed for {image_url}. "
+                f"Trace: {err}"
+            )
+            return None
+        except (RequestsConnectionError, HTTPError) as err:
             logger.debug(
                 f"Remote image could not been reached: {image_url}. "
-                f"Trying again with {http_method} and disabling SSL verification. "
-                f"Attempt: {attempt}/2. Trace: {err}"
+                f"Trying again with GET. Attempt: {attempt}/2. Trace: {err}"
             )
             if attempt < 2:
                 return self.get_remote_image_length(
-                    image_url, http_method="GET", attempt=attempt, ssl_verify=False
+                    image_url, http_method="GET", attempt=attempt
                 )
             else:
                 logger.info(
