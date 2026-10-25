@@ -351,16 +351,14 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 ),
                 comments_url=page_url_comments,
                 created=page_dates[0],
-                description=html_module.unescape(
-                    self.util.get_description_or_abstract(
-                        in_page=page,
-                        chars_count=self.config.abstract_chars_count,
-                        abstract_delimiter=self.config.abstract_delimiter,
-                    )
-                    or ""
+                description=self.util.get_description_or_abstract(
+                    in_page=page,
+                    chars_count=self.config.abstract_chars_count,
+                    abstract_delimiter=self.config.abstract_delimiter,
                 ),
                 guid=page.canonical_url,
                 link=page_url_full,
+                # MkDocs keeps HTML entities in titles extracted from the H1
                 title=html_module.unescape(page.title) if page.title else None,
                 updated=page_dates[1],
                 # for later fetch

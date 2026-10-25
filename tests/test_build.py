@@ -961,6 +961,10 @@ class TestBuildRss(BaseTest):
             self.assertIn("OpenSavvy &amp; contributors", feed_xml)
             self.assertNotIn("OpenSavvy & contributors</managingEditor>", feed_xml)
 
+            # H1-derived titles arrive from MkDocs with HTML entities:
+            # they must be unescaped once, then escaped once for the XML
+            self.assertIn("Test: A &amp; B &lt; C &gt; D", feed_xml)
+
 
 # ##############################################################################
 # ##### Stand alone program ########
