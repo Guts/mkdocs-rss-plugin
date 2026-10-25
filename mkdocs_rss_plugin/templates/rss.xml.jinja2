@@ -37,7 +37,7 @@
       {# Authors loop - use dc:creator for names (RSS <author> requires email) #}
       {% if item.authors is not none %}
         {% for author in item.authors %}
-      <dc:creator>{{ author }}</dc:creator>
+      <dc:creator>{{ author|e }}</dc:creator>
         {% endfor %}
       {% endif %}
       {# Categories loop #}
