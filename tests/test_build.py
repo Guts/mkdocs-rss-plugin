@@ -20,6 +20,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from traceback import format_exception
+from xml.etree import ElementTree
 
 # 3rd party
 import feedparser
@@ -171,6 +172,19 @@ class TestBuildRss(BaseTest):
             self.assertIn(
                 "Page with complete meta", {e.title for e in feed_parsed.entries}
             )
+
+            # authors: RSS 2.0 requires <author> to be an email address,
+            # so human-readable names must use <dc:creator> instead
+            tree = ElementTree.parse(Path(tmpdirname) / OUTPUT_RSS_FEED_CREATED)
+            dc_namespace = "http://purl.org/dc/elements/1.1/"
+            for item in tree.getroot().findall(".//item"):
+                self.assertIsNone(item.find("author"))
+                if item.find("title").text == "Page with complete meta":
+                    creators = item.findall(f"{{{dc_namespace}}}creator")
+                    self.assertEqual(
+                        [c.text for c in creators],
+                        ["Guts", "Tim Vink", "liang2kl"],
+                    )
 
     def test_simple_build_disabled(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
