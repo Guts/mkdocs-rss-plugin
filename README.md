@@ -17,9 +17,17 @@ A plugin for [MkDocs](https://www.mkdocs.org), the static site generator, which 
 
 ## Installation
 
+Since its version 1.20.0, the plugin does not force a documentation generator on you: pick the one you use through an extra.
+
 ```sh
-pip install mkdocs-rss-plugin
+# with MkDocs
+pip install "mkdocs-rss-plugin[mkdocs]"
+
+# with ProperDocs
+pip install "mkdocs-rss-plugin[properdocs]"
 ```
+
+> If MkDocs or ProperDocs is already installed in your environment, `pip install mkdocs-rss-plugin` is enough.
 
 ## Usage
 
@@ -96,11 +104,11 @@ python -m pip install -e .[dev]
 # including documentation dependencies
 python -m pip install -e .[docs]
 
-# including testing dependencies
-python -m pip install -e .[test]
+# including testing dependencies, with one documentation generator (mkdocs or properdocs)
+python -m pip install -e .[test,mkdocs]
 
 # all inclusive
-python -m pip install -e .[dev,docs,test]
+python -m pip install -e .[dev,docs,test,mkdocs]
 
 # install git hooks
 pre-commit install
