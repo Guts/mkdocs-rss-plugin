@@ -5,6 +5,7 @@
 # ##################################
 
 # standard library
+import html as html_module
 import json
 from copy import deepcopy
 from dataclasses import asdict
@@ -357,7 +358,8 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                 ),
                 guid=page.canonical_url,
                 link=page_url_full,
-                title=page.title,
+                # MkDocs keeps HTML entities in titles extracted from the H1
+                title=html_module.unescape(page.title) if page.title else None,
                 updated=page_dates[1],
                 # for later fetch
                 _mkdocs_page_ref=MkdocsPageSubset.from_page(page),
