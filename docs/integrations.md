@@ -166,3 +166,153 @@ And include it in `main.html`:
 ```jinja title="docs/theme/overrides/main.html"
 {% include "partials/json_feed.html.jinja2" %}
 ```
+
+----
+
+## Display a recent updates page from the JSON feed
+
+The updated JSON feed can also be used inside your documentation site to render a small "recently updated pages" index. This is useful for documentation portals or digital gardens where readers may want to see what changed recently without using a feed reader.
+
+First, keep the updated JSON feed enabled and expose enough entries for the page:
+
+```yaml title="mkdocs.yml"
+plugins:
+  - rss:
+      length: 20
+      match_path: '^(?!updates\.md$).*\.md$'
+      feeds_filenames:
+        json_updated: feed_json_updated.json
+
+theme:
+  name: material
+  custom_dir: docs/theme/overrides
+
+extra_javascript:
+  - javascripts/recent-updates.js
+
+nav:
+  - Recently updated: updates.md
+```
+
+Merge these entries into your existing configuration, including any existing theme overrides. Add the `Recently updated` entry to your existing `nav`; copying this `nav` block as-is replaces the whole site navigation with a single entry.
+
+The page shows all entries in the generated updated JSON feed, up to the configured `length`. This example excludes only `updates.md`; adapt `match_path` to select the content you want to include, such as `'blog/posts/.*'` for blog posts.
+
+Then create the page and select a custom template:
+
+```markdown title="docs/updates.md"
+---
+template: updates.html
+---
+
+# Recently updated
+
+Sorted by last update date from the updated feed. This page is excluded.
+```
+
+Add the template below to your theme override directory. The `url` filter resolves the feed path for both values of `use_directory_urls` and for sites hosted under a subpath. Keep the filename in sync with `feeds_filenames.json_updated` if you change it.
+
+```jinja title="docs/theme/overrides/updates.html"
+{% extends "main.html" %}
+
+{% block content %}
+  {{ super() }}
+  <p><a id="updates-feed" href="{{ 'feed_json_updated.json' | url }}">JSON feed</a></p>
+  <div data-recent-updates aria-live="polite">Loading updates...</div>
+  <noscript><p>Enable JavaScript to display the list, or use the JSON feed link.</p></noscript>
+{% endblock %}
+```
+
+Finally, add a script that fetches the JSON feed and renders its entries in feed order. It subscribes to [Material's page lifecycle](https://squidfunk.github.io/mkdocs-material/customization/#additional-javascript) so it also runs after instant navigation:
+
+```javascript title="docs/javascripts/recent-updates.js"
+(function () {
+  function initUpdates() {
+    var root = document.querySelector("[data-recent-updates]");
+
+    if (!root) {
+      return;
+    }
+
+    fetch(document.getElementById("updates-feed").href, { cache: "no-store" })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Unable to load updates feed");
+        }
+
+        return response.json();
+      })
+      .then(function (feed) {
+        var items = Array.isArray(feed.items) ? feed.items : [];
+
+        if (!items.length) {
+          root.textContent = "No recent updates found.";
+          return;
+        }
+
+        var list = document.createElement("ol");
+
+        items.forEach(function (item) {
+          var entry = document.createElement("li");
+          var link = document.createElement("a");
+          var summary = document.createElement("p");
+          var time = document.createElement("time");
+          var date = item.date_modified || item.date_published || "";
+
+          link.href = item.url;
+          link.textContent = item.title || item.url;
+          summary.textContent = itemSummary(item);
+          time.dateTime = date;
+          time.textContent = formatDate(date);
+
+          entry.appendChild(link);
+          entry.appendChild(summary);
+          entry.appendChild(time);
+          list.appendChild(entry);
+        });
+
+        root.replaceChildren(list);
+      })
+      .catch(function () {
+        root.textContent = "Unable to load recent updates.";
+      });
+  }
+
+  function formatDate(value) {
+    var date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    return date.toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function itemSummary(item) {
+    var template = document.createElement("template");
+
+    template.innerHTML = item.content_html || "";
+    var text = (template.content.textContent || "").replace(/\s+/g, " ").trim();
+
+    return text.length > 160 ? text.slice(0, 160) + "..." : text;
+  }
+
+  if (typeof document$ !== "undefined") {
+    document$.subscribe(initUpdates);
+  } else if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initUpdates);
+  } else {
+    initUpdates();
+  }
+})();
+```
+
+The example uses the updated feed (`feed_json_updated.json`) to answer "what changed recently?". Dates come from Git or page metadata according to your [`date_from_meta` configuration](configuration.md#date_from_meta).
+
+This is a client-side enhancement. Readers without JavaScript can still use the direct feed link, but the list itself is rendered in the browser.
