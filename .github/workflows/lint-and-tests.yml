@@ -25,6 +25,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        static-generator:
+          - "mkdocs"
+          - "properdocs"
         python-version:
           - "3.10"
           - "3.11"
@@ -49,7 +52,7 @@ jobs:
         run: python -m pip install --upgrade pip setuptools wheel
 
       - name: Install project as a package
-        run: python -m pip install .[test]
+        run: python -m pip install .[test,${{ matrix.static-generator }}]
 
       - name: Run Unit tests
         run: python -m pytest
@@ -59,7 +62,7 @@ jobs:
         with:
           env_vars: PYTHON
           flags: unittests
-          name: Code Coverage for unittests on python-${{ matrix.python-version }}]
+          name: Code Coverage for unittests on ${{ matrix.static-generator }}-python-${{ matrix.python-version }}]
         env:
           PYTHON: ${{ matrix.python-version }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
