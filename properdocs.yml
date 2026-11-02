@@ -66,21 +66,24 @@ nav:
   - Changelog: changelog.md
 
 plugins:
+  - document-dates:
+      locale: en
+      position: bottom
+      show_author: false
+      type: datetime
   - git-committers:
       enabled: !ENV [MKDOCS_ENABLE_PLUGIN_GIT_COMMITTERS, true]
       repository: guts/mkdocs-rss-plugin
       branch: main
       docs_path: docs/
+      exclude_committers:
+        - pre-commit-ci[bot]
+        - web-flow
       cache_dir:
         !ENV [
           MKDOCS_PLUGIN_GIT_COMMITTERS_CACHE_DIR,
           .cache/plugins/git-committers/,
         ]
-  - git-revision-date-localized:
-      enabled: !ENV [MKDOCS_ENABLE_PLUGIN_GIT_DATES, true]
-      enable_creation_date: true
-      fallback_to_build_date: true
-      locale: en
   - minify:
       minify_html: true
       htmlmin_opts:

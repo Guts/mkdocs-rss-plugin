@@ -69,7 +69,6 @@ jobs:
       - name: Build static website
         env:
           MKDOCS_ENABLE_PLUGIN_GIT_COMMITTERS: true
-          MKDOCS_ENABLE_PLUGIN_GIT_DATES: true
           MKDOCS_ENABLE_PLUGIN_MKDOCSTRINGS: true
           MKDOCS_ENABLE_PLUGIN_PRIVACY: true
           MKDOCS_ENABLE_PLUGIN_RSS: true
