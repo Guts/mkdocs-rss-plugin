@@ -47,16 +47,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = [
-    "black>=25.9",
-    "flake8>=7.1",
-    "flake8-bugbear>=24.10",
-    "flake8-builtins>=2.5",
-    "flake8-eradicate>=1.5",
-    "flake8-isort>=6.1.1",
-    "Flake8-pyproject>=1.2.3",
-    "pre-commit>=4,<5",
-]
+dev = ["ruff>=0.17.2", "pre-commit>=4.6,<5"]
 
 docs = [
     "mkdocs-git-committers-plugin-2>=2.4.1,<2.6",
@@ -94,10 +85,6 @@ Repository = "https://github.com/guts/mkdocs-rss-plugin/"
 
 # -- TOOLING CONFIGURATION --
 
-# Black configuration
-[tool.black]
-target-version = ["py310", "py311", "py312", "py313", "py314"]
-
 # Coverage configuration
 [tool.coverage.report]
 exclude_also = [
@@ -125,33 +112,23 @@ show_missing = true
 branch = true
 omit = ["*/tests/*", "*/__pycache__/*", "*/.venv/*", "*/_version.py"]
 
-[tool.flake8]
-count = true
-exclude = [
-    ".git",
-    "__pycache__",
-    "docs/conf.py",
-    "old",
-    "build",
-    "dist",
-    ".venv*",
-    "tests",
+# Pytest configuration
+[tool.pytest.ini_options]
+addopts = [
+    "--junitxml=junit/test-results.xml",
+    "--cov=mkdocs_rss_plugin",
+    "--cov-config=pyproject.toml",
+    "--cov-report=html",
+    "--cov-report=term",
+    "--cov-report=xml",
+    "--ignore=tests/_wip/",
 ]
-ignore = ["E121", "E123", "E126", "E203", "E226", "E24", "E704", "W503", "W504"]
-max-complexity = 15
-max-doc-length = 130
-max-line-length = 100
-statistics = true
-tee = true
+junit_family = "xunit2"
+minversion = "7.0"
+norecursedirs = ".* build dev development dist docs CVS fixtures _darcs {arch} *.egg venv _wip"
+python_files = ["test_*.py"]
+testpaths = ["tests"]
 
-[tool.isort]
-profile = "black"
-ensure_newline_before_comments = true
-force_grid_wrap = 0
-include_trailing_comma = true
-line_length = 88
-multi_line_output = 3
-use_parentheses = true
 
 [tool.ruff]
 line-length = 88
@@ -182,6 +159,7 @@ select = [
     "S",   # bandit security
     "TC",  # flake8-type-checking
     "T20", # flake8-print
+    "UP",  # pyupgrade
     "W",   # pycodestyle warnings
 ]
 
@@ -189,11 +167,21 @@ ignore = [
     "ANN201", # Missing return type annotation for public function
     "ANN204", #  Missing return type annotation for special method `__init__`
     "ANN401", # Dynamically typed expressions (typing.Any) are disallowed in `**kwargs`
-    "E501",   # line too long (handled by black)
-    # "E203", # whitespace before ':'
-    # "E226", # missing whitespace around arithmetic operator
-    # "E24",  # multiple spaces after ','
+    "E501",   # line too long (handled by ruff format)
 ]
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-single-line = false
+lines-after-imports = 2
+split-on-trailing-comma = true
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
 
 [tool.ruff.lint.per-file-ignores]
 # Ignore `E402` (import violations) in all `__init__.py` files
@@ -204,22 +192,6 @@ ignore = [
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-# Pytest configuration
-[tool.pytest.ini_options]
-addopts = [
-    "--junitxml=junit/test-results.xml",
-    "--cov=mkdocs_rss_plugin",
-    "--cov-config=pyproject.toml",
-    "--cov-report=html",
-    "--cov-report=term",
-    "--cov-report=xml",
-    "--ignore=tests/_wip/",
-]
-junit_family = "xunit2"
-minversion = "7.0"
-norecursedirs = ".* build dev development dist docs CVS fixtures _darcs {arch} *.egg venv _wip"
-python_files = ["test_*.py"]
-testpaths = ["tests"]
 
 # Setuptools configuration
 [tool.setuptools]

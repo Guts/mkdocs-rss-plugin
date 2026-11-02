@@ -93,9 +93,9 @@ See the relevant configuration file: `.pre-commit-config.yaml`.
 Make sure your code *roughly* follows [PEP-8](https://www.python.org/dev/peps/pep-0008/) and keeps things consistent with the rest of the code:
 
 - docstrings: [google-style](https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html) is used to technically describe what code does or not.
-- formatting: [black](https://black.readthedocs.io/) is used to automatically format the code without debate.
-- sorted imports: [isort](https://pycqa.github.io/isort/) is used to sort imports
-- static analysis: [flake8](https://flake8.pycqa.org/en/latest/) is used to catch some dizziness and keep the source code healthy.
+- formatting: [ruff format](https://docs.astral.sh/ruff/formatter/) is used to automatically format the code without debate.
+- sorted imports: [ruff's isort rules](https://docs.astral.sh/ruff/rules/#isort-i) are used to sort imports
+- static analysis: [ruff check](https://docs.astral.sh/ruff/linter/) is used to catch some dizziness and keep the source code healthy.
 
 ### Pulls requests
 
