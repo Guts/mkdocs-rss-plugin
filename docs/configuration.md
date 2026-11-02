@@ -192,6 +192,8 @@ Used, in combination with `abstract_delimiter`, to determine each [item descript
 - If that fails and `abstract_delimiter` is found in the page, the article content up to (but not including) the delimiter is used.
 - If the above has failed, then the plugin retrieves the first number of characters of the page content defined by this setting. Retrieved content is the raw markdown converted roughly into HTML.
 
+HTML comments are removed from feed descriptions. For Markdown excerpts, the delimiter is located first, then comments are removed before counting or truncating characters. This also removes comment examples inside fenced code blocks in excerpts. To preserve those examples, escape them as `&lt;!-- example --&gt;` or use full HTML content (`abstract_chars_count: -1`), where rendered code examples are preserved.
+
 Be careful: if set to `0` and there is no description, the feed's compliance is broken (an item must have a description).
 
 #### Override feed description per page
