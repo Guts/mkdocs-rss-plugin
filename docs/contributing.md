@@ -50,10 +50,10 @@ pytest
 
 ```sh
 # install dependencies for documentation
-python -m pip install -e .[docs]
+python -m pip install -e .[docs,properdocs]
 
 # build the documentation
-mkdocs build
+properdocs build
 ```
 
 ### Release workflow

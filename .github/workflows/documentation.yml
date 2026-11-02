@@ -12,6 +12,7 @@ on:
       - "*.md"
       - ".github/workflows/documentation.yml"
       - ./mkdocs_rss_plugin
+      - properdocs.yml
       - pyproject.toml
     tags:
       - "*"
@@ -22,6 +23,7 @@ on:
     paths:
       - .github/workflows/documentation.yml
       - docs/
+      - properdocs.yml
       - pyproject.toml
 
   workflow_dispatch:
@@ -72,7 +74,7 @@ jobs:
           MKDOCS_ENABLE_PLUGIN_PRIVACY: true
           MKDOCS_ENABLE_PLUGIN_RSS: true
           MKDOCS_ENABLE_PLUGIN_SOCIAL: true
-        run: mkdocs build --verbose
+        run: properdocs build --verbose
 
       - name: Save build doc as artifact
         uses: actions/upload-artifact@v7
