@@ -25,6 +25,7 @@ pip install "mkdocs-rss-plugin[mkdocs]"
 pip install "mkdocs-rss-plugin[properdocs]"
 ```
 
+> [!NOTE]
 > If MkDocs or ProperDocs is already installed in your environment, `pip install mkdocs-rss-plugin` is enough.
 
 ## Usage
