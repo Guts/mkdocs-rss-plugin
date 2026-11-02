@@ -17,6 +17,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## 1.20.0 - 2026-11-02
+
+### Bugs fixes 🐛
+
+* fix(tests): dead conditional builds by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/463>
+* fix: use dc:creator instead of author for item authors by @Zerthick in <https://github.com/Guts/mkdocs-rss-plugin/pull/455>
+* fix: resolve double-encoded HTML entities in title and description by @Zerthick in <https://github.com/Guts/mkdocs-rss-plugin/pull/456>
+* fix: guard enclosure against None/non-positive length values by @Zerthick in <https://github.com/Guts/mkdocs-rss-plugin/pull/457>
+* fix(util): formatted log was broken by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/469>
+
+### Features and enhancements 🎉
+
+* improve(network): always check HTTPS certificates when it comes to retrieve remote images length by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/464>
+
+### Tooling 🔧
+
+* update(packaging): add support for Python 3.15 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/465>
+* change(packaging): move mkdocs and properdocs to extra deps by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/466>
+* update(tooling): replace flake8, black and isort by ruff by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/468>
+* update(packaging): drop support for Python 3.10 by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/470>
+
+### Documentation 📖
+
+* update(docs): add guidelines about commit messages, PR template and AI section by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/467>
+* change(docs): switch to MaterialX by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/471>
+* update(docs): switch from Mkdocs to Properdocs by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/473>
+* update(docs): replace git-revision-date-localized by document-dates which comes with MaterialX by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/475>
+
+### Other Changes
+
+* Allow GitPython 3.2 by @musicinmybrain in <https://github.com/Guts/mkdocs-rss-plugin/pull/460>
+* update(tests): switch fixtures to MaterialX by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/472>
+* update(tests): switch to Properdocs by @Guts in <https://github.com/Guts/mkdocs-rss-plugin/pull/474>
+
 ## 1.19.0 - 2026-04-17
 
 ### Features and enhancements 🎉
