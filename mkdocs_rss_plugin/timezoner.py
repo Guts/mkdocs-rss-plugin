@@ -11,7 +11,7 @@ Manage timezones for pages date(time)s using zoneinfo module, added in Python 3.
 # ##################################
 
 # standard library
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from zoneinfo import ZoneInfo
 
 # 3rd party
@@ -50,7 +50,7 @@ def set_datetime_zoneinfo(
     if input_datetime.tzinfo:
         return input_datetime
     elif not config_timezone:
-        return input_datetime.replace(tzinfo=timezone.utc)
+        return input_datetime.replace(tzinfo=UTC)
     else:
         config_tz = ZoneInfo(config_timezone)
         return input_datetime.replace(tzinfo=config_tz)
