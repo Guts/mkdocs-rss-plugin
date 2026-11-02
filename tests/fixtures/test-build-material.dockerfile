@@ -1,5 +1,5 @@
 # Reference: https://squidfunk.github.io/mkdocs-material/getting-started/#with-docker
-FROM squidfunk/mkdocs-material
+FROM jaywhj/mkdocs-materialx
 
 COPY . .
 

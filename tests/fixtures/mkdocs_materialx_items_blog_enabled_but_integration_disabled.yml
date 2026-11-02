@@ -1,0 +1,13 @@
+site_name: Test RSS Plugin
+site_description: Test RSS with blog plugin also enabled
+site_url: https://guts.github.io/mkdocs-rss-plugin
+
+plugins:
+  - materialx/blog:
+      blog_dir: blog
+      authors_profiles: true
+  - rss:
+      use_material_blog: false
+
+theme:
+  name: materialx
