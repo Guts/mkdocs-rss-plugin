@@ -116,7 +116,7 @@ class TestRssUtil(unittest.TestCase):
         page.file.abs_src_path = "docs/page.md"
         page.meta = {"authors": 42}
 
-        with self.assertLogs("mkdocs.plugins.[RSS-plugin]", "WARNING") as logs:
+        with self.assertLogs("properdocs.plugins.[RSS-plugin]", "WARNING") as logs:
             authors = self.plg_utils.get_authors_from_meta(in_page=page)
 
         self.assertIsNone(authors)
