@@ -11,6 +11,7 @@ from mkdocs.config.base import Config
 # package
 from mkdocs_rss_plugin.constants import DEFAULT_CACHE_FOLDER
 
+
 # ############################################################################
 # ########## Classes ###############
 # ##################################

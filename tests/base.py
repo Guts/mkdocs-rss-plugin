@@ -23,6 +23,7 @@ from mkdocs.config.base import Config
 # package
 from mkdocs_rss_plugin.plugin import GitRssPlugin
 
+
 # #############################################################################
 # ########## Classes ###############
 # ##################################

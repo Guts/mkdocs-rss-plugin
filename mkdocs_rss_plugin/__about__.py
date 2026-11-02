@@ -14,6 +14,7 @@ See: https://packaging.python.org/guides/single-sourcing-package-version/
 from datetime import date
 from importlib import metadata
 
+
 _pkg_metadata = metadata.metadata("mkdocs-rss-plugin") or {}
 
 try:

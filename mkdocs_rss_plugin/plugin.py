@@ -42,6 +42,7 @@ from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
 from mkdocs_rss_plugin.models import MkdocsPageSubset, PageInformation, RssFeedBase
 from mkdocs_rss_plugin.util import Util
 
+
 # ############################################################################
 # ########## Globals #############
 # ################################
@@ -185,7 +186,6 @@ class GitRssPlugin(BasePlugin[RssPluginConfig]):
                     f"Shipped stylesheet will be referenced in RSS feeds: {self.config.stylesheet}"
                 )
             else:
-
                 base_feed.stylesheet = self.config.stylesheet
                 logger.debug(
                     f"Stylesheet will be referenced in RSS feeds: {self.config.stylesheet}"

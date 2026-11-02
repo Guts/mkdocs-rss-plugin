@@ -11,6 +11,7 @@ from mkdocs.plugins import get_plugin_logger
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
 
+
 # conditional
 try:
     from material import __version__ as material_version

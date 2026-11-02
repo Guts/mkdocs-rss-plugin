@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any
 # package modules
 from mkdocs_rss_plugin.__about__ import __title__, __version__
 
+
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
     from datetime import datetime

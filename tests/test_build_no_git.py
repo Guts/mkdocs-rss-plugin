@@ -26,6 +26,7 @@ from traceback import format_exception
 # test suite
 from tests.base import BaseTest
 
+
 logger = getLogger(__name__)
 logger.setLevel(DEBUG)
 

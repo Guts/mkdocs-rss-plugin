@@ -29,8 +29,11 @@ from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.pages import Page
 from mkdocs.utils import get_build_datetime
 from requests import Session
-from requests.exceptions import ConnectionError as RequestsConnectionError
-from requests.exceptions import HTTPError, SSLError
+from requests.exceptions import (
+    ConnectionError as RequestsConnectionError,
+    HTTPError,
+    SSLError,
+)
 
 # package
 from mkdocs_rss_plugin.constants import (
@@ -47,6 +50,7 @@ from mkdocs_rss_plugin.integrations.theme_material_social_plugin import (
 )
 from mkdocs_rss_plugin.models import MkdocsPageSubset, PageInformation, RssFeedBase
 from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
+
 
 # ############################################################################
 # ########## Globals #############
@@ -619,13 +623,19 @@ class Util:
             img_url = self.social_cards.get_social_card_url_for_page(
                 mkdocs_page=in_page
             )
-            if img_local_cache_path := self.social_cards.get_social_card_cache_path_for_page(
-                mkdocs_page=in_page
+            if (
+                img_local_cache_path
+                := self.social_cards.get_social_card_cache_path_for_page(
+                    mkdocs_page=in_page
+                )
             ):
                 img_length = img_local_cache_path.stat().st_size
                 img_type = guess_type(url=img_local_cache_path, strict=False)[0]
-            elif img_local_build_path := self.social_cards.get_social_card_build_path_for_page(
-                mkdocs_page=in_page
+            elif (
+                img_local_build_path
+                := self.social_cards.get_social_card_build_path_for_page(
+                    mkdocs_page=in_page
+                )
             ):
                 img_length = img_local_build_path.stat().st_size
                 img_type = guess_type(url=img_local_build_path, strict=False)[0]

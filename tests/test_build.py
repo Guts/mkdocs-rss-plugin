@@ -33,6 +33,7 @@ from mkdocs_rss_plugin.util import Util
 # test suite
 from tests.base import BaseTest
 
+
 # -- Globals --
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

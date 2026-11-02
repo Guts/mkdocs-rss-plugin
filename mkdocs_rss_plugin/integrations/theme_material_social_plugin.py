@@ -22,6 +22,7 @@ from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (
 )
 from mkdocs_rss_plugin.models import MkdocsPageSubset
 
+
 # conditional
 try:
     from material import __version__ as material_version
