@@ -22,6 +22,7 @@ permissions:
 jobs:
   lintest:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:

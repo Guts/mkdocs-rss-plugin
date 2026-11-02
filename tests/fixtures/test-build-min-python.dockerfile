@@ -1,9 +1,9 @@
-# Reference: https://squidfunk.github.io/mkdocs-material/getting-started/#with-docker
-FROM python:3.10.19
+# Reference: https://jaywhj.github.io/mkdocs-materialx/installation.html#with-docker
+FROM python:3.14.10
 
 COPY . .
 
 RUN python3 -m pip install --no-cache-dir -U pip setuptools wheel \
-    && python3 -m pip install --no-cache-dir .[docs]
+    && python3 -m pip install --no-cache-dir .[docs,properdocs]
 
-RUN mkdocs build
+RUN properdocs build
