@@ -22,7 +22,7 @@ from traceback import format_exception
 
 # 3rd party
 import feedparser
-from mkdocs.config import load_config
+from properdocs.config import load_config
 
 # package
 from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (

@@ -15,10 +15,10 @@ from pathlib import Path
 # 3rd party
 from click.testing import CliRunner
 
-# MkDocs
-from mkdocs.__main__ import build_command
-from mkdocs.config import load_config
-from mkdocs.config.base import Config
+# ProperDocs
+from properdocs.__main__ import build_command
+from properdocs.config import load_config
+from properdocs.config.base import Config
 
 # package
 from mkdocs_rss_plugin.plugin import GitRssPlugin
@@ -78,7 +78,7 @@ class BaseTest(unittest.TestCase):
         output_path: Path,
         strict: bool = True,
     ):
-        """Runs the `mkdocs build` command.
+        """Runs the `properdocs build` command.
 
         :param testproject_path: Path to test project
         :type testproject_path: Path
@@ -138,7 +138,7 @@ class BaseTest(unittest.TestCase):
 
         # Copy correct mkdocs.yml file and our test 'docs/'
         shutil.copytree("tests/fixtures/docs", testproject_path / "docs")
-        shutil.copyfile(mkdocs_yml_filepath, testproject_path / "mkdocs.yml")
+        shutil.copyfile(mkdocs_yml_filepath, testproject_path / "properdocs.yml")
 
         return testproject_path
 
@@ -174,15 +174,15 @@ if __name__ == "__main__":
     import feedparser
 
     base = BaseTest()
-    plg_cfg = base.get_plugin_config_from_mkdocs(Path("mkdocs.yml"), "rss")
+    plg_cfg = base.get_plugin_config_from_mkdocs(Path("properdocs.yml"), "rss")
     print(type(plg_cfg))
     # truc = base.setup_clean_mkdocs_folder(
-    #     mkdocs_yml_filepath=Path("mkdocs.yml"), output_path=Path("tests/fixtures/")
+    #     mkdocs_yml_filepath=Path("properdocs.yml"), output_path=Path("tests/fixtures/")
     # )
     # print(truc)
     run_result = base.build_docs_setup(
         testproject_path="docs",
-        mkdocs_yml_filepath=Path("mkdocs.yml"),
+        mkdocs_yml_filepath=Path("properdocs.yml"),
         output_path=Path("zoubi"),
     )
     print(type(run_result), run_result.exit_code)

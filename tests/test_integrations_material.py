@@ -19,7 +19,7 @@ from logging import DEBUG, getLogger
 from pathlib import Path
 
 # 3rd party
-from mkdocs.config import load_config
+from properdocs.config import load_config
 
 # package
 from mkdocs_rss_plugin.integrations.theme_material_base import (

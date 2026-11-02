@@ -19,7 +19,7 @@ from datetime import datetime
 from pathlib import Path
 
 # 3rd party
-from mkdocs.config.base import Config
+from properdocs.config.base import Config
 
 from mkdocs_rss_plugin.config import RssPluginConfig
 
