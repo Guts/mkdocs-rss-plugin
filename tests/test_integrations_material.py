@@ -53,6 +53,18 @@ class TestRssPluginIntegrationsMaterialThem(BaseTest):
         )
         self.assertTrue(integration_social_cards.IS_THEME_MATERIAL)
 
+    def test_plugin_config_theme_materialx(self):
+        # default reference
+        cfg_mkdocs = load_config(
+            str(Path("tests/fixtures/mkdocs_materialx_language_specific.yml").resolve())
+        )
+
+        integration_social_cards = IntegrationMaterialThemeBase(
+            mkdocs_config=cfg_mkdocs
+        )
+        self.assertTrue(integration_social_cards.IS_THEME_MATERIAL)
+        self.assertEqual(integration_social_cards.THEME_NAME, "materialx")
+
     def test_plugin_config_theme_not_material(self):
         # default reference
         cfg_mkdocs = load_config(

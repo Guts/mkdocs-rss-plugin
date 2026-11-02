@@ -74,6 +74,63 @@ class TestRssPluginIntegrationsMaterialBlog(BaseTest):
         self.assertTrue(integration_social_cards.IS_BLOG_PLUGIN_ENABLED)
         self.assertTrue(integration_social_cards.IS_ENABLED)
 
+    def test_plugin_config_materialx_blog_enabled_but_integration_disabled(self):
+        # default reference
+        cfg_mkdocs = load_config(
+            str(
+                Path(
+                    "tests/fixtures/mkdocs_materialx_items_blog_enabled_but_integration_disabled.yml"
+                ).resolve()
+            )
+        )
+
+        integration_blog = IntegrationMaterialBlog(
+            mkdocs_config=cfg_mkdocs,
+            switch_force=cfg_mkdocs.plugins.get("rss").config.use_material_blog,
+        )
+        self.assertTrue(integration_blog.IS_THEME_MATERIAL)
+        self.assertTrue(integration_blog.IS_BLOG_PLUGIN_ENABLED)
+        self.assertFalse(integration_blog.IS_ENABLED)
+
+    def test_plugin_config_materialx_blog_enabled(self):
+        # default reference
+        cfg_mkdocs = load_config(
+            str(
+                Path("tests/fixtures/mkdocs_materialx_items_blog_enabled.yml").resolve()
+            )
+        )
+
+        integration_blog = IntegrationMaterialBlog(mkdocs_config=cfg_mkdocs)
+        self.assertTrue(integration_blog.IS_THEME_MATERIAL)
+        self.assertTrue(integration_blog.IS_BLOG_PLUGIN_ENABLED)
+        self.assertTrue(integration_blog.IS_ENABLED)
+
+    def test_simple_build_materialx(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            cli_result = self.build_docs_setup(
+                testproject_path="docs",
+                mkdocs_yml_filepath=Path(
+                    "tests/fixtures/mkdocs_materialx_items_blog_enabled.yml"
+                ),
+                output_path=tmpdirname,
+                strict=False,
+            )
+
+            if cli_result.exception is not None:
+                e = cli_result.exception
+                logger.debug(format_exception(type(e), e, e.__traceback__))
+
+            self.assertEqual(cli_result.exit_code, 0)
+            self.assertIsNone(cli_result.exception)
+
+            # created items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_created.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
+
+            # updated items
+            feed_parsed = feedparser.parse(Path(tmpdirname) / "feed_rss_updated.xml")
+            self.assertEqual(feed_parsed.bozo, 0)
+
     def test_simple_build(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(

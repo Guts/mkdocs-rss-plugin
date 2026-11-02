@@ -81,6 +81,8 @@ class TestBuildWithoutMaterial(BaseTest):
             with patch.dict(
                 sys.modules,
                 {
+                    "materialx": None,
+                    "materialx.emoji": None,
                     "material.plugins": None,
                     "material.plugins.blog": None,
                     "material.plugins.blog.plugin": None,
@@ -132,6 +134,8 @@ class TestBuildWithoutMaterial(BaseTest):
             with patch.dict(
                 sys.modules,
                 {
+                    "materialx": None,
+                    "materialx.emoji": None,
                     "material.plugins": None,
                     "material.plugins.blog": None,
                     "material.plugins.blog.plugin": None,
@@ -172,6 +176,8 @@ class TestBuildWithoutMaterial(BaseTest):
             with patch.dict(
                 sys.modules,
                 {
+                    "materialx": None,
+                    "materialx.emoji": None,
                     "material.plugins": None,
                     "material.plugins.blog": None,
                     "material.plugins.blog.plugin": None,
