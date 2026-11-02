@@ -10,6 +10,7 @@ from datetime import date, datetime
 from functools import lru_cache
 from mimetypes import guess_type
 from pathlib import Path
+from re import DOTALL, compile as re_compile
 from typing import Any, Literal
 from urllib.parse import urlencode, urlparse, urlunparse
 
@@ -57,6 +58,7 @@ from mkdocs_rss_plugin.timezoner import set_datetime_zoneinfo
 # ################################
 
 logger = get_plugin_logger(MKDOCS_LOGGER_NAME)
+HTML_COMMENT_RE = re_compile(r"<!--.*?-->", flags=DOTALL)
 
 # ############################################################################
 # ########## Classes #############
@@ -493,6 +495,18 @@ class Util:
 
         return out_date
 
+    @staticmethod
+    def strip_html_comments(html_content: str) -> str:
+        """Remove HTML comments from content.
+
+        Args:
+            html_content (str): HTML content potentially containing comments
+
+        Returns:
+            str: HTML content with comments removed
+        """
+        return HTML_COMMENT_RE.sub("", html_content)
+
     def get_description_or_abstract(
         self,
         in_page: Page,
@@ -520,42 +534,35 @@ class Util:
 
         # If the full page is wanted (unlimited chars count)
         if chars_count == -1 and (in_page.content or in_page.markdown):
-            if in_page.content:
-                return in_page.content
-            else:
-                return markdown.markdown(in_page.markdown, output_format="html5")
-        # If the description is explicitly given
-        elif description:
-            return description
-        # If the abstract is cut by the delimiter
-        elif (
-            abstract_delimiter
-            and (
-                excerpt_separator_position := in_page.markdown.find(abstract_delimiter)
+            description = in_page.content or markdown.markdown(
+                in_page.markdown, output_format="html5"
             )
-            > -1
-        ):
-            return markdown.markdown(
-                in_page.markdown[:excerpt_separator_position],
-                output_format="html5",
+        # Otherwise, keep explicit descriptions or generate a Markdown excerpt
+        elif not description:
+            page_markdown = in_page.markdown or ""
+            # Locate the delimiter before stripping, since it may itself be a comment
+            excerpt_separator_position = (
+                page_markdown.find(abstract_delimiter) if abstract_delimiter else -1
             )
-        # Use first chars_count from the markdown
-        elif chars_count > 0 and in_page.markdown:
-            if len(in_page.markdown) <= chars_count:
-                return markdown.markdown(in_page.markdown, output_format="html5")
-            else:
-                return markdown.markdown(
-                    f"{in_page.markdown[: chars_count - 3]}...",
-                    output_format="html5",
+            if excerpt_separator_position == -1 and (
+                chars_count <= 0 or not page_markdown
+            ):
+                logger.warning(
+                    f"No description generated from metadata or content of the page {in_page.file.src_uri}, "
+                    "therefore the feed won't be compliant, "
+                    "because an item must have a description."
                 )
-        # No explicit description and no (or empty) abstract found
-        else:
-            logger.warning(
-                f"No description generated from metadata or content of the page {in_page.file.src_uri}, "
-                "therefore the feed won't be compliant, "
-                "because an item must have a description."
-            )
-            return ""
+                return ""
+
+            if excerpt_separator_position > -1:
+                page_markdown = page_markdown[:excerpt_separator_position]
+            # Strip before measuring or cutting to avoid exposing partial comments
+            page_markdown = self.strip_html_comments(page_markdown)
+            if excerpt_separator_position == -1 and len(page_markdown) > chars_count:
+                page_markdown = f"{page_markdown[: chars_count - 3]}..."
+            description = markdown.markdown(page_markdown, output_format="html5")
+
+        return self.strip_html_comments(description)
 
     def load_images_for_pages(
         self,
