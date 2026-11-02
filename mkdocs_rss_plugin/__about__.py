@@ -1,4 +1,4 @@
-#! python3  # noqa: E265
+#! python3
 
 """
 Metadata about the package to easily retrieve informations about it.
