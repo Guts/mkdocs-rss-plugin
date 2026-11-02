@@ -930,7 +930,7 @@ class TestBuildRss(BaseTest):
         with tempfile.TemporaryDirectory() as tmpdirname:
             cli_result = self.build_docs_setup(
                 testproject_path="docs",
-                mkdocs_yml_filepath=Path("mkdocs.yml"),
+                mkdocs_yml_filepath=Path("properdocs.yml"),
                 output_path=tmpdirname,
                 strict=True,
             )
