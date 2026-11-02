@@ -16,7 +16,7 @@
 # Standard library
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 # 3rd party
 from requests.exceptions import SSLError
@@ -109,6 +109,19 @@ class TestRssUtil(unittest.TestCase):
         self.assertIsNone(img_length)
         mock_request.assert_called_once()
         self.assertNotIn("verify", mock_request.call_args.kwargs)
+
+    def test_authors_invalid_type_logs_warning(self):
+        """An invalid authors type must log a warning, not raise an exception."""
+        page = MagicMock()
+        page.file.abs_src_path = "docs/page.md"
+        page.meta = {"authors": 42}
+
+        with self.assertLogs("mkdocs.plugins.[RSS-plugin]", "WARNING") as logs:
+            authors = self.plg_utils.get_authors_from_meta(in_page=page)
+
+        self.assertIsNone(authors)
+        self.assertIn("docs/page.md", logs.output[0])
+        self.assertIn("int", logs.output[0])
 
     def test_get_value_from_dot_key(self):
         param_list = [

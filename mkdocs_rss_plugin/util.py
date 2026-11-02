@@ -404,10 +404,10 @@ class Util:
                     return tuple(in_page.meta.get("authors"))
             else:
                 logger.warning(
-                    "Type of authors value in page.meta (%s) is not valid. "
-                    "It should be str, list or tuple, not: %s."
-                    % in_page.file.abs_src_path,
-                    type(in_page.meta.get("authors")),
+                    "Type of authors value in page.meta "
+                    f"({in_page.file.abs_src_path}) is not valid. "
+                    "It should be str, list or tuple, "
+                    f"not: {type(in_page.meta.get('authors'))}."
                 )
                 return None
 
