@@ -3,7 +3,8 @@ title: Integrations
 icon: octicons/plug-16
 ---
 
-Since version 1.19, the plugin supports both [Material for Mkdocs](https://squidfunk.github.io/mkdocs-material/) (which is in maintenance mode since Nov 11, 2025 and until November 2026) and its fork [MaterialX](https://jaywhj.github.io/mkdocs-materialx/).
+Since version 1.19, the plugin supports both [Material for Mkdocs](https://squidfunk.github.io/mkdocs-material/) (which is in maintenance mode since Nov 11, 2025 and until May 2027) and its fork [MaterialX](https://jaywhj.github.io/mkdocs-materialx/).
+This documentation site is built with MaterialX.
 
 ## Blog plugin (from Material theme)
 
@@ -87,7 +88,7 @@ To facilitate the discovery of RSS feeds, it's recommended to add relevant meta-
 
 ### Automatically set with Material theme
 
-If you're using the Material theme, everything is automagically set up (see [the related documentation page](https://squidfunk.github.io/mkdocs-material/setup/setting-up-a-blog/#rss)) :partying_face:.
+If you're using the Material or MaterialX theme, everything is automagically set up (see [the related documentation page](https://squidfunk.github.io/mkdocs-material/setup/setting-up-a-blog/#rss)) :partying_face:.
 
 ### Manually { #feed-discovery-manual-rss }
 
@@ -116,7 +117,7 @@ You need to customize the theme's template. Firstly, you need to declare the fol
 ```yaml title="mkdocs.yml"
 [...]
 theme:
-  name: material
+  name: materialx
   custom_dir: docs/theme/overrides
 [...]
 ```
