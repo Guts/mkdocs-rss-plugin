@@ -32,6 +32,7 @@ from mkdocs_rss_plugin.integrations.theme_material_blog_plugin import (
 # test suite
 from tests.base import BaseTest
 
+
 # #############################################################################
 # ########## Classes ###############
 # ##################################

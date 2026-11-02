@@ -1,4 +1,4 @@
-#! python3  # noqa: E265
+#! python3
 
 
 """
@@ -19,6 +19,7 @@ from mkdocs.plugins import get_plugin_logger
 
 # package
 from mkdocs_rss_plugin.constants import MKDOCS_LOGGER_NAME
+
 
 # ############################################################################
 # ########## Globals #############

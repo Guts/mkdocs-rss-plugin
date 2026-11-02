@@ -1,4 +1,4 @@
-#! python3  # noqa: E265
+#! python3
 
 # ############################################################################
 # ########## Libraries #############
@@ -10,6 +10,7 @@ from mkdocs.config.base import Config
 
 # package
 from mkdocs_rss_plugin.constants import DEFAULT_CACHE_FOLDER
+
 
 # ############################################################################
 # ########## Classes ###############

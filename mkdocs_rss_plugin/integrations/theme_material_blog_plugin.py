@@ -1,4 +1,4 @@
-#! python3  # noqa: E265
+#! python3
 
 # ############################################################################
 # ########## Libraries #############
@@ -19,6 +19,7 @@ from mkdocs_rss_plugin.integrations.theme_material_base import (
     IntegrationMaterialThemeBase,
 )
 from mkdocs_rss_plugin.models import MkdocsPageSubset
+
 
 # conditional
 try:

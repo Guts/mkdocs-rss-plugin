@@ -30,47 +30,26 @@ repos:
       - id: python-use-type-annotations
       - id: text-unicode-replacement-char
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.2
-    hooks:
-      - id: pyupgrade
-        args:
-          - "--py310-plus"
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.16.10"
+    rev: "v0.17.3"
     hooks:
       - id: ruff-check
+        types_or:
+          - pyi
+          - python
         args:
           - --fix-only
-          - --target-version=py310
-
-  - repo: https://github.com/pycqa/isort
-    rev: 9.0.2
-    hooks:
-      - id: isort
-        args:
-          - --profile
-          - black
-          - --filter-files
-
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.10.0
-    hooks:
-      - id: black
-        args:
-          - --target-version=py310
-
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.4.1
-    hooks:
-      - id: flake8
-        additional_dependencies:
-          - flake8-docstrings<2
-        language: python
+      - id: ruff-check
+        name: ruff check (blocking errors)
+        types_or:
+          - pyi
+          - python
         args:
           - --select=E9,F63,F7,F82
-          - --docstring-convention=google
+      - id: ruff-format
+        types_or:
+          - pyi
+          - python
 
 ci:
   autofix_prs: true

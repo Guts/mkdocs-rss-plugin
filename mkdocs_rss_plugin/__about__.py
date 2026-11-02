@@ -1,4 +1,4 @@
-#! python3  # noqa: E265
+#! python3
 
 """
 Metadata about the package to easily retrieve informations about it.
@@ -13,6 +13,7 @@ See: https://packaging.python.org/guides/single-sourcing-package-version/
 # standard library
 from datetime import date
 from importlib import metadata
+
 
 _pkg_metadata = metadata.metadata("mkdocs-rss-plugin") or {}
 

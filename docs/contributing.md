@@ -93,9 +93,9 @@ See the relevant configuration file: `.pre-commit-config.yaml`.
 Make sure your code *roughly* follows [PEP-8](https://www.python.org/dev/peps/pep-0008/) and keeps things consistent with the rest of the code:
 
 - docstrings: [google-style](https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html) is used to technically describe what code does or not.
-- formatting: [black](https://black.readthedocs.io/) is used to automatically format the code without debate.
-- sorted imports: [isort](https://pycqa.github.io/isort/) is used to sort imports
-- static analysis: [flake8](https://flake8.pycqa.org/en/latest/) is used to catch some dizziness and keep the source code healthy.
+- formatting: [ruff format](https://docs.astral.sh/ruff/formatter/) is used to automatically format the code without debate.
+- sorted imports: [ruff's isort rules](https://docs.astral.sh/ruff/rules/#isort-i) are used to sort imports
+- static analysis: [ruff check](https://docs.astral.sh/ruff/linter/) is used to catch some dizziness and keep the source code healthy.
 
 ### Pulls requests
 
@@ -129,7 +129,12 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
         "editor.bracketPairColorization.enabled": true,
         "editor.defaultFormatter": "vscode.json-language-features",
         "editor.formatOnSave": true,
-        "editor.guides.bracketPairs": "active"
+        "editor.guides.bracketPairs": "active",
+        "editor.quickSuggestions": {
+            "strings": true
+        },
+        "editor.suggest.insertMode": "replace",
+        "files.insertFinalNewline": true
     },
     "json.format.enable": true,
     "json.schemaDownload.enable": true,
@@ -141,6 +146,7 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
     "markdown.validate.fragmentLinks.enabled": "warning",
     "[markdown]": {
         "editor.bracketPairColorization.enabled": true,
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
         "editor.formatOnSave": true,
         "editor.guides.bracketPairs": "active",
         "files.trimTrailingWhitespace": false
@@ -148,16 +154,16 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
     // Python
     "python.analysis.autoFormatStrings": true,
     "python.analysis.autoImportCompletions": true,
-    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.typeCheckingMode": "standard",
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.terminal.activateEnvironment": true,
-    "python.testing.unittestEnabled": true,
+    "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,  
     "[python]": {
         "editor.codeActionsOnSave": {
             "source.organizeImports": "explicit"
         },
-        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
         "editor.guides.bracketPairs": "active",
         "editor.rulers": [
@@ -165,9 +171,14 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
         ],
         "editor.wordWrapColumn": 88,
     },
+    // TOML
+    "[toml]": {
+        "editor.defaultFormatter": "tamasfe.even-better-toml",
+        "editor.formatOnSave": true,
+    },
     // YAML
     "[yaml]": {
-        "editor.autoIndent": "keep",
+        // "editor.autoIndent": "keep",
         "editor.formatOnSave": true,
         "editor.insertSpaces": true,
         "editor.tabSize": 2,
@@ -182,14 +193,6 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
     "autoDocstring.guessTypes": true,
     "autoDocstring.docstringFormat": "google-notypes",
     "autoDocstring.generateDocstringOnEnter": false,
-    "flake8.args": [
-        "--verbose"
-    ],
-    "isort.args": [
-        "--profile",
-        "black"
-    ],
-    "isort.check": true,
     "yaml.customTags": [
         "!ENV scalar",
         "!ENV sequence",
@@ -197,7 +200,11 @@ Feel free to use the IDE you love. Here come configurations for some popular IDE
         "tag:yaml.org,2002:python/name:material.extensions.emoji.to_svg",
         "tag:yaml.org,2002:python/name:material.extensions.emoji.twemoji",
         "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format"
-    ]
+    ],
+    "sonarlint.connectedMode.project": {
+        "connectionId": "geojulien",
+        "projectKey": "Guts_mkdocs-rss-plugin"
+    }
 }
 ```
 
